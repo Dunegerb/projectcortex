@@ -28,3 +28,10 @@
 - Sincroniza os centros com dias fixos: 1, 5, 10, 15, 21, 30 e 90.
 - Garante terceiro olho no dia 30 e coroa no dia 90 ou posterior.
 - Valida os recursos dentro da IPA automática.
+
+## 1.1.5 (build 8)
+
+- App icon preto e branco integrado diretamente ao `AppIcon.appiconset`.
+- Todos os tamanhos de iPhone foram regenerados como PNG RGB de 8 bits, sem canal alpha e sem metadados extras.
+- O fluxo não depende mais da opção “Custom App Icon” do Sideloadly.
+- Adicionada validação automática de formato, dimensões e transparência antes da compilação.

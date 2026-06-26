@@ -1,6 +1,6 @@
 # Cortex 1.1.1 — Home Kundalini sincronizada + IPA automática
 
-Projeto SwiftUI completo para iPhone. A IPA unsigned é compilada diretamente do código-fonte pelo GitHub Actions em todo `push`; não depende de uma IPA-base e não exige clicar em "Create Unsigned IPA".
+Projeto SwiftUI completo para iPhone. A IPA unsigned é compilada diretamente do código-fonte pelo GitHub Actions em todo `push`; não depende de uma IPA-base e não exige clicar em “Create Unsigned IPA”.
 
 ## Home redesenhada
 
@@ -46,7 +46,7 @@ A Home atualiza o relógio a cada minuto e também ao voltar para o primeiro pla
 
 ## Tempo recuperado
 
-O campo antigo "Uso estimado" foi substituído por:
+O campo antigo “Uso estimado” foi substituído por:
 
 ```text
 Tempo gasto no ato da autosatisfação: X min/dia
@@ -118,3 +118,7 @@ Os arquivos `ChakraExperience.html` e `personkundalini.svg` agora são instalado
 
 A figura animada da Home usa agora 80% da área disponível, mantendo o cartão original e criando margens visuais ao redor do personagem. A escala é aplicada tanto à animação WebKit quanto ao SVG de fallback.
 
+
+## App icon integrado
+
+O ícone do Cortex já está dentro do catálogo `AppIcon.appiconset`. No Sideloadly, carregue somente a IPA e deixe a opção de ícone personalizado desativada. O Xcode inclui o ícone correto durante a compilação do GitHub Actions.

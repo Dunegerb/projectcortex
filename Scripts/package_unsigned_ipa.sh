@@ -1,3 +1,4 @@
+python3 Scripts/verify_app_icon.py
 #!/usr/bin/env bash
 set -euo pipefail
 
