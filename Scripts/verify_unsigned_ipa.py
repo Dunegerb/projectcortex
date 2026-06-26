@@ -55,6 +55,13 @@ def main() -> int:
             if info.get("UIRequiresFullScreen") is not True:
                 raise ValueError("UIRequiresFullScreen is not enabled")
 
+            primary_icon = info.get("CFBundleIcons", {}).get("CFBundlePrimaryIcon", {})
+            if primary_icon.get("CFBundleIconName") != "AppIcon":
+                raise ValueError("CFBundleIconName is missing or does not point to AppIcon")
+            icon_files = primary_icon.get("CFBundleIconFiles")
+            if not isinstance(icon_files, list) or "AppIcon60x60" not in icon_files:
+                raise ValueError("CFBundlePrimaryIcon does not contain AppIcon60x60 fallback metadata")
+
             signing_files = [item.filename for item in infos if is_signing_artifact(item.filename)]
             if signing_files:
                 raise ValueError(f"Signing artifacts remain: {signing_files}")
@@ -72,6 +79,21 @@ def main() -> int:
 
             if not any(name.startswith(f"{app_dir}/PlugIns/") and name.endswith(".appex/Info.plist") for name in names):
                 raise ValueError("Embedded widget extension is missing")
+
+            assets_path = str(app_dir / "Assets.car")
+            assets_info = next((item for item in infos if item.filename == assets_path), None)
+            if assets_info is None or assets_info.file_size <= 0:
+                raise ValueError("Compiled Assets.car is missing or empty")
+
+            required_icons = (
+                "AppIcon60x60@2x.png",
+                "AppIcon60x60@3x.png",
+            )
+            for icon in required_icons:
+                icon_path = str(app_dir / icon)
+                icon_info = next((item for item in infos if item.filename == icon_path), None)
+                if icon_info is None or icon_info.file_size <= 0:
+                    raise ValueError(f"Fallback app icon is missing or empty: {icon_path}")
 
             required_resources = (
                 "ChakraExperience.html",

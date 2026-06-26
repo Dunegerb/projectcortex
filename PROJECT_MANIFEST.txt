@@ -44,6 +44,14 @@ CortexApp/Features/Onboarding/OnboardingView.swift
 CortexApp/Features/Onboarding/VisualizationStepView.swift
 CortexApp/Features/Settings/SettingsView.swift
 CortexApp/Features/Shield/ShieldSettingsView.swift
+CortexApp/Resources/AppIconFallback/AppIcon20x20@2x.png
+CortexApp/Resources/AppIconFallback/AppIcon20x20@3x.png
+CortexApp/Resources/AppIconFallback/AppIcon29x29@2x.png
+CortexApp/Resources/AppIconFallback/AppIcon29x29@3x.png
+CortexApp/Resources/AppIconFallback/AppIcon40x40@2x.png
+CortexApp/Resources/AppIconFallback/AppIcon40x40@3x.png
+CortexApp/Resources/AppIconFallback/AppIcon60x60@2x.png
+CortexApp/Resources/AppIconFallback/AppIcon60x60@3x.png
 CortexApp/Resources/Assets.xcassets/AccentColor.colorset/Contents.json
 CortexApp/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
 CortexApp/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-20@2x.png
@@ -73,12 +81,16 @@ CortexWidget/CortexWidget.swift
 CortexWidget/CortexWidgetBundle.swift
 CortexWidget/PrivacyInfo.xcprivacy
 LICENSE
+PROJECT_MANIFEST.txt
 README.md
 Scripts/bootstrap.sh
 Scripts/build.sh
 Scripts/copy_kundalini_resources.sh
 Scripts/import_signing.sh
+Scripts/install_app_icon_fallback.sh
 Scripts/package_unsigned_ipa.sh
+Scripts/remove_legacy_brain.sh
+Scripts/verify_app_icon.py
 Scripts/verify_design_system.py
 Scripts/verify_native_keyboard.py
 Scripts/verify_transmutation_home.py
@@ -91,6 +103,5 @@ docs/IMPLEMENTATION_MAP.md
 docs/PRIVACY.md
 docs/RESPONSIBLE_USE.md
 project.yml
-PROJECT_MANIFEST.txt
 
-Arquivos: 93
+Arquivos: 105

@@ -35,3 +35,10 @@
 - Todos os tamanhos de iPhone foram regenerados como PNG RGB de 8 bits, sem canal alpha e sem metadados extras.
 - O fluxo não depende mais da opção “Custom App Icon” do Sideloadly.
 - Adicionada validação automática de formato, dimensões e transparência antes da compilação.
+
+## 1.1.6 — App Icon final
+- Corrige a ausência do ícone na tela inicial do iPhone.
+- Adiciona metadados explícitos `CFBundleIcons`, `CFBundleIconName` e `CFBundleIconFiles`.
+- Instala ícones PNG fallback de 120 px e 180 px diretamente no bundle final.
+- Exige `Assets.car` compilado antes de empacotar a IPA.
+- Valida o ícone dentro da IPA, não apenas no código-fonte.
