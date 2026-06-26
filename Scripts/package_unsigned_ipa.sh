@@ -14,6 +14,7 @@ python3 "$ROOT/Scripts/verify_design_system.py"
 python3 "$ROOT/Scripts/verify_native_keyboard.py"
 python3 "$ROOT/Scripts/verify_transmutation_home.py"
 python3 "$ROOT/Scripts/verify_app_icon.py"
+python3 "$ROOT/Scripts/verify_xcode_project_resources.py"
 
 python3 - "$ROOT/Config/Cortex-Info.plist" <<'PY'
 import plistlib
@@ -67,6 +68,7 @@ fi
 
 "$ROOT/Scripts/copy_kundalini_resources.sh" "$APP_PATH"
 "$ROOT/Scripts/install_app_icon_fallback.sh" "$APP_PATH"
+"$ROOT/Scripts/compile_asset_catalog.sh" "$APP_PATH"
 
 for resource in ChakraExperience.html personkundalini.svg; do
   if [[ ! -s "$APP_PATH/$resource" ]]; then

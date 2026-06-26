@@ -36,9 +36,16 @@
 - O fluxo não depende mais da opção “Custom App Icon” do Sideloadly.
 - Adicionada validação automática de formato, dimensões e transparência antes da compilação.
 
-## 1.1.6 — App Icon final
+## 1.1.7 — App Icon final
 - Corrige a ausência do ícone na tela inicial do iPhone.
 - Adiciona metadados explícitos `CFBundleIcons`, `CFBundleIconName` e `CFBundleIconFiles`.
 - Instala ícones PNG fallback de 120 px e 180 px diretamente no bundle final.
 - Exige `Assets.car` compilado antes de empacotar a IPA.
 - Valida o ícone dentro da IPA, não apenas no código-fonte.
+
+## 1.1.7 (build 10)
+
+- Corrige a declaração do catálogo `Assets.xcassets` no XcodeGen: recursos agora entram em `sources` com `buildPhase: resources`.
+- Adiciona validação do `Cortex.xcodeproj` gerado antes da compilação.
+- Adiciona fallback determinístico com `xcrun actool` caso um runner não produza `Assets.car` durante o build unsigned.
+- Mantém os PNGs de compatibilidade e mescla no `Info.plist` as chaves geradas pelo `actool`.

@@ -34,6 +34,9 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
+      - name: Verify generated resource phases
+        run: python3 Scripts/verify_xcode_project_resources.py
+
       - name: Build for iOS Simulator
         run: |
           set -o pipefail

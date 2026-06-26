@@ -18,8 +18,8 @@ settings:
     SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
     SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
     SUPPORTS_MACCATALYST: NO
-    CURRENT_PROJECT_VERSION: 9
-    MARKETING_VERSION: 1.1.6
+    CURRENT_PROJECT_VERSION: 10
+    MARKETING_VERSION: 1.1.7
     DEVELOPMENT_TEAM: ${CORTEX_TEAM_ID}
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     CORTEX_APP_GROUP: ${CORTEX_APP_GROUP}
@@ -45,9 +45,14 @@ targets:
         excludes:
           - Resources
       - path: Shared
-    resources:
       - path: CortexApp/Resources/Assets.xcassets
+        type: file
+        buildPhase: resources
+        group: CortexApp/Resources
       - path: CortexApp/Resources/PrivacyInfo.xcprivacy
+        type: file
+        buildPhase: resources
+        group: CortexApp/Resources
     postBuildScripts:
       - name: Install Kundalini runtime resources
         script: |
@@ -91,8 +96,10 @@ targets:
         excludes:
           - PrivacyInfo.xcprivacy
       - path: Shared
-    resources:
       - path: CortexWidget/PrivacyInfo.xcprivacy
+        type: file
+        buildPhase: resources
+        group: CortexWidget
     entitlements:
       path: Config/CortexWidget.entitlements
       properties:

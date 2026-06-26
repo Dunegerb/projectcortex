@@ -52,6 +52,9 @@ jobs:
       - name: Verify automatic transmutation Home
         run: python3 Scripts/verify_transmutation_home.py
 
+      - name: Verify App Icon source set
+        run: python3 Scripts/verify_app_icon.py
+
       - name: Build and package IPA from source
         run: ./Scripts/package_unsigned_ipa.sh
 
