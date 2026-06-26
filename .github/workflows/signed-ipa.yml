@@ -1,0 +1,101 @@
+name: Build Signed IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  archive:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Verify native iPhone keyboard policy
+        run: python3 Scripts/verify_native_keyboard.py
+
+      - name: Verify automatic transmutation Home
+        run: python3 Scripts/verify_transmutation_home.py
+
+      - name: Import certificate and provisioning profiles
+        id: signing
+        env:
+          CERTIFICATE_P12_BASE64: ${{ secrets.CERTIFICATE_P12_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          APP_PROFILE_BASE64: ${{ secrets.APP_PROFILE_BASE64 }}
+          WIDGET_PROFILE_BASE64: ${{ secrets.WIDGET_PROFILE_BASE64 }}
+        run: ./Scripts/import_signing.sh
+
+      - name: Generate Xcode project with signing settings
+        env:
+          CORTEX_TEAM_ID: ${{ secrets.CORTEX_TEAM_ID }}
+          CORTEX_APP_BUNDLE_ID: ${{ secrets.CORTEX_APP_BUNDLE_ID }}
+          CORTEX_WIDGET_BUNDLE_ID: ${{ secrets.CORTEX_WIDGET_BUNDLE_ID }}
+          CORTEX_APP_GROUP: ${{ secrets.CORTEX_APP_GROUP }}
+          CORTEX_APP_PROFILE: ${{ steps.signing.outputs.app_profile_name }}
+          CORTEX_WIDGET_PROFILE: ${{ steps.signing.outputs.widget_profile_name }}
+        run: xcodegen generate
+
+      - name: Archive
+        env:
+          CORTEX_TEAM_ID: ${{ secrets.CORTEX_TEAM_ID }}
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Cortex.xcodeproj \
+            -scheme Cortex \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Cortex.xcarchive" \
+            archive | tee archive.log
+
+      - name: Create ExportOptions.plist
+        env:
+          TEAM_ID: ${{ secrets.CORTEX_TEAM_ID }}
+          APP_BUNDLE_ID: ${{ secrets.CORTEX_APP_BUNDLE_ID }}
+          WIDGET_BUNDLE_ID: ${{ secrets.CORTEX_WIDGET_BUNDLE_ID }}
+          APP_PROFILE_NAME: ${{ steps.signing.outputs.app_profile_name }}
+          WIDGET_PROFILE_NAME: ${{ steps.signing.outputs.widget_profile_name }}
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>teamID</key><string>${TEAM_ID}</string>
+            <key>stripSwiftSymbols</key><true/>
+            <key>uploadSymbols</key><true/>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>${APP_BUNDLE_ID}</key><string>${APP_PROFILE_NAME}</string>
+              <key>${WIDGET_BUNDLE_ID}</key><string>${WIDGET_PROFILE_NAME}</string>
+            </dict>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Export IPA
+        run: |
+          mkdir -p build/export
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$RUNNER_TEMP/Cortex.xcarchive" \
+            -exportPath build/export \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist"
+
+      - name: Upload signed IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cortex-signed-ipa
+          path: build/export/*.ipa
+
+      - name: Upload archive log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive-log
+          path: archive.log

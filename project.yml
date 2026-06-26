@@ -1,0 +1,137 @@
+name: Cortex
+options:
+  minimumXcodeGenVersion: 2.38.0
+  deploymentTarget:
+    iOS: "17.0"
+  groupSortPosition: top
+  generateEmptyDirectories: true
+configs:
+  Debug: debug
+  Release: release
+  Unsigned: release
+settings:
+  base:
+    SWIFT_VERSION: 5.0
+    SWIFT_STRICT_CONCURRENCY: minimal
+    IPHONEOS_DEPLOYMENT_TARGET: 17.0
+    TARGETED_DEVICE_FAMILY: "1"
+    SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+    SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
+    SUPPORTS_MACCATALYST: NO
+    CURRENT_PROJECT_VERSION: 6
+    MARKETING_VERSION: 1.1.3
+    DEVELOPMENT_TEAM: ${CORTEX_TEAM_ID}
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    CORTEX_APP_GROUP: ${CORTEX_APP_GROUP}
+  configs:
+    Debug:
+      CODE_SIGN_STYLE: Automatic
+    Release:
+      CODE_SIGN_STYLE: Manual
+      CODE_SIGN_IDENTITY: Apple Distribution
+    Unsigned:
+      CODE_SIGNING_ALLOWED: NO
+      CODE_SIGNING_REQUIRED: NO
+      CODE_SIGN_IDENTITY: ""
+      EXPANDED_CODE_SIGN_IDENTITY: ""
+      DEVELOPMENT_TEAM: ""
+      PROVISIONING_PROFILE_SPECIFIER: ""
+targets:
+  Cortex:
+    type: application
+    platform: iOS
+    sources:
+      - path: CortexApp
+        excludes:
+          - Resources
+      - path: Shared
+    resources:
+      - path: CortexApp/Resources/Assets.xcassets
+      - path: CortexApp/Resources/PrivacyInfo.xcprivacy
+    postBuildScripts:
+      - name: Install Kundalini runtime resources
+        script: |
+          "${SRCROOT}/Scripts/copy_kundalini_resources.sh" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+        inputFiles:
+          - $(SRCROOT)/Scripts/copy_kundalini_resources.sh
+          - $(SRCROOT)/CortexApp/Resources/ChakraExperience.html
+          - $(SRCROOT)/CortexApp/Resources/personkundalini.svg
+        outputFiles:
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/ChakraExperience.html
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/personkundalini.svg
+    entitlements:
+      path: Config/Cortex.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.developer.healthkit: true
+        com.apple.security.application-groups:
+          - ${CORTEX_APP_GROUP}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ${CORTEX_APP_BUNDLE_ID}
+        PRODUCT_NAME: Cortex
+        INFOPLIST_FILE: Config/Cortex-Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_ENTITLEMENTS: Config/Cortex.entitlements
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+      configs:
+        Release:
+          PROVISIONING_PROFILE_SPECIFIER: ${CORTEX_APP_PROFILE}
+    dependencies:
+      - target: CortexWidget
+        embed: true
+  CortexWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: CortexWidget
+        excludes:
+          - PrivacyInfo.xcprivacy
+      - path: Shared
+    resources:
+      - path: CortexWidget/PrivacyInfo.xcprivacy
+    entitlements:
+      path: Config/CortexWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - ${CORTEX_APP_GROUP}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ${CORTEX_WIDGET_BUNDLE_ID}
+        PRODUCT_NAME: CortexWidget
+        INFOPLIST_FILE: Config/CortexWidget-Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_ENTITLEMENTS: Config/CortexWidget.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+      configs:
+        Release:
+          PROVISIONING_PROFILE_SPECIFIER: ${CORTEX_WIDGET_PROFILE}
+  CortexTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: CortexTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ${CORTEX_APP_BUNDLE_ID}.tests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Cortex
+schemes:
+  Cortex:
+    build:
+      targets:
+        Cortex: all
+        CortexWidget: all
+        CortexTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - CortexTests
+    archive:
+      config: Release

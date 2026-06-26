@@ -1,0 +1,55 @@
+name: Validate iOS Source
+
+on:
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      CORTEX_TEAM_ID: ""
+      CORTEX_APP_BUNDLE_ID: com.seudominio.cortex
+      CORTEX_WIDGET_BUNDLE_ID: com.seudominio.cortex.widget
+      CORTEX_APP_GROUP: group.com.seudominio.cortex
+      CORTEX_APP_PROFILE: ""
+      CORTEX_WIDGET_PROFILE: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Verify native iPhone keyboard policy
+        run: python3 Scripts/verify_native_keyboard.py
+
+      - name: Verify automatic transmutation Home
+        run: python3 Scripts/verify_transmutation_home.py
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for iOS Simulator
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Cortex.xcodeproj \
+            -scheme Cortex \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build | tee build.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcode-build-log-${{ github.sha }}
+          path: build.log
+          if-no-files-found: warn

@@ -1,0 +1,100 @@
+name: Automatic Unsigned IPA
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unsigned-ipa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: Build Cortex unsigned IPA
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    env:
+      CORTEX_TEAM_ID: ""
+      CORTEX_APP_BUNDLE_ID: com.seudominio.cortex
+      CORTEX_WIDGET_BUNDLE_ID: com.seudominio.cortex.widget
+      CORTEX_APP_GROUP: group.com.seudominio.cortex
+      CORTEX_APP_PROFILE: ""
+      CORTEX_WIDGET_PROFILE: ""
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Prepare scripts
+        run: chmod +x Scripts/*.sh Scripts/*.py
+
+      - name: Remove legacy 3D brain source
+        run: ./Scripts/remove_legacy_brain.sh
+
+      - name: Verify SF Pro and OLED design system
+        run: python3 Scripts/verify_design_system.py
+
+      - name: Verify native iPhone keyboard policy
+        run: python3 Scripts/verify_native_keyboard.py
+
+      - name: Verify automatic transmutation Home
+        run: python3 Scripts/verify_transmutation_home.py
+
+      - name: Build and package IPA from source
+        run: ./Scripts/package_unsigned_ipa.sh
+
+      - name: Verify IPA
+        run: python3 Scripts/verify_unsigned_ipa.py build/Cortex-unsigned-fullscreen.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cortex-unsigned-fullscreen
+          path: |
+            build/Cortex-unsigned-fullscreen.ipa
+            build/Cortex-unsigned-fullscreen.ipa.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+  release:
+    name: Attach IPA to release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download generated IPA
+        uses: actions/download-artifact@v4
+        with:
+          name: Cortex-unsigned-fullscreen
+          path: release-assets
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            release-assets/Cortex-unsigned-fullscreen.ipa \
+            release-assets/Cortex-unsigned-fullscreen.ipa.sha256 \
+            --repo "$GITHUB_REPOSITORY" \
+            --generate-notes \
+          || gh release upload "$GITHUB_REF_NAME" \
+            release-assets/Cortex-unsigned-fullscreen.ipa \
+            release-assets/Cortex-unsigned-fullscreen.ipa.sha256 \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber

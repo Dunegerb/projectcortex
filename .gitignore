@@ -1,0 +1,12 @@
+.DS_Store
+.env
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+Cortex.xcodeproj/project.xcworkspace/xcuserdata/
+Cortex.xcodeproj/xcuserdata/
+*.ipa
+*.xcarchive
+*.mobileprovision
+*.p12
