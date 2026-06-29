@@ -143,3 +143,9 @@ A área abaixo de `Recovered time` agora segue os SVGs fornecidos: dois cartões
 ## Home 1.2.2 — energia centralizada
 
 O card “Current energy” agora usa fundo sólido, sem o gradiente antigo. A figura Kundalini mantém o mesmo zoom, mas aplica um deslocamento próprio para cada um dos sete centros, deixando o chakra atual centralizado no enquadramento. A barra inferior também foi rebaixada em mais 8 pt no iPhone X e continua responsiva em outros iPhones.
+## Correção nativa do card de energia atual (1.2.3)
+
+O card **Current energy** não usa mais `WKWebView`. Cada um dos sete estados fornecidos no redesign foi incorporado ao catálogo de assets em resoluções 1x, 2x e 3x. Isso remove duas falhas observadas no iPhone: o salto de escala após o carregamento do HTML e o desaparecimento da figura quando o processo WebKit era suspenso ou encerrado em segundo plano.
+
+A animação Kundalini original permanece preservada no projeto, mas o recorte de energia atual da Home agora é renderizado nativamente pelo SwiftUI e continua sincronizado com os dias 1, 5, 10, 15, 21, 30 e 90.
+

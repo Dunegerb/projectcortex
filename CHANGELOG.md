@@ -1,3 +1,11 @@
+## 1.2.3 (build 14)
+
+- Remove o `WKWebView` do card **Current energy** e usa sete imagens nativas pré-renderizadas.
+- Elimina o salto de escala que ocorria quando o fallback era substituído pelo conteúdo WebKit.
+- Impede que a figura desapareça ao voltar do segundo plano por encerramento do processo WebKit.
+- Mantém exatamente os enquadramentos fornecidos para Root, Sacral, Solar Plexus, Heart, Throat, Third Eye e Crown.
+- Inclui recursos 1x, 2x e 3x no catálogo de assets e força a troca do card por identidade de estágio.
+
 # Changelog
 
 ## 1.2.2 (build 13)

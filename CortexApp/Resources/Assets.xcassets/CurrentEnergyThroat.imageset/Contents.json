@@ -1,0 +1,23 @@
+{
+  "images": [
+    {
+      "filename": "CurrentEnergyThroat.png",
+      "idiom": "universal",
+      "scale": "1x"
+    },
+    {
+      "filename": "CurrentEnergyThroat@2x.png",
+      "idiom": "universal",
+      "scale": "2x"
+    },
+    {
+      "filename": "CurrentEnergyThroat@3x.png",
+      "idiom": "universal",
+      "scale": "3x"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}

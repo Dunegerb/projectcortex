@@ -6,7 +6,6 @@ import UIKit
 struct DashboardView: View {
     @EnvironmentObject private var router: AppRouter
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Bindable var profile: UserProfile
 
     @Query(sort: \DailyCheckIn.date, order: .reverse) private var checkIns: [DailyCheckIn]
@@ -293,43 +292,16 @@ struct DashboardView: View {
     }
 
     private func currentEnergyCard(scale: CGFloat) -> some View {
-        ZStack(alignment: .bottom) {
-            RoundedRectangle(cornerRadius: 27 * scale, style: .continuous)
-                .fill(HomeColors.card)
-
-            ChakraExperienceView(
-                day: snapshot.currentDay,
-                animated: !reduceMotion,
-                artworkScale: 1.88,
-                artworkOffset: CGSize(width: 0, height: stage.figureOffset * scale)
-            )
+        Image(stage.cardAssetName)
+            .resizable()
+            .interpolation(.high)
+            .antialiased(true)
+            .aspectRatio(699.0 / 383.0, contentMode: .fit)
+            .frame(maxWidth: .infinity)
             .frame(height: 194 * scale)
-            .offset(y: -3 * scale)
-            .accessibilityHidden(true)
-
-            HStack(spacing: 3 * scale) {
-                Text("Current energy:")
-                    .foregroundStyle(HomeColors.muted)
-                Text(stage.englishTitle)
-                    .foregroundStyle(.white)
-                Spacer(minLength: 0)
-            }
-            .font(.system(size: 13 * scale, weight: .regular, design: .default))
-            .tracking(-0.14 * scale)
-            .padding(.horizontal, 22 * scale)
-            .frame(height: 45 * scale)
-            .background(.ultraThinMaterial, in: Capsule())
-            .background(Color.black.opacity(0.58), in: Capsule())
-            .overlay(
-                Capsule().stroke(Color.white.opacity(0.16), lineWidth: 0.7)
-            )
-            .padding(.horizontal, 27 * scale)
-            .padding(.bottom, 18 * scale)
-        }
-        .frame(height: 194 * scale)
-        .clipShape(RoundedRectangle(cornerRadius: 27 * scale, style: .continuous))
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Current energy: \(stage.englishTitle)")
+            .id(stage.cardAssetName)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Current energy: \(stage.englishTitle)")
     }
 
     private func recoveredTimeCard(scale: CGFloat) -> some View {
@@ -674,16 +646,16 @@ private struct TransmutationStage {
     let englishTitle: String
     let color: Color
     let assetName: String
-    let figureOffset: CGFloat
+    let cardAssetName: String
 
     static let all: [TransmutationStage] = [
-        .init(activationDay: 1, englishTitle: "Root Chakra", color: Color(red: 168 / 255, green: 19 / 255, blue: 18 / 255), assetName: "ChakraRoot", figureOffset: -137),
-        .init(activationDay: 5, englishTitle: "Sacral Chakra", color: Color(red: 208 / 255, green: 93 / 255, blue: 2 / 255), assetName: "ChakraSacral", figureOffset: -103),
-        .init(activationDay: 10, englishTitle: "Solar Plexus Chakra", color: Color(red: 240 / 255, green: 156 / 255, blue: 34 / 255), assetName: "ChakraSolar", figureOffset: -63),
-        .init(activationDay: 15, englishTitle: "Heart Chakra", color: Color(red: 57 / 255, green: 141 / 255, blue: 24 / 255), assetName: "ChakraHeart", figureOffset: -22),
-        .init(activationDay: 21, englishTitle: "Throat Chakra", color: Color(red: 15 / 255, green: 158 / 255, blue: 226 / 255), assetName: "ChakraThroat", figureOffset: 25),
-        .init(activationDay: 30, englishTitle: "Third Eye Chakra", color: Color(red: 131 / 255, green: 58 / 255, blue: 247 / 255), assetName: "ChakraThirdEye", figureOffset: 76),
-        .init(activationDay: 90, englishTitle: "Crown Chakra", color: Color(red: 249 / 255, green: 249 / 255, blue: 247 / 255), assetName: "ChakraCrown", figureOffset: 116)
+        .init(activationDay: 1, englishTitle: "Root Chakra", color: Color(red: 168 / 255, green: 19 / 255, blue: 18 / 255), assetName: "ChakraRoot", cardAssetName: "CurrentEnergyRoot"),
+        .init(activationDay: 5, englishTitle: "Sacral Chakra", color: Color(red: 208 / 255, green: 93 / 255, blue: 2 / 255), assetName: "ChakraSacral", cardAssetName: "CurrentEnergySacral"),
+        .init(activationDay: 10, englishTitle: "Solar Plexus Chakra", color: Color(red: 240 / 255, green: 156 / 255, blue: 34 / 255), assetName: "ChakraSolar", cardAssetName: "CurrentEnergySolar"),
+        .init(activationDay: 15, englishTitle: "Heart Chakra", color: Color(red: 57 / 255, green: 141 / 255, blue: 24 / 255), assetName: "ChakraHeart", cardAssetName: "CurrentEnergyHeart"),
+        .init(activationDay: 21, englishTitle: "Throat Chakra", color: Color(red: 15 / 255, green: 158 / 255, blue: 226 / 255), assetName: "ChakraThroat", cardAssetName: "CurrentEnergyThroat"),
+        .init(activationDay: 30, englishTitle: "Third Eye Chakra", color: Color(red: 131 / 255, green: 58 / 255, blue: 247 / 255), assetName: "ChakraThirdEye", cardAssetName: "CurrentEnergyThirdEye"),
+        .init(activationDay: 90, englishTitle: "Crown Chakra", color: Color(red: 249 / 255, green: 249 / 255, blue: 247 / 255), assetName: "ChakraCrown", cardAssetName: "CurrentEnergyCrown")
     ]
 
     static func activeCount(for day: Int) -> Int {

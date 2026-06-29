@@ -53,6 +53,40 @@ def verify_template_asset(name: str) -> None:
         fail(f"{name} is too small: {width}x{height}")
 
 
+def verify_current_energy_asset(name: str) -> None:
+    imageset = ASSETS / f"{name}.imageset"
+    manifest = imageset / "Contents.json"
+    if not manifest.is_file():
+        fail(f"missing native current-energy asset manifest: {name}")
+
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    expected = {
+        "1x": (350, 192),
+        "2x": (699, 383),
+        "3x": (1049, 575),
+    }
+    found_scales: set[str] = set()
+
+    for image in data.get("images", []):
+        scale = image.get("scale")
+        filename = image.get("filename")
+        if scale not in expected or not filename:
+            continue
+        png = imageset / filename
+        if not png.is_file() or png.stat().st_size < 10_000:
+            fail(f"missing or empty {scale} current-energy image: {name}")
+        raw = png.read_bytes()
+        if raw[:8] != b"\x89PNG\r\n\x1a\n" or raw[12:16] != b"IHDR":
+            fail(f"{name} {scale} is not a PNG")
+        width, height = struct.unpack(">II", raw[16:24])
+        if (width, height) != expected[scale]:
+            fail(f"unexpected dimensions for {name} {scale}: {width}x{height}")
+        found_scales.add(scale)
+
+    if found_scales != set(expected):
+        fail(f"incomplete current-energy image scales for {name}: {sorted(found_scales)}")
+
+
 def main() -> int:
     if BRAIN.exists():
         fail("legacy BrainSceneView.swift still exists; run Scripts/remove_legacy_brain.sh")
@@ -92,22 +126,20 @@ def main() -> int:
         "HomeMetrics.scale",
         "chakraProgressStrip",
         "CortexBottomNavigation",
-        "ChakraExperienceView(",
-        "day: snapshot.currentDay",
-        "artworkScale: 1.88",
-        "figureOffset: -137",
-        "figureOffset: -103",
-        "figureOffset: -63",
-        "figureOffset: -22",
-        "figureOffset: 25",
-        "figureOffset: 76",
-        "figureOffset: 116",
         "profile.startDate = relapseDate",
         "Este espaço é opcional",
         "activationDay: 30",
         "activationDay: 90",
         'assetName: "ChakraRoot"',
         'assetName: "ChakraCrown"',
+        "Image(stage.cardAssetName)",
+        'cardAssetName: "CurrentEnergyRoot"',
+        'cardAssetName: "CurrentEnergySacral"',
+        'cardAssetName: "CurrentEnergySolar"',
+        'cardAssetName: "CurrentEnergyHeart"',
+        'cardAssetName: "CurrentEnergyThroat"',
+        'cardAssetName: "CurrentEnergyThirdEye"',
+        'cardAssetName: "CurrentEnergyCrown"',
     ):
         target = dashboard if token != "CortexBottomNavigation" else app_root
         require(target, token, "DashboardView.swift" if target is dashboard else "AppRootView.swift")
@@ -151,6 +183,14 @@ def main() -> int:
     current_card_source = dashboard.split("private func currentEnergyCard", 1)[1].split("private func recoveredTimeCard", 1)[0]
     if "LinearGradient(" in current_card_source:
         fail("current energy card must use a solid background without the legacy gradient")
+    if "ChakraExperienceView(" in current_card_source or "WKWebView" in current_card_source:
+        fail("current energy card must not depend on WebKit; it causes late rescaling and blanking after backgrounding")
+    for token in (
+        "Image(stage.cardAssetName)",
+        ".aspectRatio(699.0 / 383.0, contentMode: .fit)",
+        ".id(stage.cardAssetName)",
+    ):
+        require(current_card_source, token, "DashboardView.swift currentEnergyCard")
     require(artwork, ".aura {\n      display: none !important;", "ChakraExperience.html")
 
     for asset in (
@@ -160,6 +200,13 @@ def main() -> int:
         "ShieldGlyph",
     ):
         verify_template_asset(asset)
+
+    for asset in (
+        "CurrentEnergyRoot", "CurrentEnergySacral", "CurrentEnergySolar",
+        "CurrentEnergyHeart", "CurrentEnergyThroat", "CurrentEnergyThirdEye",
+        "CurrentEnergyCrown",
+    ):
+        verify_current_energy_asset(asset)
 
     for reference in (
         "HomeRedesignReference.png",
@@ -215,7 +262,7 @@ def main() -> int:
 
     print(
         "Verified pixel-referenced iPhone X Home redesign, SF Pro layout, custom navigation, "
-        "seven automatic energy stages, optional daily notes and Kundalini runtime."
+        "seven native current-energy cards, optional daily notes and Kundalini runtime."
     )
     return 0
 
