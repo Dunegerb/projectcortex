@@ -85,6 +85,10 @@ def main() -> int:
         "Since ",
         "Current energy:",
         "Recovered time",
+        "dashboardSummaryCards",
+        "Add today's note",
+        "goalRemainingDays",
+        "savedNotesCount",
         "HomeMetrics.scale",
         "chakraProgressStrip",
         "CortexBottomNavigation",
@@ -109,6 +113,8 @@ def main() -> int:
         "NavSettings",
         "Estou com fissura",
         "router.showEmergency = true",
+        "navigationBottomPadding",
+        "bottomInset - 8 * scale",
     ):
         require(app_root, token, "AppRootView.swift")
 
@@ -149,6 +155,9 @@ def main() -> int:
         "actualchakralogos-topcard.svg",
         "Current-energy,_card.svg",
         "barnavegation.svg",
+        "goal-card.svg",
+        "countnotes-card.svg",
+        "addtodaynote-card.svg",
     ):
         path = DESIGN_SOURCE / reference
         if not path.is_file() or path.stat().st_size == 0:

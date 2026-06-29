@@ -34,6 +34,7 @@ struct MainTabView: View {
             let bottomInset = proxy.safeAreaInsets.bottom > 0
                 ? proxy.safeAreaInsets.bottom
                 : (proxy.size.height >= 760 * scale ? 34 * scale : 8 * scale)
+            let navigationBottomPadding = max(8 * scale, bottomInset - 8 * scale)
 
             ZStack(alignment: .bottom) {
                 selectedContent
@@ -53,7 +54,7 @@ struct MainTabView: View {
                     scale: scale
                 )
                 .padding(.horizontal, 24 * scale)
-                .padding(.bottom, bottomInset)
+                .padding(.bottom, navigationBottomPadding)
             }
             .background(Color.black.ignoresSafeArea())
         }

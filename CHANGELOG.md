@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.1 (build 12)
+
+- Adiciona os cartões Goal e Notes abaixo de Recovered time, seguindo o grid e os raios do redesign.
+- Adiciona o cartão Add today's note conectado ao registro diário opcional.
+- Goal usa a meta configurada no perfil e Notes conta apenas observações salvas.
+- Mantém SF Pro nativa, tracking reduzido, cores e espaçamentos da Home.
+- Reposiciona a barra inferior 8 pt mais próxima da área segura inferior no iPhone X.
+- Preserva Diário, Marcos, Escudo, Ajustes e o fluxo de emergência sem redesign interno.
+
 ## 1.2.0 (build 11)
 
 - Home redesenhada a partir do layout 739 × 1600 fornecido, equivalente à composição do iPhone X.

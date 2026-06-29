@@ -45,6 +45,8 @@ struct DashboardView: View {
                             cycleCard(scale: scale)
                             currentEnergyCard(scale: scale)
                             recoveredTimeCard(scale: scale)
+                            dashboardSummaryCards(scale: scale)
+                            addTodayNoteCard(scale: scale)
                         }
                         .padding(.horizontal, HomeMetrics.cardInset * scale)
                         .padding(.top, HomeMetrics.cardGap * scale)
@@ -361,6 +363,126 @@ struct DashboardView: View {
         .padding(.horizontal, 34 * scale)
         .frame(maxWidth: .infinity, minHeight: 120 * scale, maxHeight: 120 * scale)
         .background(HomeColors.card, in: RoundedRectangle(cornerRadius: 27 * scale, style: .continuous))
+    }
+
+    private func dashboardSummaryCards(scale: CGFloat) -> some View {
+        HStack(spacing: 14 * scale) {
+            compactMetricCard(
+                title: "Goal",
+                value: "\(goalRemainingDays)",
+                subtitle: goalRemainingDays == 1 ? "day remaining" : "days remaining",
+                systemImage: "scope",
+                scale: scale
+            )
+
+            compactMetricCard(
+                title: "Notes",
+                value: "\(savedNotesCount)",
+                subtitle: savedNotesCount == 1 ? "note saved" : "notes saved",
+                systemImage: "note.text",
+                scale: scale
+            )
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func compactMetricCard(
+        title: String,
+        value: String,
+        subtitle: String,
+        systemImage: String,
+        scale: CGFloat
+    ) -> some View {
+        VStack(spacing: 0) {
+            Label {
+                Text(title)
+            } icon: {
+                Image(systemName: systemImage)
+            }
+            .font(.system(size: 13 * scale, weight: .regular, design: .default))
+            .tracking(-0.14 * scale)
+            .foregroundStyle(HomeColors.muted)
+
+            Spacer().frame(height: 15 * scale)
+
+            Text(value)
+                .font(.system(size: 34 * scale, weight: .medium, design: .default))
+                .tracking(-0.55 * scale)
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+
+            Spacer().frame(height: 9 * scale)
+
+            Text(subtitle)
+                .font(.system(size: 12 * scale, weight: .regular, design: .default))
+                .tracking(-0.12 * scale)
+                .foregroundStyle(HomeColors.muted)
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
+        }
+        .frame(maxWidth: .infinity, minHeight: 138 * scale, maxHeight: 138 * scale)
+        .background(
+            HomeColors.card,
+            in: RoundedRectangle(cornerRadius: 27 * scale, style: .continuous)
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(value), \(subtitle)")
+    }
+
+    private func addTodayNoteCard(scale: CGFloat) -> some View {
+        Button {
+            showCheckIn = true
+            HapticEngine.shared.softPulse()
+        } label: {
+            HStack(spacing: 17 * scale) {
+                Image(systemName: "square.and.pencil")
+                    .font(.system(size: 22 * scale, weight: .regular))
+                    .foregroundStyle(HomeColors.muted)
+                    .frame(width: 28 * scale)
+
+                VStack(alignment: .leading, spacing: 4 * scale) {
+                    Text("Add today's note")
+                        .font(.system(size: 16 * scale, weight: .regular, design: .default))
+                        .tracking(-0.22 * scale)
+                        .foregroundStyle(.white)
+
+                    Text("A fun fact about your day of transmutation")
+                        .font(.system(size: 12 * scale, weight: .regular, design: .default))
+                        .tracking(-0.12 * scale)
+                        .foregroundStyle(HomeColors.muted)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+                }
+
+                Spacer(minLength: 8 * scale)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14 * scale, weight: .medium))
+                    .foregroundStyle(HomeColors.muted)
+            }
+            .padding(.horizontal, 27 * scale)
+            .frame(maxWidth: .infinity, minHeight: 87 * scale, maxHeight: 87 * scale)
+            .background(
+                HomeColors.card,
+                in: RoundedRectangle(cornerRadius: 27 * scale, style: .continuous)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 27 * scale, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Adicionar observação de hoje")
+    }
+
+    private var goalRemainingDays: Int {
+        max(profile.targetDays - snapshot.currentDay, 0)
+    }
+
+    private var savedNotesCount: Int {
+        checkIns.filter { checkIn in
+            checkIn.status == .aligned &&
+            !checkIn.note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }.count
     }
 
     private var visibleStages: [TransmutationStage] {

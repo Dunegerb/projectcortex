@@ -105,8 +105,11 @@ CortexApp/Resources/DesignSource/Keep transmuting.svg
 CortexApp/Resources/DesignSource/Rectangle 2.svg
 CortexApp/Resources/DesignSource/Rectangle 3.svg
 CortexApp/Resources/DesignSource/actualchakralogos-topcard.svg
+CortexApp/Resources/DesignSource/addtodaynote-card.svg
 CortexApp/Resources/DesignSource/barnavegation.svg
 CortexApp/Resources/DesignSource/card-since.data+dayscounter.svg
+CortexApp/Resources/DesignSource/countnotes-card.svg
+CortexApp/Resources/DesignSource/goal-card.svg
 CortexApp/Resources/DesignSource/goodmorning+name.svg
 CortexApp/Resources/DesignSource/recoverytime.svg
 CortexApp/Resources/DesignSource/shieldbutton.svg
@@ -119,9 +122,7 @@ CortexWidget/CortexWidget.swift
 CortexWidget/CortexWidgetBundle.swift
 CortexWidget/PrivacyInfo.xcprivacy
 LICENSE
-PROJECT_MANIFEST.txt
 README.md
-Scripts/__pycache__/verify_app_icon.cpython-313.pyc
 Scripts/bootstrap.sh
 Scripts/build.sh
 Scripts/compile_asset_catalog.sh

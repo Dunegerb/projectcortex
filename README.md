@@ -135,3 +135,7 @@ O catálogo `Assets.xcassets` é adicionado explicitamente à fase **Copy Bundle
 A Home utiliza uma composição responsiva baseada no frame de referência 739 × 1600, com escala de largura para iPhones e ajuste pelas áreas seguras do aparelho. A tipografia usa exclusivamente SF Pro por meio de `Font.system`. O indicador superior, a figura Kundalini e a cor do estágio avançam automaticamente nos dias 1, 5, 10, 15, 21, 30 e 90.
 
 A barra inferior é própria do aplicativo: Início, Diário, ação de emergência, Marcos e Ajustes. O Escudo Neural permanece disponível pelo botão no cabeçalho.
+
+## Home 1.2.1 — cartões complementares
+
+A área abaixo de `Recovered time` agora segue os SVGs fornecidos: dois cartões compactos lado a lado para `Goal` e `Notes`, seguidos pelo botão largo `Add today's note`. Os valores são dinâmicos; a meta usa `targetDays` do perfil e as notas contam apenas observações não vazias. A barra inferior foi deslocada 8 pt para baixo no iPhone X, respeitando a área segura nos demais iPhones.
