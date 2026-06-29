@@ -164,19 +164,45 @@ private struct CortexBottomNavigation: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [
-                                Color(red: 241 / 255, green: 133 / 255, blue: 133 / 255),
-                                Color(red: 168 / 255, green: 19 / 255, blue: 18 / 255),
-                                Color(red: 67 / 255, green: 20 / 255, blue: 20 / 255)
-                            ],
-                            center: .topLeading,
-                            startRadius: 1,
-                            endRadius: 75 * scale
+                            gradient: Gradient(stops: [
+                                .init(
+                                    color: Color(red: 67 / 255, green: 20 / 255, blue: 20 / 255),
+                                    location: 0.00
+                                ),
+                                .init(
+                                    color: Color(red: 168 / 255, green: 19 / 255, blue: 18 / 255),
+                                    location: 0.62
+                                ),
+                                .init(
+                                    color: Color(red: 241 / 255, green: 133 / 255, blue: 133 / 255),
+                                    location: 1.00
+                                )
+                            ]),
+                            center: UnitPoint(x: 0.08, y: 0.92),
+                            startRadius: 0,
+                            endRadius: 80 * scale
                         )
                     )
-                    .overlay(
-                        Circle().stroke(Color.white.opacity(0.20), lineWidth: 0.7)
-                    )
+                    .overlay {
+                        Circle()
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(stops: [
+                                        .init(
+                                            color: Color(red: 241 / 255, green: 133 / 255, blue: 133 / 255),
+                                            location: 0.00
+                                        ),
+                                        .init(
+                                            color: Color(red: 241 / 255, green: 133 / 255, blue: 133 / 255).opacity(0),
+                                            location: 1.00
+                                        )
+                                    ]),
+                                    startPoint: .bottomLeading,
+                                    endPoint: .topTrailing
+                                ),
+                                lineWidth: 0.9 * scale
+                            )
+                    }
 
                 Image("NavEmergency")
                     .resizable()

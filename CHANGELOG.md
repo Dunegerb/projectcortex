@@ -1,3 +1,12 @@
+## 1.2.4 (build 15)
+
+- Reproduz o gradiente radial cinematográfico do card de boas-vindas com as paradas `#262626`, `#575757` (73%) e `#6A6A6A`.
+- Corrige a direção da luz: o tom escuro nasce no canto inferior esquerdo e clareia em direção ao canto superior direito.
+- Recria o botão “Estou com fissura” com gradiente `#431414` → `#A81312` (62%) → `#F18585`.
+- Adiciona stroke diagonal `#F18585` que se dissolve até transparência no canto superior direito.
+- Estende o card de boas-vindas durante o overscroll, eliminando a faixa preta no topo.
+- Adiciona resistência progressiva, pulsos hápticos suaves e retorno com mola personalizada ao soltar.
+
 ## 1.2.3 (build 14)
 
 - Remove o `WKWebView` do card **Current energy** e usa sete imagens nativas pré-renderizadas.

@@ -115,6 +115,13 @@ def main() -> int:
 
     for token in (
         "Good Morning,",
+        "elasticTopPanel",
+        "DashboardOverscrollPreferenceKey",
+        "updateElasticOverscroll",
+        "interpolatingSpring",
+        "HomeColors.welcomeDark",
+        "HomeColors.welcomeMid",
+        "HomeColors.welcomeLight",
         "Keep transmuting",
         "Since ",
         "Current energy:",
@@ -154,6 +161,11 @@ def main() -> int:
         "router.showEmergency = true",
         "navigationBottomPadding",
         "bottomInset - 16 * scale",
+        "location: 0.62",
+        "center: UnitPoint(x: 0.08, y: 0.92)",
+        ".strokeBorder(",
+        "startPoint: .bottomLeading",
+        "endPoint: .topTrailing",
     ):
         require(app_root, token, "AppRootView.swift")
 

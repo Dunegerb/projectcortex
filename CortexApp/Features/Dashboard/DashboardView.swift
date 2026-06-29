@@ -12,6 +12,11 @@ struct DashboardView: View {
     @State private var showCheckIn = false
     @State private var showShield = false
     @State private var now = Date()
+    @State private var dashboardOverscroll: CGFloat = 0
+    @State private var previousOverscroll: CGFloat = 0
+    @State private var elasticHapticStep = 0
+    @State private var isStretchingHeader = false
+    @State private var elasticContentShift: CGFloat = 0
 
     private var snapshot: RecoverySnapshot {
         RecoveryEngine.snapshot(profile: profile, checkIns: checkIns, now: now)
@@ -38,7 +43,7 @@ struct DashboardView: View {
 
                 ScrollView {
                     VStack(spacing: 0) {
-                        topPanel(scale: scale, topInset: topInset)
+                        elasticTopPanel(scale: scale, topInset: topInset)
 
                         VStack(spacing: HomeMetrics.cardGap * scale) {
                             cycleCard(scale: scale)
@@ -50,11 +55,58 @@ struct DashboardView: View {
                         .padding(.horizontal, HomeMetrics.cardInset * scale)
                         .padding(.top, HomeMetrics.cardGap * scale)
                         .padding(.bottom, 84 * scale + bottomInset)
+                        .background(Color.black)
                     }
                     .frame(maxWidth: .infinity, alignment: .top)
                 }
+                .coordinateSpace(name: DashboardScrollSpace.name)
                 .scrollIndicators(.hidden)
                 .background(Color.black)
+                .onPreferenceChange(DashboardOverscrollPreferenceKey.self) { amount in
+                    updateElasticOverscroll(amount, scale: scale)
+                }
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 1)
+                        .onChanged { value in
+                            guard value.translation.height > 0 else { return }
+                            if !isStretchingHeader {
+                                isStretchingHeader = true
+                                HapticEngine.shared.prepareElastic()
+                            }
+
+                            let normalized = min(
+                                max(dashboardOverscroll / max(80 * scale, 1), 0),
+                                1
+                            )
+                            let resisted = normalized * (2 - normalized)
+                            elasticContentShift = resisted * 10 * scale
+                        }
+                        .onEnded { value in
+                            let shouldRelease = isStretchingHeader && dashboardOverscroll > 3 * scale
+                            isStretchingHeader = false
+                            previousOverscroll = 0
+                            elasticHapticStep = 0
+
+                            if shouldRelease {
+                                HapticEngine.shared.elasticRelease()
+                            }
+
+                            let velocity = min(
+                                max(value.predictedEndTranslation.height / 120, 0.8),
+                                4.0
+                            )
+                            withAnimation(
+                                .interpolatingSpring(
+                                    mass: 0.72,
+                                    stiffness: 210,
+                                    damping: 18,
+                                    initialVelocity: velocity
+                                )
+                            ) {
+                                elasticContentShift = 0
+                            }
+                        }
+                )
             }
             .ignoresSafeArea(edges: .top)
             .navigationBarHidden(true)
@@ -94,89 +146,141 @@ struct DashboardView: View {
         }
     }
 
-    private func topPanel(scale: CGFloat, topInset: CGFloat) -> some View {
+    private func elasticTopPanel(scale: CGFloat, topInset: CGFloat) -> some View {
+        let baseHeight = topInset + (HomeMetrics.headerContentHeight * scale)
+
+        return GeometryReader { geometry in
+            let pullDistance = max(
+                geometry.frame(in: .named(DashboardScrollSpace.name)).minY,
+                0
+            )
+
+            topPanel(
+                scale: scale,
+                topInset: topInset,
+                stretch: pullDistance,
+                contentShift: elasticContentShift
+            )
+            .frame(width: geometry.size.width)
+            .offset(y: -pullDistance)
+            .preference(
+                key: DashboardOverscrollPreferenceKey.self,
+                value: pullDistance
+            )
+        }
+        .frame(height: baseHeight)
+    }
+
+    private func topPanel(
+        scale: CGFloat,
+        topInset: CGFloat,
+        stretch: CGFloat,
+        contentShift: CGFloat
+    ) -> some View {
         let headerHeight = topInset + (HomeMetrics.headerContentHeight * scale)
+        let panelShape = UnevenRoundedRectangle(
+            topLeadingRadius: 0,
+            bottomLeadingRadius: 35 * scale,
+            bottomTrailingRadius: 35 * scale,
+            topTrailingRadius: 0,
+            style: .continuous
+        )
 
         return ZStack(alignment: .topLeading) {
-            Color.black
-
             RadialGradient(
-                colors: [
-                    Color.white.opacity(0.38),
-                    Color.white.opacity(0.17),
-                    Color.white.opacity(0.045),
-                    .clear
-                ],
-                center: UnitPoint(x: 0.53, y: 0.05),
+                gradient: Gradient(stops: [
+                    .init(color: HomeColors.welcomeDark, location: 0.00),
+                    .init(color: HomeColors.welcomeMid, location: 0.73),
+                    .init(color: HomeColors.welcomeLight, location: 1.00)
+                ]),
+                center: UnitPoint(x: 0.04, y: 0.96),
                 startRadius: 0,
-                endRadius: 350 * scale
+                endRadius: 460 * scale
             )
 
-            VStack(alignment: .leading, spacing: -1 * scale) {
-                Text(greeting)
-                    .font(.system(size: 15 * scale, weight: .regular, design: .default))
-                    .tracking(-0.18 * scale)
-                    .foregroundStyle(Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255))
-
-                Text(profile.alterName)
-                    .font(.system(size: 34 * scale, weight: .medium, design: .default))
-                    .tracking(-0.48 * scale)
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.72)
-            }
-            .frame(width: 230 * scale, alignment: .leading)
-            .offset(x: 30 * scale, y: topInset + 36 * scale)
-
-            Button {
-                showShield = true
-                HapticEngine.shared.softPulse()
-            } label: {
-                ZStack {
-                    Circle()
-                        .fill(HomeColors.control)
-
-                    Image("ShieldGlyph")
-                        .resizable()
-                        .renderingMode(.template)
-                        .scaledToFit()
+            ZStack(alignment: .topLeading) {
+                VStack(alignment: .leading, spacing: -1 * scale) {
+                    Text(greeting)
+                        .font(.system(size: 15 * scale, weight: .regular, design: .default))
+                        .tracking(-0.18 * scale)
                         .foregroundStyle(HomeColors.muted)
-                        .frame(width: 25 * scale, height: 25 * scale)
 
-                    Circle()
-                        .fill(profile.shieldEnabled ? HomeColors.statusGreen : HomeColors.muted)
-                        .frame(width: 7 * scale, height: 7 * scale)
-                        .offset(x: 15 * scale, y: -13 * scale)
+                    Text(profile.alterName)
+                        .font(.system(size: 34 * scale, weight: .medium, design: .default))
+                        .tracking(-0.48 * scale)
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
                 }
-                .frame(width: 53 * scale, height: 53 * scale)
+                .frame(width: 230 * scale, alignment: .leading)
+                .offset(x: 30 * scale, y: topInset + 36 * scale)
+
+                Button {
+                    showShield = true
+                    HapticEngine.shared.softPulse()
+                } label: {
+                    ZStack {
+                        Circle()
+                            .fill(HomeColors.control)
+
+                        Image("ShieldGlyph")
+                            .resizable()
+                            .renderingMode(.template)
+                            .scaledToFit()
+                            .foregroundStyle(HomeColors.muted)
+                            .frame(width: 25 * scale, height: 25 * scale)
+
+                        Circle()
+                            .fill(profile.shieldEnabled ? HomeColors.statusGreen : HomeColors.muted)
+                            .frame(width: 7 * scale, height: 7 * scale)
+                            .offset(x: 15 * scale, y: -13 * scale)
+                    }
+                    .frame(width: 53 * scale, height: 53 * scale)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(profile.shieldEnabled ? "Escudo ativo" : "Escudo inativo")
+                .frame(maxWidth: .infinity, alignment: .topTrailing)
+                .padding(.trailing, 30 * scale)
+                .offset(y: topInset + 37 * scale)
+
+                chakraProgressStrip(scale: scale)
+                    .padding(.horizontal, 24 * scale)
+                    .offset(y: topInset + 111 * scale)
+
+                Text("Keep transmuting")
+                    .font(.system(size: 12 * scale, weight: .regular, design: .default))
+                    .tracking(-0.12 * scale)
+                    .foregroundStyle(HomeColors.muted)
+                    .frame(maxWidth: .infinity)
+                    .offset(y: topInset + 184 * scale)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(profile.shieldEnabled ? "Escudo ativo" : "Escudo inativo")
-            .frame(maxWidth: .infinity, alignment: .topTrailing)
-            .padding(.trailing, 30 * scale)
-            .offset(y: topInset + 37 * scale)
-
-            chakraProgressStrip(scale: scale)
-                .padding(.horizontal, 24 * scale)
-                .offset(y: topInset + 111 * scale)
-
-            Text("Keep transmuting")
-                .font(.system(size: 12 * scale, weight: .regular, design: .default))
-                .tracking(-0.12 * scale)
-                .foregroundStyle(HomeColors.muted)
-                .frame(maxWidth: .infinity)
-                .offset(y: topInset + 184 * scale)
+            .offset(y: contentShift)
         }
-        .frame(height: headerHeight)
-        .clipShape(
-            UnevenRoundedRectangle(
-                topLeadingRadius: 0,
-                bottomLeadingRadius: 35 * scale,
-                bottomTrailingRadius: 35 * scale,
-                topTrailingRadius: 0,
-                style: .continuous
-            )
-        )
+        .frame(height: headerHeight + stretch, alignment: .top)
+        .clipShape(panelShape)
+        .contentShape(panelShape)
+    }
+
+    private func updateElasticOverscroll(_ amount: CGFloat, scale: CGFloat) {
+        dashboardOverscroll = max(amount, 0)
+        defer { previousOverscroll = dashboardOverscroll }
+
+        guard isStretchingHeader,
+              dashboardOverscroll > previousOverscroll,
+              dashboardOverscroll > 8 * scale else {
+            if dashboardOverscroll <= 0.5 {
+                previousOverscroll = 0
+                elasticHapticStep = 0
+            }
+            return
+        }
+
+        let step = Int(dashboardOverscroll / max(13 * scale, 1))
+        guard step > elasticHapticStep else { return }
+
+        let intensity = min(0.16 + CGFloat(step) * 0.045, 0.48)
+        HapticEngine.shared.elasticTick(intensity: intensity)
+        elasticHapticStep = step
     }
 
     private func chakraProgressStrip(scale: CGFloat) -> some View {
@@ -525,6 +629,18 @@ struct DashboardView: View {
     }
 }
 
+private enum DashboardScrollSpace {
+    static let name = "DashboardScrollSpace"
+}
+
+private struct DashboardOverscrollPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
 private enum HomeMetrics {
     static let headerContentHeight: CGFloat = 211
     static let cardInset: CGFloat = 10
@@ -536,6 +652,9 @@ private enum HomeMetrics {
 }
 
 private enum HomeColors {
+    static let welcomeDark = Color(red: 38 / 255, green: 38 / 255, blue: 38 / 255)
+    static let welcomeMid = Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255)
+    static let welcomeLight = Color(red: 106 / 255, green: 106 / 255, blue: 106 / 255)
     static let card = Color(red: 14 / 255, green: 14 / 255, blue: 14 / 255)
     static let control = Color(red: 35 / 255, green: 35 / 255, blue: 35 / 255)
     static let muted = Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)

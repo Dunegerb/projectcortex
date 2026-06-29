@@ -148,4 +148,9 @@ O card “Current energy” agora usa fundo sólido, sem o gradiente antigo. A f
 O card **Current energy** não usa mais `WKWebView`. Cada um dos sete estados fornecidos no redesign foi incorporado ao catálogo de assets em resoluções 1x, 2x e 3x. Isso remove duas falhas observadas no iPhone: o salto de escala após o carregamento do HTML e o desaparecimento da figura quando o processo WebKit era suspenso ou encerrado em segundo plano.
 
 A animação Kundalini original permanece preservada no projeto, mas o recorte de energia atual da Home agora é renderizado nativamente pelo SwiftUI e continua sincronizado com os dias 1, 5, 10, 15, 21, 30 e 90.
+## Acabamento cinematográfico e overscroll elástico (1.2.4)
+
+A Home usa agora o gradiente radial original do redesign no card de boas-vindas. A origem escura fica no canto inferior esquerdo e a luz se abre diagonalmente até o canto superior direito, com as três paradas exatas do arquivo de referência.
+
+O botão central de fissura recebeu o mesmo tratamento radial em vermelho e um stroke direcional que desaparece na direção da luz. O cabeçalho também se estende durante o gesto de puxar a tela para baixo, evitando qualquer recorte preto. A resistência visual é progressiva, os pulsos hápticos aumentam suavemente com a tensão e o conteúdo retorna com uma mola interpolada quando o gesto termina.
 

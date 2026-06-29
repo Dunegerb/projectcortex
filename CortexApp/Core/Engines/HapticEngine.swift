@@ -5,6 +5,8 @@ final class HapticEngine {
     static let shared = HapticEngine()
 
     private var engine: CHHapticEngine?
+    private let elasticImpact = UIImpactFeedbackGenerator(style: .soft)
+    private let elasticReleaseImpact = UIImpactFeedbackGenerator(style: .light)
 
     private init() {
         prepare()
@@ -22,6 +24,21 @@ final class HapticEngine {
 
     func softPulse() {
         play(events: [event(time: 0, intensity: 0.35, sharpness: 0.15)])
+    }
+
+    func prepareElastic() {
+        elasticImpact.prepare()
+        elasticReleaseImpact.prepare()
+    }
+
+    func elasticTick(intensity: CGFloat) {
+        elasticImpact.impactOccurred(intensity: min(max(intensity, 0.10), 0.65))
+        elasticImpact.prepare()
+    }
+
+    func elasticRelease() {
+        elasticReleaseImpact.impactOccurred(intensity: 0.32)
+        elasticReleaseImpact.prepare()
     }
 
     func victory() {
