@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.2 (build 13)
+
+- Remove o gradiente de fundo do card de energia atual.
+- Centraliza automaticamente o chakra ativo no recorte da figura para os sete estágios.
+- Mantém o fundo sólido `#0E0E0E` e o painel translúcido de descrição.
+- Ajusta os títulos para “Solar Plexus Chakra” e “Third Eye Chakra”.
+- Rebaixa a barra de navegação em mais 8 pt no iPhone X, respeitando a área segura.
+- Preserva os SVGs de referência dos sete estados em `DesignSource/CurrentEnergyStages`.
+
 ## 1.2.1 (build 12)
 
 - Adiciona os cartões Goal e Notes abaixo de Recovered time, seguindo o grid e os raios do redesign.

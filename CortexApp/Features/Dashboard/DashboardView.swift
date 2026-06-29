@@ -307,13 +307,6 @@ struct DashboardView: View {
             .offset(y: -3 * scale)
             .accessibilityHidden(true)
 
-            LinearGradient(
-                colors: [Color.black.opacity(0.30), .clear, Color.black.opacity(0.74)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .allowsHitTesting(false)
-
             HStack(spacing: 3 * scale) {
                 Text("Current energy:")
                     .foregroundStyle(HomeColors.muted)
@@ -684,13 +677,13 @@ private struct TransmutationStage {
     let figureOffset: CGFloat
 
     static let all: [TransmutationStage] = [
-        .init(activationDay: 1, englishTitle: "Root Chakra", color: Color(red: 168 / 255, green: 19 / 255, blue: 18 / 255), assetName: "ChakraRoot", figureOffset: -78),
-        .init(activationDay: 5, englishTitle: "Sacral Chakra", color: Color(red: 208 / 255, green: 93 / 255, blue: 2 / 255), assetName: "ChakraSacral", figureOffset: -42),
-        .init(activationDay: 10, englishTitle: "Solar Plexus", color: Color(red: 240 / 255, green: 156 / 255, blue: 34 / 255), assetName: "ChakraSolar", figureOffset: -8),
-        .init(activationDay: 15, englishTitle: "Heart Chakra", color: Color(red: 57 / 255, green: 141 / 255, blue: 24 / 255), assetName: "ChakraHeart", figureOffset: 28),
-        .init(activationDay: 21, englishTitle: "Throat Chakra", color: Color(red: 15 / 255, green: 158 / 255, blue: 226 / 255), assetName: "ChakraThroat", figureOffset: 66),
-        .init(activationDay: 30, englishTitle: "Third Eye", color: Color(red: 131 / 255, green: 58 / 255, blue: 247 / 255), assetName: "ChakraThirdEye", figureOffset: 112),
-        .init(activationDay: 90, englishTitle: "Crown Chakra", color: Color(red: 249 / 255, green: 249 / 255, blue: 247 / 255), assetName: "ChakraCrown", figureOffset: 150)
+        .init(activationDay: 1, englishTitle: "Root Chakra", color: Color(red: 168 / 255, green: 19 / 255, blue: 18 / 255), assetName: "ChakraRoot", figureOffset: -137),
+        .init(activationDay: 5, englishTitle: "Sacral Chakra", color: Color(red: 208 / 255, green: 93 / 255, blue: 2 / 255), assetName: "ChakraSacral", figureOffset: -103),
+        .init(activationDay: 10, englishTitle: "Solar Plexus Chakra", color: Color(red: 240 / 255, green: 156 / 255, blue: 34 / 255), assetName: "ChakraSolar", figureOffset: -63),
+        .init(activationDay: 15, englishTitle: "Heart Chakra", color: Color(red: 57 / 255, green: 141 / 255, blue: 24 / 255), assetName: "ChakraHeart", figureOffset: -22),
+        .init(activationDay: 21, englishTitle: "Throat Chakra", color: Color(red: 15 / 255, green: 158 / 255, blue: 226 / 255), assetName: "ChakraThroat", figureOffset: 25),
+        .init(activationDay: 30, englishTitle: "Third Eye Chakra", color: Color(red: 131 / 255, green: 58 / 255, blue: 247 / 255), assetName: "ChakraThirdEye", figureOffset: 76),
+        .init(activationDay: 90, englishTitle: "Crown Chakra", color: Color(red: 249 / 255, green: 249 / 255, blue: 247 / 255), assetName: "ChakraCrown", figureOffset: 116)
     ]
 
     static func activeCount(for day: Int) -> Int {

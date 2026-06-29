@@ -139,3 +139,7 @@ A barra inferior é própria do aplicativo: Início, Diário, ação de emergên
 ## Home 1.2.1 — cartões complementares
 
 A área abaixo de `Recovered time` agora segue os SVGs fornecidos: dois cartões compactos lado a lado para `Goal` e `Notes`, seguidos pelo botão largo `Add today's note`. Os valores são dinâmicos; a meta usa `targetDays` do perfil e as notas contam apenas observações não vazias. A barra inferior foi deslocada 8 pt para baixo no iPhone X, respeitando a área segura nos demais iPhones.
+
+## Home 1.2.2 — energia centralizada
+
+O card “Current energy” agora usa fundo sólido, sem o gradiente antigo. A figura Kundalini mantém o mesmo zoom, mas aplica um deslocamento próprio para cada um dos sete centros, deixando o chakra atual centralizado no enquadramento. A barra inferior também foi rebaixada em mais 8 pt no iPhone X e continua responsiva em outros iPhones.

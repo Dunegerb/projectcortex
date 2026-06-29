@@ -199,13 +199,9 @@
       filter: saturate(.94);
     }
 
+    /* The Home card owns the background. Keep the WebView fully transparent. */
     .aura {
-      inset: 3% 7%;
-      background:
-        radial-gradient(ellipse at 50% 52%, rgba(255,255,255,.055), transparent 55%),
-        radial-gradient(ellipse at 50% 76%, rgba(131,58,247,.085), transparent 66%);
-      filter: blur(22px);
-      opacity: .76;
+      display: none !important;
     }
 
     .body-outline { opacity: .82; }

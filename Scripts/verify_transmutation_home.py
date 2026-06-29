@@ -95,6 +95,13 @@ def main() -> int:
         "ChakraExperienceView(",
         "day: snapshot.currentDay",
         "artworkScale: 1.88",
+        "figureOffset: -137",
+        "figureOffset: -103",
+        "figureOffset: -63",
+        "figureOffset: -22",
+        "figureOffset: 25",
+        "figureOffset: 76",
+        "figureOffset: 116",
         "profile.startDate = relapseDate",
         "Este espaço é opcional",
         "activationDay: 30",
@@ -114,7 +121,7 @@ def main() -> int:
         "Estou com fissura",
         "router.showEmergency = true",
         "navigationBottomPadding",
-        "bottomInset - 8 * scale",
+        "bottomInset - 16 * scale",
     ):
         require(app_root, token, "AppRootView.swift")
 
@@ -140,6 +147,11 @@ def main() -> int:
         ".offset(artworkOffset)",
     ):
         require(web_view, token, "ChakraExperienceView.swift")
+
+    current_card_source = dashboard.split("private func currentEnergyCard", 1)[1].split("private func recoveredTimeCard", 1)[0]
+    if "LinearGradient(" in current_card_source:
+        fail("current energy card must use a solid background without the legacy gradient")
+    require(artwork, ".aura {\n      display: none !important;", "ChakraExperience.html")
 
     for asset in (
         "ChakraRoot", "ChakraSacral", "ChakraSolar", "ChakraHeart",
