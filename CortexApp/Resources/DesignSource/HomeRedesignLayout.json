@@ -1,0 +1,2373 @@
+[
+  {
+    "id": "1311:515",
+    "name": "Frame 47",
+    "type": "FRAME",
+    "properties": {
+      "position": {
+        "x": -2004,
+        "y": 7940
+      },
+      "size": {
+        "width": 739,
+        "height": 1600
+      },
+      "rotation": 0,
+      "styles": {
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 1
+            },
+            "opacity": 1
+          }
+        ],
+        "strokes": [],
+        "effects": []
+      }
+    },
+    "children": [
+      {
+        "id": "1311:516",
+        "name": "Vector",
+        "type": "VECTOR",
+        "properties": {
+          "rotation": 0,
+          "styles": {
+            "fills": [],
+            "strokes": [
+              {
+                "type": "SOLID",
+                "color": {
+                  "r": 255,
+                  "g": 255,
+                  "b": 255,
+                  "a": 1
+                },
+                "opacity": 1
+              }
+            ],
+            "effects": []
+          }
+        },
+        "children": []
+      },
+      {
+        "id": "1311:517",
+        "name": "recoverytime",
+        "type": "GROUP",
+        "properties": {
+          "position": {
+            "x": -1984,
+            "y": 9164
+          },
+          "size": {
+            "width": 699,
+            "height": 237
+          },
+          "rotation": 0,
+          "styles": {
+            "effects": []
+          }
+        },
+        "children": [
+          {
+            "id": "1311:518",
+            "name": "Rectangle 4",
+            "type": "RECTANGLE",
+            "properties": {
+              "position": {
+                "x": -1984,
+                "y": 9164
+              },
+              "size": {
+                "width": 699,
+                "height": 237
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 14,
+                      "g": 14,
+                      "b": 14,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:519",
+            "name": "1 h 11 min",
+            "type": "TEXT",
+            "properties": {
+              "position": {
+                "x": -1643.7432861328125,
+                "y": 9257.078125
+              },
+              "size": {
+                "width": 273.595947265625,
+                "height": 49.921875
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 145,
+                      "g": 145,
+                      "b": 145,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              },
+              "text": "1 h 11 min",
+              "font": {
+                "family": "Inter",
+                "style": "Medium",
+                "size": 66
+              },
+              "lineHeight": {
+                "unit": "AUTO"
+              },
+              "alignment": "CENTER"
+            },
+            "children": []
+          },
+          {
+            "id": "1311:520",
+            "name": "recoverytime+logo",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1916.25,
+                "y": 9274.75
+              },
+              "size": {
+                "width": 184.25,
+                "height": 17.5
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:521",
+                "name": "Recovered time",
+                "type": "TEXT",
+                "properties": {
+                  "position": {
+                    "x": -1884.0625,
+                    "y": 9275.5
+                  },
+                  "size": {
+                    "width": 150.3360595703125,
+                    "height": 16.75
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  },
+                  "text": "Recovered time",
+                  "font": {
+                    "family": "Inter",
+                    "style": "Regular",
+                    "size": 22
+                  },
+                  "lineHeight": {
+                    "unit": "AUTO"
+                  },
+                  "alignment": "LEFT"
+                },
+                "children": []
+              },
+              {
+                "id": "1311:522",
+                "name": "Vector",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1916.25,
+                    "y": 9274.75
+                  },
+                  "size": {
+                    "width": 17.5,
+                    "height": 17.5
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1311:523",
+        "name": "Rectangle 2",
+        "type": "RECTANGLE",
+        "properties": {
+          "position": {
+            "x": -2004,
+            "y": 7940
+          },
+          "size": {
+            "width": 739,
+            "height": 502
+          },
+          "rotation": 0,
+          "styles": {
+            "fills": [
+              {
+                "type": "GRADIENT_RADIAL",
+                "opacity": 1
+              }
+            ],
+            "strokes": [],
+            "effects": []
+          }
+        },
+        "children": []
+      },
+      {
+        "id": "1311:524",
+        "name": "Rectangle 3",
+        "type": "RECTANGLE",
+        "properties": {
+          "position": {
+            "x": -2004,
+            "y": 7940
+          },
+          "size": {
+            "width": 739,
+            "height": 502
+          },
+          "rotation": 0,
+          "styles": {
+            "fills": [
+              {
+                "type": "GRADIENT_RADIAL",
+                "opacity": 1
+              }
+            ],
+            "strokes": [],
+            "effects": []
+          }
+        },
+        "children": []
+      },
+      {
+        "id": "1311:525",
+        "name": "Keep transmuting",
+        "type": "TEXT",
+        "properties": {
+          "position": {
+            "x": -1720.0625,
+            "y": 8391.5
+          },
+          "size": {
+            "width": 169.4788818359375,
+            "height": 21.25
+          },
+          "rotation": 0,
+          "styles": {
+            "fills": [
+              {
+                "type": "SOLID",
+                "color": {
+                  "r": 145,
+                  "g": 145,
+                  "b": 145,
+                  "a": 1
+                },
+                "opacity": 1
+              }
+            ],
+            "strokes": [],
+            "effects": []
+          },
+          "text": "Keep transmuting",
+          "font": {
+            "family": "Inter",
+            "style": "Regular",
+            "size": 22
+          },
+          "lineHeight": {
+            "unit": "AUTO"
+          },
+          "alignment": "LEFT"
+        },
+        "children": []
+      },
+      {
+        "id": "1311:526",
+        "name": "goodmorning+name",
+        "type": "GROUP",
+        "properties": {
+          "position": {
+            "x": -1944,
+            "y": 8101.5
+          },
+          "size": {
+            "width": 229,
+            "height": 87.296875
+          },
+          "rotation": 0,
+          "styles": {
+            "effects": []
+          }
+        },
+        "children": [
+          {
+            "id": "1311:527",
+            "name": "Edward",
+            "type": "TEXT",
+            "properties": {
+              "position": {
+                "x": -1938.7265625,
+                "y": 8140
+              },
+              "size": {
+                "width": 218.0120849609375,
+                "height": 48.796875
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 255,
+                      "g": 255,
+                      "b": 255,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              },
+              "text": "Edward",
+              "font": {
+                "family": "Inter",
+                "style": "Medium",
+                "size": 66
+              },
+              "lineHeight": {
+                "unit": "AUTO"
+              },
+              "alignment": "LEFT"
+            },
+            "children": []
+          },
+          {
+            "id": "1311:528",
+            "name": "Good Morning,",
+            "type": "TEXT",
+            "properties": {
+              "position": {
+                "x": -1942.210205078125,
+                "y": 8101.5
+              },
+              "size": {
+                "width": 194.8773193359375,
+                "height": 28.97705078125
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 145,
+                      "g": 145,
+                      "b": 145,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              },
+              "text": "Good Morning,",
+              "font": {
+                "family": "Inter",
+                "style": "Regular",
+                "size": 30
+              },
+              "lineHeight": {
+                "unit": "AUTO"
+              },
+              "alignment": "LEFT"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "1311:529",
+        "name": "actualchakralogos-topcard",
+        "type": "GROUP",
+        "properties": {
+          "position": {
+            "x": -1956,
+            "y": 8247
+          },
+          "size": {
+            "width": 638,
+            "height": 111
+          },
+          "rotation": 0,
+          "styles": {
+            "effects": []
+          }
+        },
+        "children": [
+          {
+            "id": "1311:530",
+            "name": "Frame 1",
+            "type": "FRAME",
+            "properties": {
+              "position": {
+                "x": -1956,
+                "y": 8247
+              },
+              "size": {
+                "width": 518.13525390625,
+                "height": 110.65961456298828
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 14,
+                      "g": 14,
+                      "b": 14,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:531",
+                "name": "Ellipse 50",
+                "type": "ELLIPSE",
+                "properties": {
+                  "position": {
+                    "x": -1949,
+                    "y": 8253.830078125
+                  },
+                  "size": {
+                    "width": 94,
+                    "height": 94
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 168,
+                          "g": 19,
+                          "b": 18,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:532",
+                "name": "chakra-orange",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1816,
+                    "y": 8276.830078125
+                  },
+                  "size": {
+                    "width": 46,
+                    "height": 48
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:533",
+                "name": "chakra-yellow",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1731,
+                    "y": 8277.830078125
+                  },
+                  "size": {
+                    "width": 46,
+                    "height": 47
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:534",
+                "name": "chakra-green",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1646,
+                    "y": 8276.830078125
+                  },
+                  "size": {
+                    "width": 48,
+                    "height": 48
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:535",
+                "name": "chakra-lightblue",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1559,
+                    "y": 8277.830078125
+                  },
+                  "size": {
+                    "width": 45,
+                    "height": 47
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:536",
+                "name": "chakra-base-red",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1927,
+                    "y": 8275.830078125
+                  },
+                  "size": {
+                    "width": 50.6759033203125,
+                    "height": 49.6416015625
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 254,
+                          "g": 254,
+                          "b": 254,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "1311:537",
+            "name": "1-7-chakrascount",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1429,
+                "y": 8247
+              },
+              "size": {
+                "width": 111,
+                "height": 111
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:538",
+                "name": "Ellipse 51",
+                "type": "ELLIPSE",
+                "properties": {
+                  "position": {
+                    "x": -1429,
+                    "y": 8247
+                  },
+                  "size": {
+                    "width": 111,
+                    "height": 111
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 14,
+                          "g": 14,
+                          "b": 14,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:539",
+                "name": "Vector 2",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1375,
+                    "y": 8288
+                  },
+                  "size": {
+                    "width": 2,
+                    "height": 28.8896484375
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [],
+                    "strokes": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:540",
+                "name": "1",
+                "type": "TEXT",
+                "properties": {
+                  "position": {
+                    "x": -1398.1676025390625,
+                    "y": 8291.181640625
+                  },
+                  "size": {
+                    "width": 8.0965576171875,
+                    "height": 21.818359375
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 255,
+                          "g": 255,
+                          "b": 255,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  },
+                  "text": "1",
+                  "font": {
+                    "family": "Inter",
+                    "style": "Regular",
+                    "size": 30
+                  },
+                  "lineHeight": {
+                    "unit": "AUTO"
+                  },
+                  "alignment": "LEFT"
+                },
+                "children": []
+              },
+              {
+                "id": "1311:541",
+                "name": "7",
+                "type": "TEXT",
+                "properties": {
+                  "position": {
+                    "x": -1359.25146484375,
+                    "y": 8291.181640625
+                  },
+                  "size": {
+                    "width": 13.977294921875,
+                    "height": 21.818359375
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  },
+                  "text": "7",
+                  "font": {
+                    "family": "Inter",
+                    "style": "Regular",
+                    "size": 30
+                  },
+                  "lineHeight": {
+                    "unit": "AUTO"
+                  },
+                  "alignment": "LEFT"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1311:544",
+        "name": "shieldbutton",
+        "type": "GROUP",
+        "properties": {
+          "position": {
+            "x": -1430,
+            "y": 8102
+          },
+          "size": {
+            "width": 104,
+            "height": 104
+          },
+          "rotation": 0,
+          "styles": {
+            "effects": []
+          }
+        },
+        "children": [
+          {
+            "id": "1311:545",
+            "name": "Ellipse 51",
+            "type": "ELLIPSE",
+            "properties": {
+              "position": {
+                "x": -1430,
+                "y": 8102
+              },
+              "size": {
+                "width": 104,
+                "height": 104
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 35,
+                      "g": 35,
+                      "b": 35,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:546",
+            "name": "Vector",
+            "type": "VECTOR",
+            "properties": {
+              "position": {
+                "x": -1395,
+                "y": 8135
+              },
+              "size": {
+                "width": 34.0115966796875,
+                "height": 37.5
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 145,
+                      "g": 145,
+                      "b": 145,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:547",
+            "name": "Ellipsestatusshield",
+            "type": "ELLIPSE",
+            "properties": {
+              "position": {
+                "x": -1370,
+                "y": 8134
+              },
+              "size": {
+                "width": 14,
+                "height": 14
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 19,
+                      "g": 168,
+                      "b": 61,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "1311:548",
+        "name": "Current-energy,_card",
+        "type": "GROUP",
+        "properties": {
+          "position": {
+            "x": -1984,
+            "y": 8747
+          },
+          "size": {
+            "width": 699,
+            "height": 383
+          },
+          "rotation": 0,
+          "styles": {
+            "effects": []
+          }
+        },
+        "children": [
+          {
+            "id": "1311:549",
+            "name": "card",
+            "type": "RECTANGLE",
+            "properties": {
+              "position": {
+                "x": -1984,
+                "y": 8747
+              },
+              "size": {
+                "width": 699,
+                "height": 383
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 14,
+                      "g": 14,
+                      "b": 14,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:550",
+            "name": "card mask",
+            "type": "RECTANGLE",
+            "properties": {
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 14,
+                      "g": 14,
+                      "b": 14,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:551",
+            "name": "personkundalini",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1908,
+                "y": 8747
+              },
+              "size": {
+                "width": 546,
+                "height": 276.04913330078125
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:552",
+                "name": "kundalini-line",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1643.205810546875,
+                    "y": 8747
+                  },
+                  "size": {
+                    "width": 16.4158935546875,
+                    "height": 189.8232421875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 183,
+                          "g": 183,
+                          "b": 183,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:553",
+                "name": "chakra-yellow",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1665.1640625,
+                    "y": 8747
+                  },
+                  "size": {
+                    "width": 60.447509765625,
+                    "height": 54.623046875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 84,
+                          "g": 84,
+                          "b": 84,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:554",
+                "name": "chakra-orange",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1664.7498779296875,
+                    "y": 8817.5537109375
+                  },
+                  "size": {
+                    "width": 60.42919921875,
+                    "height": 64.65625
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 84,
+                          "g": 84,
+                          "b": 84,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:555",
+                "name": "chakra-lightblue",
+                "type": "VECTOR",
+                "properties": {
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 84,
+                          "g": 84,
+                          "b": 84,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:556",
+                "name": "chakra-green",
+                "type": "VECTOR",
+                "properties": {
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 84,
+                          "g": 84,
+                          "b": 84,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:557",
+                "name": "body",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1908,
+                    "y": 8747
+                  },
+                  "size": {
+                    "width": 546,
+                    "height": 276.048828125
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 105,
+                          "g": 105,
+                          "b": 105,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:558",
+                "name": "chakra-base-red",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1667.8201904296875,
+                    "y": 8894.9697265625
+                  },
+                  "size": {
+                    "width": 65.7381591796875,
+                    "height": 65.2158203125
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 168,
+                          "g": 19,
+                          "b": 18,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:559",
+                "name": "chakra-purple-threeeye",
+                "type": "VECTOR",
+                "properties": {
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 84,
+                          "g": 84,
+                          "b": 84,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:560",
+                "name": "chakra-soul",
+                "type": "VECTOR",
+                "properties": {
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 84,
+                          "g": 84,
+                          "b": 84,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "1311:561",
+            "name": "gradient-bottom",
+            "type": "RECTANGLE",
+            "properties": {
+              "position": {
+                "x": -1984,
+                "y": 8747
+              },
+              "size": {
+                "width": 699,
+                "height": 383
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "GRADIENT_LINEAR",
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:562",
+            "name": "gradient-top",
+            "type": "RECTANGLE",
+            "properties": {
+              "position": {
+                "x": -1984,
+                "y": 8747
+              },
+              "size": {
+                "width": 699,
+                "height": 383
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "GRADIENT_LINEAR",
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:563",
+            "name": "card-chakraatual",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1956,
+                "y": 9008
+              },
+              "size": {
+                "width": 638,
+                "height": 88
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:564",
+                "name": "Rectangle 7",
+                "type": "RECTANGLE",
+                "properties": {
+                  "position": {
+                    "x": -1956,
+                    "y": 9008
+                  },
+                  "size": {
+                    "width": 638,
+                    "height": 88
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 14,
+                          "g": 14,
+                          "b": 14,
+                          "a": 1
+                        },
+                        "opacity": 0.3100000023841858
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": [
+                      {
+                        "type": "GLASS",
+                        "visible": true,
+                        "radius": 4
+                      }
+                    ]
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:565",
+                "name": "Current energy: Root Chakra",
+                "type": "TEXT",
+                "properties": {
+                  "position": {
+                    "x": -1914.6875,
+                    "y": 9043.78125
+                  },
+                  "size": {
+                    "width": 277.0216064453125,
+                    "height": 20.96875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "strokes": [],
+                    "effects": []
+                  },
+                  "text": "Current energy: Root Chakra",
+                  "font": {
+                    "family": "Inter",
+                    "style": "Regular",
+                    "size": 22
+                  },
+                  "lineHeight": {
+                    "unit": "AUTO"
+                  },
+                  "alignment": "LEFT"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1311:566",
+        "name": "card-since.data+dayscounter",
+        "type": "GROUP",
+        "properties": {
+          "position": {
+            "x": -1984,
+            "y": 8476
+          },
+          "size": {
+            "width": 699,
+            "height": 237
+          },
+          "rotation": 0,
+          "styles": {
+            "effects": []
+          }
+        },
+        "children": [
+          {
+            "id": "1311:567",
+            "name": "Rectangle 4",
+            "type": "RECTANGLE",
+            "properties": {
+              "position": {
+                "x": -1984,
+                "y": 8476
+              },
+              "size": {
+                "width": 699,
+                "height": 237
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 14,
+                      "g": 14,
+                      "b": 14,
+                      "a": 1
+                    },
+                    "opacity": 1
+                  }
+                ],
+                "strokes": [],
+                "effects": []
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:568",
+            "name": "dayscounter",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1507,
+                "y": 8503
+              },
+              "size": {
+                "width": 184,
+                "height": 184
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:569",
+                "name": "Ellipse 51",
+                "type": "ELLIPSE",
+                "properties": {
+                  "position": {
+                    "x": -1507,
+                    "y": 8503
+                  },
+                  "size": {
+                    "width": 184,
+                    "height": 184
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "GRADIENT_RADIAL",
+                        "opacity": 1
+                      },
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 35,
+                          "g": 35,
+                          "b": 35,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [
+                      {
+                        "type": "GRADIENT_LINEAR",
+                        "opacity": 1
+                      }
+                    ],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:570",
+                "name": "Dias",
+                "type": "TEXT",
+                "properties": {
+                  "position": {
+                    "x": -1435.0625,
+                    "y": 8622.5
+                  },
+                  "size": {
+                    "width": 39.91845703125,
+                    "height": 16.78125
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  },
+                  "text": "Dias",
+                  "font": {
+                    "family": "Inter",
+                    "style": "Regular",
+                    "size": 22
+                  },
+                  "lineHeight": {
+                    "unit": "AUTO"
+                  },
+                  "alignment": "LEFT"
+                },
+                "children": []
+              },
+              {
+                "id": "1311:571",
+                "name": "3",
+                "type": "TEXT",
+                "properties": {
+                  "position": {
+                    "x": -1432.38671875,
+                    "y": 8561.34375
+                  },
+                  "size": {
+                    "width": 33.9375,
+                    "height": 49.3125
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 255,
+                          "g": 255,
+                          "b": 255,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  },
+                  "text": "3",
+                  "font": {
+                    "family": "Inter",
+                    "style": "Medium",
+                    "size": 66
+                  },
+                  "lineHeight": {
+                    "unit": "AUTO"
+                  },
+                  "alignment": "CENTER"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "1311:572",
+            "name": "sincedata+nextenergy",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1917,
+                "y": 8566
+              },
+              "size": {
+                "width": 231,
+                "height": 61.75
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:573",
+                "name": "Since June 25, 2026",
+                "type": "TEXT",
+                "properties": {
+                  "position": {
+                    "x": -1885.75,
+                    "y": 8568.5
+                  },
+                  "size": {
+                    "width": 198.0203857421875,
+                    "height": 20.40625
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 255,
+                          "g": 255,
+                          "b": 255,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  },
+                  "text": "Since June 25, 2026",
+                  "font": {
+                    "family": "Inter",
+                    "style": "Regular",
+                    "size": 22
+                  },
+                  "lineHeight": {
+                    "unit": "AUTO"
+                  },
+                  "alignment": "LEFT"
+                },
+                "children": []
+              },
+              {
+                "id": "1311:574",
+                "name": "Next energy in 2 days",
+                "type": "TEXT",
+                "properties": {
+                  "position": {
+                    "x": -1914.0625,
+                    "y": 8606.5
+                  },
+                  "size": {
+                    "width": 210.177001953125,
+                    "height": 21.25
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  },
+                  "text": "Next energy in 2 days",
+                  "font": {
+                    "family": "Inter",
+                    "style": "Regular",
+                    "size": 22
+                  },
+                  "lineHeight": {
+                    "unit": "AUTO"
+                  },
+                  "alignment": "LEFT"
+                },
+                "children": []
+              },
+              {
+                "id": "1311:575",
+                "name": "Vector",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1917,
+                    "y": 8566
+                  },
+                  "size": {
+                    "width": 18,
+                    "height": 20
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [],
+                    "strokes": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 255,
+                          "g": 255,
+                          "b": 255,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1311:576",
+        "name": "barnavegation",
+        "type": "GROUP",
+        "properties": {
+          "position": {
+            "x": -1956,
+            "y": 9329
+          },
+          "size": {
+            "width": 643,
+            "height": 136
+          },
+          "rotation": 0,
+          "styles": {
+            "effects": []
+          }
+        },
+        "children": [
+          {
+            "id": "1311:577",
+            "name": "Rectangle 1",
+            "type": "RECTANGLE",
+            "properties": {
+              "position": {
+                "x": -1956,
+                "y": 9329
+              },
+              "size": {
+                "width": 643,
+                "height": 136
+              },
+              "rotation": 0,
+              "styles": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": {
+                      "r": 27,
+                      "g": 27,
+                      "b": 27,
+                      "a": 1
+                    },
+                    "opacity": 0.6600000262260437
+                  }
+                ],
+                "strokes": [],
+                "effects": [
+                  {
+                    "type": "GLASS",
+                    "visible": true,
+                    "radius": 4
+                  }
+                ]
+              }
+            },
+            "children": []
+          },
+          {
+            "id": "1311:578",
+            "name": "settingsbutton",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1441.789306640625,
+                "y": 9337.060546875
+              },
+              "size": {
+                "width": 121.21367645263672,
+                "height": 120.80485534667969
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:579",
+                "name": "Ellipse 54",
+                "type": "ELLIPSE",
+                "properties": {
+                  "position": {
+                    "x": -1441.789306640625,
+                    "y": 9337.060546875
+                  },
+                  "size": {
+                    "width": 121.2135009765625,
+                    "height": 120.8046875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 35,
+                          "g": 35,
+                          "b": 35,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:580",
+                "name": "Vector",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1402.3192138671875,
+                    "y": 9376.392578125
+                  },
+                  "size": {
+                    "width": 42.7625732421875,
+                    "height": 42.6259765625
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [],
+                    "strokes": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "1311:581",
+            "name": "dailybutton",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1821.5286865234375,
+                "y": 9337.060546875
+              },
+              "size": {
+                "width": 121.21355438232422,
+                "height": 120.80485534667969
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:582",
+                "name": "Ellipse 51",
+                "type": "ELLIPSE",
+                "properties": {
+                  "position": {
+                    "x": -1821.5286865234375,
+                    "y": 9337.060546875
+                  },
+                  "size": {
+                    "width": 121.2135009765625,
+                    "height": 120.8046875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 35,
+                          "g": 35,
+                          "b": 35,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:583",
+                "name": "Vector",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1777.3236083984375,
+                    "y": 9376.392578125
+                  },
+                  "size": {
+                    "width": 32.3240966796875,
+                    "height": 41.734375
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [],
+                    "strokes": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "1311:584",
+            "name": "milestonesbutton",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1568.684814453125,
+                "y": 9337.060546875
+              },
+              "size": {
+                "width": 121.213623046875,
+                "height": 120.80485534667969
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:585",
+                "name": "Ellipse 53",
+                "type": "ELLIPSE",
+                "properties": {
+                  "position": {
+                    "x": -1568.6846923828125,
+                    "y": 9337.060546875
+                  },
+                  "size": {
+                    "width": 121.2135009765625,
+                    "height": 120.8046875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 35,
+                          "g": 35,
+                          "b": 35,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:586",
+                "name": "Vector",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1528.2677001953125,
+                    "y": 9376.392578125
+                  },
+                  "size": {
+                    "width": 39.48193359375,
+                    "height": 41.734375
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [],
+                    "strokes": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 145,
+                          "g": 145,
+                          "b": 145,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "1311:587",
+            "name": "homebutton",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1947.47705078125,
+                "y": 9337.060546875
+              },
+              "size": {
+                "width": 121.21355438232422,
+                "height": 120.80485534667969
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:588",
+                "name": "Ellipse 50",
+                "type": "ELLIPSE",
+                "properties": {
+                  "position": {
+                    "x": -1947.47705078125,
+                    "y": 9337.060546875
+                  },
+                  "size": {
+                    "width": 121.2135009765625,
+                    "height": 120.8046875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 54,
+                          "g": 54,
+                          "b": 54,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:589",
+                "name": "Subtract",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1904.863037109375,
+                    "y": 9378.587890625
+                  },
+                  "size": {
+                    "width": 36.708984375,
+                    "height": 38.1494140625
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 254,
+                          "g": 254,
+                          "b": 254,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "1311:590",
+            "name": "emergencybutton",
+            "type": "GROUP",
+            "properties": {
+              "position": {
+                "x": -1694.63330078125,
+                "y": 9337.060546875
+              },
+              "size": {
+                "width": 121.21355438232422,
+                "height": 120.80485534667969
+              },
+              "rotation": 0,
+              "styles": {
+                "effects": []
+              }
+            },
+            "children": [
+              {
+                "id": "1311:591",
+                "name": "Ellipse 52",
+                "type": "ELLIPSE",
+                "properties": {
+                  "position": {
+                    "x": -1694.63330078125,
+                    "y": 9337.060546875
+                  },
+                  "size": {
+                    "width": 121.2135009765625,
+                    "height": 120.8046875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "GRADIENT_RADIAL",
+                        "opacity": 1
+                      },
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 109,
+                          "g": 19,
+                          "b": 19,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [
+                      {
+                        "type": "GRADIENT_LINEAR",
+                        "opacity": 1
+                      }
+                    ],
+                    "effects": []
+                  }
+                },
+                "children": []
+              },
+              {
+                "id": "1311:592",
+                "name": "Subtract",
+                "type": "VECTOR",
+                "properties": {
+                  "position": {
+                    "x": -1653.9129638671875,
+                    "y": 9377.642578125
+                  },
+                  "size": {
+                    "width": 39.773681640625,
+                    "height": 39.638671875
+                  },
+                  "rotation": 0,
+                  "styles": {
+                    "fills": [
+                      {
+                        "type": "SOLID",
+                        "color": {
+                          "r": 254,
+                          "g": 254,
+                          "b": 254,
+                          "a": 1
+                        },
+                        "opacity": 1
+                      }
+                    ],
+                    "strokes": [],
+                    "effects": []
+                  }
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

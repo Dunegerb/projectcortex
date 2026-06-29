@@ -63,6 +63,20 @@ CortexApp/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-40@3x.png
 CortexApp/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-60@2x.png
 CortexApp/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-60@3x.png
 CortexApp/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json
+CortexApp/Resources/Assets.xcassets/ChakraCrown.imageset/ChakraCrown.png
+CortexApp/Resources/Assets.xcassets/ChakraCrown.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/ChakraHeart.imageset/ChakraHeart.png
+CortexApp/Resources/Assets.xcassets/ChakraHeart.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/ChakraRoot.imageset/ChakraRoot.png
+CortexApp/Resources/Assets.xcassets/ChakraRoot.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/ChakraSacral.imageset/ChakraSacral.png
+CortexApp/Resources/Assets.xcassets/ChakraSacral.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/ChakraSolar.imageset/ChakraSolar.png
+CortexApp/Resources/Assets.xcassets/ChakraSolar.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/ChakraThirdEye.imageset/ChakraThirdEye.png
+CortexApp/Resources/Assets.xcassets/ChakraThirdEye.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/ChakraThroat.imageset/ChakraThroat.png
+CortexApp/Resources/Assets.xcassets/ChakraThroat.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/Contents.json
 CortexApp/Resources/Assets.xcassets/KundaliniPerson.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/KundaliniPerson.imageset/KundaliniPerson.svg
@@ -71,7 +85,31 @@ CortexApp/Resources/Assets.xcassets/LaunchMark.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/LaunchMark.imageset/LaunchMark@1x.png
 CortexApp/Resources/Assets.xcassets/LaunchMark.imageset/LaunchMark@2x.png
 CortexApp/Resources/Assets.xcassets/LaunchMark.imageset/LaunchMark@3x.png
+CortexApp/Resources/Assets.xcassets/NavEmergency.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/NavEmergency.imageset/NavEmergency.png
+CortexApp/Resources/Assets.xcassets/NavHome.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/NavHome.imageset/NavHome.png
+CortexApp/Resources/Assets.xcassets/NavJournal.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/NavJournal.imageset/NavJournal.png
+CortexApp/Resources/Assets.xcassets/NavMilestones.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/NavMilestones.imageset/NavMilestones.png
+CortexApp/Resources/Assets.xcassets/NavSettings.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/NavSettings.imageset/NavSettings.png
+CortexApp/Resources/Assets.xcassets/ShieldGlyph.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/ShieldGlyph.imageset/ShieldGlyph.png
 CortexApp/Resources/ChakraExperience.html
+CortexApp/Resources/DesignSource/Current-energy,_card.svg
+CortexApp/Resources/DesignSource/HomeRedesignLayout.json
+CortexApp/Resources/DesignSource/HomeRedesignReference.png
+CortexApp/Resources/DesignSource/Keep transmuting.svg
+CortexApp/Resources/DesignSource/Rectangle 2.svg
+CortexApp/Resources/DesignSource/Rectangle 3.svg
+CortexApp/Resources/DesignSource/actualchakralogos-topcard.svg
+CortexApp/Resources/DesignSource/barnavegation.svg
+CortexApp/Resources/DesignSource/card-since.data+dayscounter.svg
+CortexApp/Resources/DesignSource/goodmorning+name.svg
+CortexApp/Resources/DesignSource/recoverytime.svg
+CortexApp/Resources/DesignSource/shieldbutton.svg
 CortexApp/Resources/PrivacyInfo.xcprivacy
 CortexApp/Resources/personkundalini.svg
 CortexApp/Theme/CortexTheme.swift
@@ -83,8 +121,10 @@ CortexWidget/PrivacyInfo.xcprivacy
 LICENSE
 PROJECT_MANIFEST.txt
 README.md
+Scripts/__pycache__/verify_app_icon.cpython-313.pyc
 Scripts/bootstrap.sh
 Scripts/build.sh
+Scripts/compile_asset_catalog.sh
 Scripts/copy_kundalini_resources.sh
 Scripts/import_signing.sh
 Scripts/install_app_icon_fallback.sh
@@ -95,6 +135,7 @@ Scripts/verify_design_system.py
 Scripts/verify_native_keyboard.py
 Scripts/verify_transmutation_home.py
 Scripts/verify_unsigned_ipa.py
+Scripts/verify_xcode_project_resources.py
 Shared/CortexDesignSystem.swift
 Shared/CortexShared.swift
 docs/APPLE_SETUP.md
@@ -103,5 +144,3 @@ docs/IMPLEMENTATION_MAP.md
 docs/PRIVACY.md
 docs/RESPONSIBLE_USE.md
 project.yml
-
-Arquivos: 105

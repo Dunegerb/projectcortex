@@ -8,9 +8,8 @@ import WebKit
 struct ChakraExperienceView: View {
     let day: Int
     var animated = true
-
-    /// Keeps the figure comfortably inside the card instead of touching the edges.
-    private let artworkScale: CGFloat = 0.80
+    var artworkScale: CGFloat = 0.80
+    var artworkOffset: CGSize = .zero
 
     @State private var webContentIsReady = false
 
@@ -38,6 +37,7 @@ struct ChakraExperienceView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .scaleEffect(artworkScale, anchor: .center)
+        .offset(artworkOffset)
     }
 }
 

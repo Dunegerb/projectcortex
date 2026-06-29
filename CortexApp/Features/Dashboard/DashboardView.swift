@@ -10,9 +10,8 @@ struct DashboardView: View {
     @Bindable var profile: UserProfile
 
     @Query(sort: \DailyCheckIn.date, order: .reverse) private var checkIns: [DailyCheckIn]
-    @Query(sort: \EmergencySession.startedAt, order: .reverse) private var emergencySessions: [EmergencySession]
-    @StateObject private var health = HealthKitService.shared
     @State private var showCheckIn = false
+    @State private var showShield = false
     @State private var now = Date()
 
     private var snapshot: RecoverySnapshot {
@@ -23,37 +22,40 @@ struct DashboardView: View {
         TransmutationStage.activeCount(for: snapshot.currentDay)
     }
 
-    private var transmutationProgress: Double {
-        TransmutationStage.progress(for: snapshot.currentDay)
-    }
-
     private var stage: TransmutationStage {
         TransmutationStage.all[activeChakras - 1]
     }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 18) {
-                    header
-                    transmutationHero
-                    recoveredTimeCard
-                    progressMetrics
-                    wellbeingCard
+            GeometryReader { proxy in
+                let scale = HomeMetrics.scale(for: proxy.size.width)
+                let topInset = proxy.safeAreaInsets.top > 0
+                    ? proxy.safeAreaInsets.top
+                    : (proxy.size.height >= 760 * scale ? 44 * scale : 20 * scale)
+                let bottomInset = proxy.safeAreaInsets.bottom > 0
+                    ? proxy.safeAreaInsets.bottom
+                    : (proxy.size.height >= 760 * scale ? 34 * scale : 8 * scale)
 
-                    if snapshot.isFlatlineWindow {
-                        flatlineCard
+                ScrollView {
+                    VStack(spacing: 0) {
+                        topPanel(scale: scale, topInset: topInset)
+
+                        VStack(spacing: HomeMetrics.cardGap * scale) {
+                            cycleCard(scale: scale)
+                            currentEnergyCard(scale: scale)
+                            recoveredTimeCard(scale: scale)
+                        }
+                        .padding(.horizontal, HomeMetrics.cardInset * scale)
+                        .padding(.top, HomeMetrics.cardGap * scale)
+                        .padding(.bottom, 84 * scale + bottomInset)
                     }
-
-                    dailyNoteButton
-                    emergencyButton
+                    .frame(maxWidth: .infinity, alignment: .top)
                 }
-                .padding(.horizontal, 18)
-                .padding(.top, 12)
-                .padding(.bottom, 30)
+                .scrollIndicators(.hidden)
+                .background(Color.black)
             }
-            .scrollIndicators(.hidden)
-            .background(homeBackground)
+            .ignoresSafeArea(edges: .top)
             .navigationBarHidden(true)
             .sheet(isPresented: $showCheckIn) {
                 DailyCheckInSheet(
@@ -64,9 +66,13 @@ struct DashboardView: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
             }
+            .sheet(isPresented: $showShield) {
+                ShieldSettingsView(profile: profile)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+            }
             .task {
                 now = Date()
-                await health.refreshDashboardMetrics()
                 WidgetSharedState.update(profile: profile, snapshot: snapshot)
             }
             .task {
@@ -87,319 +93,280 @@ struct DashboardView: View {
         }
     }
 
-    private var homeBackground: some View {
-        ZStack {
-            CortexTheme.base.ignoresSafeArea()
+    private func topPanel(scale: CGFloat, topInset: CGFloat) -> some View {
+        let headerHeight = topInset + (HomeMetrics.headerContentHeight * scale)
+
+        return ZStack(alignment: .topLeading) {
+            Color.black
+
             RadialGradient(
-                colors: [stage.color.opacity(0.10), .clear],
-                center: UnitPoint(x: 0.52, y: 0.23),
-                startRadius: 8,
-                endRadius: 340
+                colors: [
+                    Color.white.opacity(0.38),
+                    Color.white.opacity(0.17),
+                    Color.white.opacity(0.045),
+                    .clear
+                ],
+                center: UnitPoint(x: 0.53, y: 0.05),
+                startRadius: 0,
+                endRadius: 350 * scale
             )
-            .ignoresSafeArea()
-        }
-    }
 
-    private var header: some View {
-        HStack(alignment: .center, spacing: 14) {
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: -1 * scale) {
                 Text(greeting)
-                    .cortexTextStyle(.caption1, weight: .semibold)
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 15 * scale, weight: .regular, design: .default))
+                    .tracking(-0.18 * scale)
+                    .foregroundStyle(Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255))
+
                 Text(profile.alterName)
-                    .cortexTextStyle(.title1, weight: .semibold)
+                    .font(.system(size: 34 * scale, weight: .medium, design: .default))
+                    .tracking(-0.48 * scale)
+                    .foregroundStyle(.white)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.72)
             }
+            .frame(width: 230 * scale, alignment: .leading)
+            .offset(x: 30 * scale, y: topInset + 36 * scale)
 
-            Spacer(minLength: 10)
+            Button {
+                showShield = true
+                HapticEngine.shared.softPulse()
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(HomeColors.control)
 
-            Image(systemName: profile.archetype.symbol)
-                .cortexTextStyle(.title3)
-                .foregroundStyle(stage.color)
-                .frame(width: 44, height: 44)
-                .background(CortexTheme.secondary, in: Circle())
-                .overlay(Circle().stroke(CortexTheme.quaternary.opacity(0.8), lineWidth: 1))
-                .accessibilityLabel("Arquétipo: \(profile.archetype.title)")
+                    Image("ShieldGlyph")
+                        .resizable()
+                        .renderingMode(.template)
+                        .scaledToFit()
+                        .foregroundStyle(HomeColors.muted)
+                        .frame(width: 25 * scale, height: 25 * scale)
+
+                    Circle()
+                        .fill(profile.shieldEnabled ? HomeColors.statusGreen : HomeColors.muted)
+                        .frame(width: 7 * scale, height: 7 * scale)
+                        .offset(x: 15 * scale, y: -13 * scale)
+                }
+                .frame(width: 53 * scale, height: 53 * scale)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(profile.shieldEnabled ? "Escudo ativo" : "Escudo inativo")
+            .frame(maxWidth: .infinity, alignment: .topTrailing)
+            .padding(.trailing, 30 * scale)
+            .offset(y: topInset + 37 * scale)
+
+            chakraProgressStrip(scale: scale)
+                .padding(.horizontal, 24 * scale)
+                .offset(y: topInset + 111 * scale)
+
+            Text("Keep transmuting")
+                .font(.system(size: 12 * scale, weight: .regular, design: .default))
+                .tracking(-0.12 * scale)
+                .foregroundStyle(HomeColors.muted)
+                .frame(maxWidth: .infinity)
+                .offset(y: topInset + 184 * scale)
         }
+        .frame(height: headerHeight)
+        .clipShape(
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: 35 * scale,
+                bottomTrailingRadius: 35 * scale,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
+        )
     }
 
-    private var transmutationHero: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("TRANSMUTAÇÃO")
-                        .cortexTextStyle(.caption2, weight: .semibold, tracking: -0.05)
-                        .foregroundStyle(stage.color)
-                    HStack(alignment: .firstTextBaseline, spacing: 7) {
+    private func chakraProgressStrip(scale: CGFloat) -> some View {
+        HStack(spacing: 5 * scale) {
+            HStack(spacing: 0) {
+                ForEach(visibleStages.indices, id: \.self) { index in
+                    let item = visibleStages[index]
+                    let isActive = item.activationDay == stage.activationDay
+
+                    ZStack {
+                        if isActive {
+                            Circle()
+                                .fill(item.color)
+                                .frame(width: 47 * scale, height: 47 * scale)
+                        }
+
+                        Image(item.assetName)
+                            .resizable()
+                            .renderingMode(.template)
+                            .scaledToFit()
+                            .foregroundStyle(isActive ? Color.white : HomeColors.muted)
+                            .frame(
+                                width: (isActive ? 27 : 24) * scale,
+                                height: (isActive ? 27 : 24) * scale
+                            )
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 56 * scale)
+            .background(HomeColors.card, in: Capsule())
+
+            HStack(spacing: 7 * scale) {
+                Text("\(activeChakras)")
+                    .foregroundStyle(.white)
+                Rectangle()
+                    .fill(HomeColors.muted)
+                    .frame(width: 1, height: 15 * scale)
+                Text("7")
+                    .foregroundStyle(HomeColors.muted)
+            }
+            .font(.system(size: 15 * scale, weight: .regular, design: .default))
+            .monospacedDigit()
+            .frame(width: 56 * scale, height: 56 * scale)
+            .background(HomeColors.card, in: Circle())
+        }
+        .frame(maxWidth: .infinity)
+        .allowsHitTesting(false)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Energia atual: \(stage.englishTitle). Centro \(activeChakras) de 7.")
+    }
+
+    private func cycleCard(scale: CGFloat) -> some View {
+        Button {
+            showCheckIn = true
+            HapticEngine.shared.softPulse()
+        } label: {
+            HStack(spacing: 14 * scale) {
+                VStack(alignment: .leading, spacing: 9 * scale) {
+                    HStack(spacing: 8 * scale) {
+                        Image(systemName: "calendar")
+                            .font(.system(size: 11 * scale, weight: .medium))
+                        Text("Since \(profile.startDate.cortexEnglishLongDate)")
+                            .font(.system(size: 14 * scale, weight: .regular, design: .default))
+                            .tracking(-0.17 * scale)
+                    }
+                    .foregroundStyle(.white)
+
+                    Text(nextEnergyText)
+                        .font(.system(size: 13 * scale, weight: .regular, design: .default))
+                        .tracking(-0.14 * scale)
+                        .foregroundStyle(HomeColors.muted)
+                }
+
+                Spacer(minLength: 8 * scale)
+
+                ZStack {
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [HomeColors.control.opacity(0.98), HomeColors.control.opacity(0.78)],
+                                center: .topLeading,
+                                startRadius: 2,
+                                endRadius: 74 * scale
+                            )
+                        )
+                        .overlay(
+                            Circle().stroke(Color.white.opacity(0.035), lineWidth: 1)
+                        )
+
+                    VStack(spacing: -2 * scale) {
                         Text("\(snapshot.currentDay)")
-                            .font(.system(size: 48, weight: .semibold, design: .default))
-                            .tracking(-1.2)
+                            .font(.system(size: 34 * scale, weight: .medium, design: .default))
+                            .tracking(-0.55 * scale)
                             .monospacedDigit()
-                        Text(snapshot.currentDay == 1 ? "dia" : "dias")
-                            .cortexTextStyle(.title3)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white)
+                        Text(snapshot.currentDay == 1 ? "Dia" : "Dias")
+                            .font(.system(size: 12 * scale, weight: .regular, design: .default))
+                            .foregroundStyle(HomeColors.muted)
                     }
                 }
-
-                Spacer(minLength: 8)
-
-                VStack(alignment: .trailing, spacing: 5) {
-                    Text(stage.shortTitle)
-                        .cortexTextStyle(.headline)
-                    Text("Centro \(activeChakras) de 7")
-                        .cortexTextStyle(.caption1)
-                        .foregroundStyle(.secondary)
-                }
+                .frame(width: 92 * scale, height: 92 * scale)
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
+            .padding(.leading, 34 * scale)
+            .padding(.trailing, 16 * scale)
+            .frame(maxWidth: .infinity, minHeight: 120 * scale, maxHeight: 120 * scale)
+            .background(HomeColors.card, in: RoundedRectangle(cornerRadius: 27 * scale, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: 27 * scale, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(snapshot.currentDay) dias desde \(profile.startDate.cortexEnglishLongDate). Toque para adicionar uma observação opcional.")
+    }
+
+    private func currentEnergyCard(scale: CGFloat) -> some View {
+        ZStack(alignment: .bottom) {
+            RoundedRectangle(cornerRadius: 27 * scale, style: .continuous)
+                .fill(HomeColors.card)
 
             ChakraExperienceView(
                 day: snapshot.currentDay,
-                animated: !reduceMotion
+                animated: !reduceMotion,
+                artworkScale: 1.88,
+                artworkOffset: CGSize(width: 0, height: stage.figureOffset * scale)
             )
-            .frame(height: 365)
-            .padding(.horizontal, 4)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Figura de transmutação. \(activeChakras) de 7 centros ativos.")
+            .frame(height: 194 * scale)
+            .offset(y: -3 * scale)
+            .accessibilityHidden(true)
 
-            VStack(spacing: 11) {
-                HStack {
-                    Text(stage.title)
-                        .cortexTextStyle(.subhead, weight: .semibold)
-                    Spacer()
-                    Text(transmutationProgress.cortexPercentage)
-                        .cortexTextStyle(.subhead, weight: .semibold)
-                        .monospacedDigit()
-                        .foregroundStyle(stage.color)
-                }
+            LinearGradient(
+                colors: [Color.black.opacity(0.30), .clear, Color.black.opacity(0.74)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .allowsHitTesting(false)
 
-                GeometryReader { proxy in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(CortexTheme.quaternary)
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: [TransmutationStage.all.first!.color, stage.color],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: max(5, proxy.size.width * transmutationProgress))
-                    }
-                }
-                .frame(height: 5)
-
-                HStack {
-                    Label("Desde \(profile.startDate.cortexShortDate)", systemImage: "calendar")
-                    Spacer()
-                    Text(nextStageDescription)
-                }
-                .cortexTextStyle(.caption1)
-                .foregroundStyle(.secondary)
+            HStack(spacing: 3 * scale) {
+                Text("Current energy:")
+                    .foregroundStyle(HomeColors.muted)
+                Text(stage.englishTitle)
+                    .foregroundStyle(.white)
+                Spacer(minLength: 0)
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 20)
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(CortexTheme.secondary)
-                .overlay {
-                    LinearGradient(
-                        colors: [stage.color.opacity(0.10), .clear, CortexTheme.base.opacity(0.18)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-                }
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .stroke(CortexTheme.quaternary.opacity(0.78), lineWidth: 1)
-        )
-    }
-
-    private var recoveredTimeCard: some View {
-        HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 7) {
-                Text("TEMPO RECUPERADO")
-                    .cortexTextStyle(.caption2, weight: .semibold, tracking: -0.05)
-                    .foregroundStyle(.secondary)
-                Text(recoveredTimeText)
-                    .cortexTextStyle(.title1, weight: .semibold)
-                    .monospacedDigit()
-                Text("Estimativa \(recoveryOriginText) · base de \(profile.dailyUsageMinutes) min/dia")
-                    .cortexTextStyle(.footnote)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            Spacer(minLength: 8)
-
-            Image(systemName: "clock.arrow.circlepath")
-                .font(.system(size: 24, weight: .medium))
-                .foregroundStyle(CortexTheme.ice)
-                .frame(width: 50, height: 50)
-                .background(CortexTheme.tertiary, in: Circle())
-        }
-        .cortexCard(padding: 18)
-    }
-
-    private var progressMetrics: some View {
-        HStack(spacing: 12) {
-            compactMetric(
-                title: "Meta",
-                value: "\(max(profile.targetDays - snapshot.currentDay, 0))",
-                detail: "dias restantes",
-                icon: "flag.checkered"
-            )
-            compactMetric(
-                title: "Registros",
-                value: "\(snapshot.alignedDays)",
-                detail: "notas no ciclo",
-                icon: "note.text"
-            )
-        }
-    }
-
-    private func compactMetric(title: String, value: String, detail: String, icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(title)
-                    .cortexTextStyle(.caption1)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Image(systemName: icon)
-                    .foregroundStyle(CortexTheme.ice)
-            }
-            Text(value)
-                .cortexTextStyle(.title2, weight: .semibold)
-                .monospacedDigit()
-            Text(detail)
-                .cortexTextStyle(.caption2)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, minHeight: 104, alignment: .leading)
-        .cortexCard(padding: 15)
-    }
-
-
-    private var wellbeingCard: some View {
-        VStack(spacing: 0) {
-            wellbeingRow(
-                title: "Sono",
-                value: health.sleepHours.map { String(format: "%.1fh", $0) } ?? "—",
-                icon: "moon.zzz.fill"
-            )
-            Divider().overlay(CortexTheme.quaternary).padding(.leading, 48)
-            wellbeingRow(
-                title: "Frequência cardíaca média",
-                value: health.averageHeartRate.map { "\(Int($0)) bpm" } ?? "—",
-                icon: "heart.fill"
-            )
-            Divider().overlay(CortexTheme.quaternary).padding(.leading, 48)
-            wellbeingRow(
-                title: "Protocolos concluídos",
-                value: "\(emergencySessions.filter(\.completed).count)",
-                icon: "lifepreserver.fill"
-            )
-        }
-        .background(CortexTheme.secondary, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(CortexTheme.quaternary.opacity(0.72), lineWidth: 1)
-        )
-    }
-
-    private func wellbeingRow(title: String, value: String, icon: String) -> some View {
-        HStack(spacing: 13) {
-            Image(systemName: icon)
-                .foregroundStyle(CortexTheme.ice)
-                .frame(width: 28)
-            Text(title)
-                .cortexTextStyle(.subhead)
-            Spacer()
-            Text(value)
-                .cortexTextStyle(.subhead, weight: .semibold)
-                .monospacedDigit()
-                .foregroundStyle(value == "—" ? Color.secondary : Color.primary)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-    }
-
-    private var flatlineCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label("ENERGIA EM REORGANIZAÇÃO", systemImage: "cloud.fog.fill")
-                .cortexTextStyle(.caption1, weight: .semibold)
-                .foregroundStyle(CortexTheme.paper)
-            Text("Você pode perceber apatia, cansaço ou irritação. Isso não é um diagnóstico nem uma certeza médica. Reduza a carga, durma bem e procure apoio profissional se o sofrimento for intenso ou persistente.")
-                .cortexTextStyle(.subhead)
-                .foregroundStyle(.secondary)
-            Text("Esta fase é temporária. Continue com ações pequenas e concretas.")
-                .cortexTextStyle(.headline)
-        }
-        .cortexCard()
-    }
-
-    private var dailyNoteButton: some View {
-        Button {
-            showCheckIn = true
-        } label: {
-            HStack(spacing: 14) {
-                Image(systemName: todayObservation == nil ? "square.and.pencil" : "checkmark.circle.fill")
-                    .font(.system(size: 21, weight: .medium))
-                    .foregroundStyle(CortexTheme.ice)
-                    .frame(width: 42, height: 42)
-                    .background(CortexTheme.tertiary, in: Circle())
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(todayObservation == nil ? "Adicionar nota do dia" : "Editar nota de hoje")
-                        .cortexTextStyle(.headline)
-                    Text("Opcional · não altera sua contagem")
-                        .cortexTextStyle(.caption1)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .cortexTextStyle(.caption1, weight: .semibold)
-                    .foregroundStyle(.tertiary)
-            }
-            .padding(16)
-            .background(CortexTheme.secondary, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .font(.system(size: 13 * scale, weight: .regular, design: .default))
+            .tracking(-0.14 * scale)
+            .padding(.horizontal, 22 * scale)
+            .frame(height: 45 * scale)
+            .background(.ultraThinMaterial, in: Capsule())
+            .background(Color.black.opacity(0.58), in: Capsule())
             .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(CortexTheme.quaternary.opacity(0.72), lineWidth: 1)
+                Capsule().stroke(Color.white.opacity(0.16), lineWidth: 0.7)
             )
+            .padding(.horizontal, 27 * scale)
+            .padding(.bottom, 18 * scale)
         }
-        .buttonStyle(.plain)
+        .frame(height: 194 * scale)
+        .clipShape(RoundedRectangle(cornerRadius: 27 * scale, style: .continuous))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Current energy: \(stage.englishTitle)")
     }
 
-    private var emergencyButton: some View {
-        Button {
-            router.showEmergency = true
-        } label: {
-            HStack(spacing: 13) {
-                Image(systemName: "lifepreserver.fill")
-                    .font(.system(size: 20, weight: .semibold))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Preciso de apoio agora")
-                        .cortexTextStyle(.headline)
-                    Text("Abrir protocolo de emergência")
-                        .cortexTextStyle(.caption1)
-                        .foregroundStyle(.white.opacity(0.70))
-                }
-                Spacer()
-                Image(systemName: "arrow.up.right")
-                    .cortexTextStyle(.caption1, weight: .semibold)
+    private func recoveredTimeCard(scale: CGFloat) -> some View {
+        HStack(alignment: .center, spacing: 16 * scale) {
+            Label {
+                Text("Recovered time")
+            } icon: {
+                Image(systemName: "clock.arrow.circlepath")
             }
-            .frame(maxWidth: .infinity)
-            .padding(17)
-            .foregroundStyle(.white)
-            .background(CortexTheme.danger.opacity(0.86), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .font(.system(size: 13 * scale, weight: .regular, design: .default))
+            .tracking(-0.14 * scale)
+            .foregroundStyle(HomeColors.muted)
+
+            Spacer(minLength: 8 * scale)
+
+            Text(recoveredTimeText)
+                .font(.system(size: 34 * scale, weight: .medium, design: .default))
+                .tracking(-0.60 * scale)
+                .monospacedDigit()
+                .foregroundStyle(HomeColors.muted)
+                .lineLimit(1)
+                .minimumScaleFactor(0.68)
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 34 * scale)
+        .frame(maxWidth: .infinity, minHeight: 120 * scale, maxHeight: 120 * scale)
+        .background(HomeColors.card, in: RoundedRectangle(cornerRadius: 27 * scale, style: .continuous))
+    }
+
+    private var visibleStages: [TransmutationStage] {
+        let activeIndex = max(0, activeChakras - 1)
+        let start = min(max(activeIndex - 2, 0), max(TransmutationStage.all.count - 5, 0))
+        return Array(TransmutationStage.all[start..<min(start + 5, TransmutationStage.all.count)])
     }
 
     private var todayObservation: DailyCheckIn? {
@@ -411,23 +378,19 @@ struct DashboardView: View {
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: now)
         switch hour {
-        case 5..<12: return "BOM DIA"
-        case 12..<18: return "BOA TARDE"
-        default: return "BOA NOITE"
+        case 5..<12: return "Good Morning,"
+        case 12..<18: return "Good Afternoon,"
+        default: return "Good Evening,"
         }
     }
 
-    private var nextStageDescription: String {
+    private var nextEnergyText: String {
         guard let nextDay = TransmutationStage.nextActivationDay(after: snapshot.currentDay) else {
-            return "Todos os centros ativos"
+            return "All energies are active"
         }
-
         let remaining = max(nextDay - snapshot.currentDay, 0)
-        return remaining == 0 ? "Próxima etapa hoje" : "Próxima etapa em \(remaining)d"
-    }
-
-    private var recoveryOriginText: String {
-        snapshot.slips > 0 ? "desde a última recaída" : "desde a criação da conta"
+        if remaining == 0 { return "Next energy today" }
+        return remaining == 1 ? "Next energy in 1 day" : "Next energy in \(remaining) days"
     }
 
     private var recoveredTimeText: String {
@@ -439,12 +402,12 @@ struct DashboardView: View {
         let hours = totalMinutes / 60
         let minutes = totalMinutes % 60
         if hours < 24 {
-            return minutes == 0 ? "\(hours)h" : "\(hours)h \(minutes)min"
+            return minutes == 0 ? "\(hours) h" : "\(hours) h \(minutes) min"
         }
 
         let days = hours / 24
         let remainingHours = hours % 24
-        return remainingHours == 0 ? "\(days)d" : "\(days)d \(remainingHours)h"
+        return remainingHours == 0 ? "\(days) d" : "\(days) d \(remainingHours) h"
     }
 
     private func saveObservation(_ note: String) {
@@ -473,6 +436,36 @@ struct DashboardView: View {
         now = relapseDate
         showCheckIn = false
     }
+}
+
+private enum HomeMetrics {
+    static let headerContentHeight: CGFloat = 211
+    static let cardInset: CGFloat = 10
+    static let cardGap: CGFloat = 17
+
+    static func scale(for width: CGFloat) -> CGFloat {
+        min(max(width / 375, 0.88), 1.12)
+    }
+}
+
+private enum HomeColors {
+    static let card = Color(red: 14 / 255, green: 14 / 255, blue: 14 / 255)
+    static let control = Color(red: 35 / 255, green: 35 / 255, blue: 35 / 255)
+    static let muted = Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
+    static let statusGreen = Color(red: 19 / 255, green: 168 / 255, blue: 61 / 255)
+}
+
+private extension Date {
+    var cortexEnglishLongDate: String {
+        Self.cortexEnglishLongFormatter.string(from: self)
+    }
+
+    static let cortexEnglishLongFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.dateFormat = "MMMM d, yyyy"
+        return formatter
+    }()
 }
 
 private struct DailyCheckInSheet: View {
@@ -563,18 +556,19 @@ private struct DailyCheckInSheet: View {
 
 private struct TransmutationStage {
     let activationDay: Int
-    let shortTitle: String
-    let title: String
+    let englishTitle: String
     let color: Color
+    let assetName: String
+    let figureOffset: CGFloat
 
     static let all: [TransmutationStage] = [
-        .init(activationDay: 1, shortTitle: "Raiz", title: "Presença e estabilidade", color: Color(red: 168.0 / 255.0, green: 19.0 / 255.0, blue: 18.0 / 255.0)),
-        .init(activationDay: 5, shortTitle: "Sacral", title: "Movimento e criação", color: Color(red: 208.0 / 255.0, green: 93.0 / 255.0, blue: 2.0 / 255.0)),
-        .init(activationDay: 10, shortTitle: "Plexo solar", title: "Direção e vontade", color: Color(red: 240.0 / 255.0, green: 156.0 / 255.0, blue: 34.0 / 255.0)),
-        .init(activationDay: 15, shortTitle: "Coração", title: "Integração e equilíbrio", color: Color(red: 57.0 / 255.0, green: 141.0 / 255.0, blue: 24.0 / 255.0)),
-        .init(activationDay: 21, shortTitle: "Garganta", title: "Verdade e expressão", color: Color(red: 15.0 / 255.0, green: 158.0 / 255.0, blue: 226.0 / 255.0)),
-        .init(activationDay: 30, shortTitle: "Terceiro olho", title: "Clareza e percepção", color: Color(red: 131.0 / 255.0, green: 58.0 / 255.0, blue: 247.0 / 255.0)),
-        .init(activationDay: 90, shortTitle: "Coroa", title: "Consciência e propósito", color: Color(red: 249.0 / 255.0, green: 249.0 / 255.0, blue: 247.0 / 255.0))
+        .init(activationDay: 1, englishTitle: "Root Chakra", color: Color(red: 168 / 255, green: 19 / 255, blue: 18 / 255), assetName: "ChakraRoot", figureOffset: -78),
+        .init(activationDay: 5, englishTitle: "Sacral Chakra", color: Color(red: 208 / 255, green: 93 / 255, blue: 2 / 255), assetName: "ChakraSacral", figureOffset: -42),
+        .init(activationDay: 10, englishTitle: "Solar Plexus", color: Color(red: 240 / 255, green: 156 / 255, blue: 34 / 255), assetName: "ChakraSolar", figureOffset: -8),
+        .init(activationDay: 15, englishTitle: "Heart Chakra", color: Color(red: 57 / 255, green: 141 / 255, blue: 24 / 255), assetName: "ChakraHeart", figureOffset: 28),
+        .init(activationDay: 21, englishTitle: "Throat Chakra", color: Color(red: 15 / 255, green: 158 / 255, blue: 226 / 255), assetName: "ChakraThroat", figureOffset: 66),
+        .init(activationDay: 30, englishTitle: "Third Eye", color: Color(red: 131 / 255, green: 58 / 255, blue: 247 / 255), assetName: "ChakraThirdEye", figureOffset: 112),
+        .init(activationDay: 90, englishTitle: "Crown Chakra", color: Color(red: 249 / 255, green: 249 / 255, blue: 247 / 255), assetName: "ChakraCrown", figureOffset: 150)
     ]
 
     static func activeCount(for day: Int) -> Int {
@@ -583,13 +577,7 @@ private struct TransmutationStage {
         return min(max(count, 1), all.count)
     }
 
-    static func progress(for day: Int) -> Double {
-        let safeDay = min(max(day, 1), 90)
-        return Double(safeDay - 1) / 89.0
-    }
-
     static func nextActivationDay(after day: Int) -> Int? {
         all.first { $0.activationDay > max(day, 1) }?.activationDay
     }
 }
-

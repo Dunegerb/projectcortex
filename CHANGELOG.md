@@ -1,3 +1,16 @@
+# Changelog
+
+## 1.2.0 (build 11)
+
+- Home redesenhada a partir do layout 739 × 1600 fornecido, equivalente à composição do iPhone X.
+- SF Pro nativa mantida em toda a interface.
+- Cabeçalho com saudação dinâmica, escudo e indicador automático de 7 energias.
+- Cartões de ciclo, energia atual e tempo recuperado refeitos com proporções responsivas.
+- Figura Kundalini passa a acompanhar visualmente o centro ativo dentro do cartão.
+- Barra inferior personalizada com ação central “Estou com fissura”.
+- Recursos vetoriais originais e JSON de posicionamento preservados em `DesignSource`.
+- Contagem automática, notas opcionais e reinício por recaída preservados.
+
 # 1.1.4
 
 - Reduz a figura Kundalini para 80% do tamanho anterior na Home.
@@ -11,7 +24,6 @@
 - Adiciona fase de build explícita para copiar os recursos Kundalini.
 - Adiciona salvaguarda de empacotamento e validação de arquivos não vazios.
 
-# Changelog
 
 ## 1.1.2 — build 5
 

@@ -129,3 +129,9 @@ O build agora valida o catálogo compilado (`Assets.car`), os metadados do `Info
 ### Correção do App Icon no build unsigned (v1.1.7)
 
 O catálogo `Assets.xcassets` é adicionado explicitamente à fase **Copy Bundle Resources** do target Cortex. O empacotador valida o projeto Xcode gerado e, como proteção adicional, executa `xcrun actool` quando `Assets.car` não for produzido automaticamente.
+
+## Home 1.2.0
+
+A Home utiliza uma composição responsiva baseada no frame de referência 739 × 1600, com escala de largura para iPhones e ajuste pelas áreas seguras do aparelho. A tipografia usa exclusivamente SF Pro por meio de `Font.system`. O indicador superior, a figura Kundalini e a cor do estágio avançam automaticamente nos dias 1, 5, 10, 15, 21, 30 e 90.
+
+A barra inferior é própria do aplicativo: Início, Diário, ação de emergência, Marcos e Ajustes. O Escudo Neural permanece disponível pelo botão no cabeçalho.
