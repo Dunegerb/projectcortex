@@ -217,16 +217,27 @@ def main() -> int:
         require(web_view, token, "ChakraExperienceView.swift")
 
     current_card_source = dashboard.split("private func currentEnergyCard", 1)[1].split("private func recoveredTimeCard", 1)[0]
-    if "LinearGradient(" in current_card_source:
-        fail("current energy card must use a solid background without the legacy gradient")
     if "ChakraExperienceView(" in current_card_source or "WKWebView" in current_card_source:
         fail("current energy card must not depend on WebKit; it causes late rescaling and blanking after backgrounding")
     for token in (
-        "Image(colorScheme == .light ? stage.lightCardAssetName : stage.cardAssetName)",
+        "Image(stage.lightCardAssetName)",
+        "Image(stage.cardAssetName)",
+        "currentEnergyLightGlass(",
+        "LightBackdropBlur()",
+        "HomeColors.control.opacity(0.31)",
+        ".strokeBorder(",
         ".aspectRatio(699.0 / 383.0, contentMode: .fit)",
-        ".id(colorScheme == .light ? stage.lightCardAssetName : stage.cardAssetName)",
+        ".id(stage.lightCardAssetName)",
+        ".id(stage.cardAssetName)",
     ):
         require(current_card_source, token, "DashboardView.swift currentEnergyCard")
+    require(dashboard, ".systemUltraThinMaterialLight", "DashboardView.swift light glass blur")
+
+    light_stage_sources = DESIGN_SOURCE / "CurrentEnergyStagesLight"
+    for light_svg in light_stage_sources.glob("CurrentEnergy*Light.svg"):
+        source = light_svg.read_text(encoding="utf-8")
+        if '<rect x="28" y="261" width="638" height="88" rx="44"' in source:
+            fail(f"light current-energy glass must be composed natively, not baked into {light_svg.name}")
     require(artwork, ".aura {\n      display: none !important;", "ChakraExperience.html")
 
     for asset in (
@@ -302,7 +313,7 @@ def main() -> int:
 
     print(
         "Verified pixel-referenced iPhone X Home redesign, SF Pro layout, custom navigation, "
-        "seven dark/light native current-energy cards, automatic appearance selection, "
+        "seven dark/light native current-energy cards with a native light glass overlay, automatic appearance selection, "
         "optional daily notes and Kundalini runtime."
     )
     return 0

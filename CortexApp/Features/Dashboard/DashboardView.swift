@@ -399,17 +399,120 @@ struct DashboardView: View {
         .accessibilityLabel("\(snapshot.currentDay) dias desde \(profile.startDate.cortexEnglishLongDate). Toque para adicionar uma observação opcional.")
     }
 
+    @ViewBuilder
     private func currentEnergyCard(scale: CGFloat) -> some View {
-        Image(colorScheme == .light ? stage.lightCardAssetName : stage.cardAssetName)
-            .resizable()
-            .interpolation(.high)
-            .antialiased(true)
-            .aspectRatio(699.0 / 383.0, contentMode: .fit)
+        if colorScheme == .light {
+            GeometryReader { proxy in
+                let targetAspect = CGFloat(699.0 / 383.0)
+                let renderedWidth = min(proxy.size.width, proxy.size.height * targetAspect)
+                let renderedHeight = renderedWidth / targetAspect
+
+                ZStack {
+                    Image(stage.lightCardAssetName)
+                        .resizable()
+                        .interpolation(.high)
+                        .antialiased(true)
+                        .frame(width: renderedWidth, height: renderedHeight)
+
+                    currentEnergyLightGlass(
+                        cardWidth: renderedWidth,
+                        cardHeight: renderedHeight
+                    )
+                }
+                .frame(width: renderedWidth, height: renderedHeight)
+                .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
+            }
             .frame(maxWidth: .infinity)
             .frame(height: 194 * scale)
-            .id(colorScheme == .light ? stage.lightCardAssetName : stage.cardAssetName)
+            .id(stage.lightCardAssetName)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Current energy: \(stage.englishTitle)")
+        } else {
+            Image(stage.cardAssetName)
+                .resizable()
+                .interpolation(.high)
+                .antialiased(true)
+                .aspectRatio(699.0 / 383.0, contentMode: .fit)
+                .frame(maxWidth: .infinity)
+                .frame(height: 194 * scale)
+                .id(stage.cardAssetName)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Current energy: \(stage.englishTitle)")
+        }
+    }
+
+    private func currentEnergyLightGlass(
+        cardWidth: CGFloat,
+        cardHeight: CGFloat
+    ) -> some View {
+        let glassWidth = cardWidth * (638.0 / 699.0)
+        let glassHeight = cardHeight * (88.0 / 383.0)
+        let glassCenterX = cardWidth * (347.0 / 699.0)
+        let glassCenterY = cardHeight * (305.0 / 383.0)
+        let glassRadius = glassHeight / 2
+        let borderWidth = max(cardHeight * (1.2 / 383.0), 0.6)
+        let fontSize = cardHeight * (22.0 / 383.0)
+        let labelInset = cardWidth * (41.0 / 699.0)
+
+        return ZStack {
+            LightBackdropBlur()
+                .clipShape(
+                    RoundedRectangle(cornerRadius: glassRadius, style: .continuous)
+                )
+
+            RoundedRectangle(cornerRadius: glassRadius, style: .continuous)
+                .fill(HomeColors.control.opacity(0.31))
+
+            LinearGradient(
+                colors: [
+                    Color.white.opacity(0.28),
+                    Color.white.opacity(0.07),
+                    Color.white.opacity(0.01)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .clipShape(
+                RoundedRectangle(cornerRadius: glassRadius, style: .continuous)
+            )
+
+            HStack(spacing: cardWidth * (4.0 / 699.0)) {
+                Text("Current energy:")
+                    .foregroundStyle(HomeColors.muted)
+
+                Text(stage.englishTitle)
+                    .foregroundStyle(HomeColors.primary)
+            }
+            .font(.system(size: fontSize, weight: .regular, design: .default))
+            .tracking(-0.10)
+            .lineLimit(1)
+            .minimumScaleFactor(0.86)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, labelInset)
+            .padding(.trailing, cardWidth * (24.0 / 699.0))
+        }
+        .frame(width: glassWidth, height: glassHeight)
+        .overlay(
+            RoundedRectangle(cornerRadius: glassRadius, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.82),
+                            Color.black.opacity(0.075)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    lineWidth: borderWidth
+                )
+        )
+        .shadow(
+            color: Color.black.opacity(0.075),
+            radius: cardHeight * (10.0 / 383.0),
+            x: 0,
+            y: cardHeight * (3.0 / 383.0)
+        )
+        .position(x: glassCenterX, y: glassCenterY)
     }
 
     private func recoveredTimeCard(scale: CGFloat) -> some View {
@@ -652,6 +755,18 @@ private enum HomeMetrics {
 
     static func scale(for width: CGFloat) -> CGFloat {
         min(max(width / 375, 0.88), 1.12)
+    }
+}
+
+private struct LightBackdropBlur: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialLight))
+    }
+
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        if !(uiView.effect is UIBlurEffect) {
+            uiView.effect = UIBlurEffect(style: .systemUltraThinMaterialLight)
+        }
     }
 }
 
