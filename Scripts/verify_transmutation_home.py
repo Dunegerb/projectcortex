@@ -223,15 +223,26 @@ def main() -> int:
         "Image(stage.lightCardAssetName)",
         "Image(stage.cardAssetName)",
         "currentEnergyLightGlass(",
-        "LightBackdropBlur()",
+        "let blurRadius = cardHeight * (4.0 / 383.0)",
+        ".blur(radius: blurRadius)",
+        ".mask {",
         "HomeColors.control.opacity(0.31)",
-        ".strokeBorder(",
         ".aspectRatio(699.0 / 383.0, contentMode: .fit)",
         ".id(stage.lightCardAssetName)",
         ".id(stage.cardAssetName)",
     ):
         require(current_card_source, token, "DashboardView.swift currentEnergyCard")
-    require(dashboard, ".systemUltraThinMaterialLight", "DashboardView.swift light glass blur")
+    if current_card_source.count("Image(stage.lightCardAssetName)") < 2:
+        fail("light current-energy glass must blur a duplicate of the underlying stage artwork")
+    for forbidden in (
+        "LightBackdropBlur",
+        ".systemUltraThinMaterialLight",
+        ".strokeBorder(",
+        ".shadow(",
+        "Color.white.opacity(0.28)",
+    ):
+        if forbidden in current_card_source:
+            fail(f"light current-energy glass contains an extra effect not present in the supplied SVG: {forbidden}")
 
     light_stage_sources = DESIGN_SOURCE / "CurrentEnergyStagesLight"
     for light_svg in light_stage_sources.glob("CurrentEnergy*Light.svg"):

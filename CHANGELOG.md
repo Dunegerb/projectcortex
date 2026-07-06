@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.5 (build 17)
+## 1.2.5 (build 18)
 
 - Adiciona modo claro baseado nos SVGs fornecidos, com as cores exatas `#F1F1F1`, `#FFFFFF`, `#F5F5F5`, `#191817` e `#555555`.
 - Reproduz no cabeçalho claro o gradiente radial `#E9E9E9` → `#C2C2C2` (73%) → `#9E9E9E`.
@@ -8,7 +8,7 @@
 - Mantém o modo escuro atual sem alterar sua identidade visual.
 - Inclui em Ajustes as opções **Automático**, **Claro** e **Escuro**; o modo Automático acompanha o tema do iPhone.
 - Torna superfícies SwiftUI e barras UIKit adaptativas e persiste a escolha em `AppStorage`.
-- Corrige o painel **Current energy** no modo claro com blur nativo, transparência, brilho e contorno adaptados; o modo escuro permanece intacto.
+- Corrige novamente o painel **Current energy** no modo claro usando o mesmo princípio visual do dark mode: blur de raio 4 sobre a própria arte e preenchimento `#F5F5F5` a 31%, sem brilho, borda, sombra ou tonalização extra.
 
 ## 1.2.4 (build 15)
 

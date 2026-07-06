@@ -450,31 +450,34 @@ struct DashboardView: View {
         let glassCenterX = cardWidth * (347.0 / 699.0)
         let glassCenterY = cardHeight * (305.0 / 383.0)
         let glassRadius = glassHeight / 2
-        let borderWidth = max(cardHeight * (1.2 / 383.0), 0.6)
+        let blurRadius = cardHeight * (4.0 / 383.0)
         let fontSize = cardHeight * (22.0 / 383.0)
         let labelInset = cardWidth * (41.0 / 699.0)
+        let trailingInset = cardWidth * (24.0 / 699.0)
+        let textWidth = glassWidth - labelInset - trailingInset
+        let textCenterX = glassCenterX - (glassWidth / 2) + labelInset + (textWidth / 2)
 
         return ZStack {
-            LightBackdropBlur()
-                .clipShape(
+            // Reproduces the Figma glass literally: the card image itself is
+            // blurred behind the capsule, then receives only the 31% tint
+            // declared by the supplied SVG. No material tint, highlight,
+            // border or shadow is added.
+            Image(stage.lightCardAssetName)
+                .resizable()
+                .interpolation(.high)
+                .antialiased(true)
+                .frame(width: cardWidth, height: cardHeight)
+                .blur(radius: blurRadius)
+                .mask {
                     RoundedRectangle(cornerRadius: glassRadius, style: .continuous)
-                )
+                        .frame(width: glassWidth, height: glassHeight)
+                        .position(x: glassCenterX, y: glassCenterY)
+                }
 
             RoundedRectangle(cornerRadius: glassRadius, style: .continuous)
                 .fill(HomeColors.control.opacity(0.31))
-
-            LinearGradient(
-                colors: [
-                    Color.white.opacity(0.28),
-                    Color.white.opacity(0.07),
-                    Color.white.opacity(0.01)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .clipShape(
-                RoundedRectangle(cornerRadius: glassRadius, style: .continuous)
-            )
+                .frame(width: glassWidth, height: glassHeight)
+                .position(x: glassCenterX, y: glassCenterY)
 
             HStack(spacing: cardWidth * (4.0 / 699.0)) {
                 Text("Current energy:")
@@ -487,32 +490,10 @@ struct DashboardView: View {
             .tracking(-0.10)
             .lineLimit(1)
             .minimumScaleFactor(0.86)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, labelInset)
-            .padding(.trailing, cardWidth * (24.0 / 699.0))
+            .frame(width: textWidth, height: glassHeight, alignment: .leading)
+            .position(x: textCenterX, y: glassCenterY)
         }
-        .frame(width: glassWidth, height: glassHeight)
-        .overlay(
-            RoundedRectangle(cornerRadius: glassRadius, style: .continuous)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.82),
-                            Color.black.opacity(0.075)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ),
-                    lineWidth: borderWidth
-                )
-        )
-        .shadow(
-            color: Color.black.opacity(0.075),
-            radius: cardHeight * (10.0 / 383.0),
-            x: 0,
-            y: cardHeight * (3.0 / 383.0)
-        )
-        .position(x: glassCenterX, y: glassCenterY)
+        .frame(width: cardWidth, height: cardHeight)
     }
 
     private func recoveredTimeCard(scale: CGFloat) -> some View {
@@ -755,18 +736,6 @@ private enum HomeMetrics {
 
     static func scale(for width: CGFloat) -> CGFloat {
         min(max(width / 375, 0.88), 1.12)
-    }
-}
-
-private struct LightBackdropBlur: UIViewRepresentable {
-    func makeUIView(context: Context) -> UIVisualEffectView {
-        UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialLight))
-    }
-
-    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
-        if !(uiView.effect is UIBlurEffect) {
-            uiView.effect = UIBlurEffect(style: .systemUltraThinMaterialLight)
-        }
     }
 }
 
