@@ -19,7 +19,7 @@ struct MirrorStepView: View {
 
                 Text("O que este comportamento custou para você?")
                     .cortexTextStyle(.largeTitle)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(CortexTheme.primaryText)
 
                 Text("Escreva com honestidade. Sem rótulos, sem humilhação: apenas o que você deseja recuperar.")
                     .cortexTextStyle(.body)
@@ -62,7 +62,7 @@ private extension View {
         self
             .padding(16)
             .background(CortexTheme.quaternary, in: RoundedRectangle(cornerRadius: 16))
-            .foregroundStyle(.white)
+            .foregroundStyle(CortexTheme.primaryText)
             .overlay(RoundedRectangle(cornerRadius: 16).stroke(CortexTheme.tertiary))
     }
 }

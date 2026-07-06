@@ -6,6 +6,7 @@ import UIKit
 struct DashboardView: View {
     @EnvironmentObject private var router: AppRouter
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @Bindable var profile: UserProfile
 
     @Query(sort: \DailyCheckIn.date, order: .reverse) private var checkIns: [DailyCheckIn]
@@ -55,13 +56,13 @@ struct DashboardView: View {
                         .padding(.horizontal, HomeMetrics.cardInset * scale)
                         .padding(.top, HomeMetrics.cardGap * scale)
                         .padding(.bottom, 84 * scale + bottomInset)
-                        .background(Color.black)
+                        .background(HomeColors.background)
                     }
                     .frame(maxWidth: .infinity, alignment: .top)
                 }
                 .coordinateSpace(name: DashboardScrollSpace.name)
                 .scrollIndicators(.hidden)
-                .background(Color.black)
+                .background(HomeColors.background)
                 .onPreferenceChange(DashboardOverscrollPreferenceKey.self) { amount in
                     updateElasticOverscroll(amount, scale: scale)
                 }
@@ -208,7 +209,7 @@ struct DashboardView: View {
                     Text(profile.alterName)
                         .font(.system(size: 34 * scale, weight: .medium, design: .default))
                         .tracking(-0.48 * scale)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(HomeColors.primary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
                 }
@@ -316,7 +317,7 @@ struct DashboardView: View {
 
             HStack(spacing: 7 * scale) {
                 Text("\(activeChakras)")
-                    .foregroundStyle(.white)
+                    .foregroundStyle(HomeColors.primary)
                 Rectangle()
                     .fill(HomeColors.muted)
                     .frame(width: 1, height: 15 * scale)
@@ -348,7 +349,7 @@ struct DashboardView: View {
                             .font(.system(size: 14 * scale, weight: .regular, design: .default))
                             .tracking(-0.17 * scale)
                     }
-                    .foregroundStyle(.white)
+                    .foregroundStyle(HomeColors.primary)
 
                     Text(nextEnergyText)
                         .font(.system(size: 13 * scale, weight: .regular, design: .default))
@@ -369,7 +370,10 @@ struct DashboardView: View {
                             )
                         )
                         .overlay(
-                            Circle().stroke(Color.white.opacity(0.035), lineWidth: 1)
+                            Circle().stroke(
+                                colorScheme == .light ? Color.black.opacity(0.035) : Color.white.opacity(0.035),
+                                lineWidth: 1
+                            )
                         )
 
                     VStack(spacing: -2 * scale) {
@@ -377,7 +381,7 @@ struct DashboardView: View {
                             .font(.system(size: 34 * scale, weight: .medium, design: .default))
                             .tracking(-0.55 * scale)
                             .monospacedDigit()
-                            .foregroundStyle(.white)
+                            .foregroundStyle(HomeColors.primary)
                         Text(snapshot.currentDay == 1 ? "Dia" : "Dias")
                             .font(.system(size: 12 * scale, weight: .regular, design: .default))
                             .foregroundStyle(HomeColors.muted)
@@ -396,14 +400,14 @@ struct DashboardView: View {
     }
 
     private func currentEnergyCard(scale: CGFloat) -> some View {
-        Image(stage.cardAssetName)
+        Image(colorScheme == .light ? stage.lightCardAssetName : stage.cardAssetName)
             .resizable()
             .interpolation(.high)
             .antialiased(true)
             .aspectRatio(699.0 / 383.0, contentMode: .fit)
             .frame(maxWidth: .infinity)
             .frame(height: 194 * scale)
-            .id(stage.cardAssetName)
+            .id(colorScheme == .light ? stage.lightCardAssetName : stage.cardAssetName)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Current energy: \(stage.englishTitle)")
     }
@@ -478,7 +482,7 @@ struct DashboardView: View {
                 .font(.system(size: 34 * scale, weight: .medium, design: .default))
                 .tracking(-0.55 * scale)
                 .monospacedDigit()
-                .foregroundStyle(.white)
+                .foregroundStyle(HomeColors.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
 
@@ -515,7 +519,7 @@ struct DashboardView: View {
                     Text("Add today's note")
                         .font(.system(size: 16 * scale, weight: .regular, design: .default))
                         .tracking(-0.22 * scale)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(HomeColors.primary)
 
                     Text("A fun fact about your day of transmutation")
                         .font(.system(size: 12 * scale, weight: .regular, design: .default))
@@ -652,12 +656,14 @@ private enum HomeMetrics {
 }
 
 private enum HomeColors {
-    static let welcomeDark = Color(red: 38 / 255, green: 38 / 255, blue: 38 / 255)
-    static let welcomeMid = Color(red: 87 / 255, green: 87 / 255, blue: 87 / 255)
-    static let welcomeLight = Color(red: 106 / 255, green: 106 / 255, blue: 106 / 255)
-    static let card = Color(red: 14 / 255, green: 14 / 255, blue: 14 / 255)
-    static let control = Color(red: 35 / 255, green: 35 / 255, blue: 35 / 255)
-    static let muted = Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
+    static let background = CortexTheme.adaptive(light: 0xF1F1F1, dark: 0x000000)
+    static let welcomeDark = CortexTheme.adaptive(light: 0xE9E9E9, dark: 0x262626)
+    static let welcomeMid = CortexTheme.adaptive(light: 0xC2C2C2, dark: 0x575757)
+    static let welcomeLight = CortexTheme.adaptive(light: 0x9E9E9E, dark: 0x6A6A6A)
+    static let card = CortexTheme.adaptive(light: 0xFFFFFF, dark: 0x0E0E0E)
+    static let control = CortexTheme.adaptive(light: 0xF5F5F5, dark: 0x232323)
+    static let primary = CortexTheme.adaptive(light: 0x191817, dark: 0xFFFFFF)
+    static let muted = CortexTheme.adaptive(light: 0x555555, dark: 0x919191)
     static let statusGreen = Color(red: 19 / 255, green: 168 / 255, blue: 61 / 255)
 }
 
@@ -767,8 +773,10 @@ private struct TransmutationStage {
     let assetName: String
     let cardAssetName: String
 
+    var lightCardAssetName: String { "\(cardAssetName)Light" }
+
     static let all: [TransmutationStage] = [
-        .init(activationDay: 1, englishTitle: "Root Chakra", color: Color(red: 168 / 255, green: 19 / 255, blue: 18 / 255), assetName: "ChakraRoot", cardAssetName: "CurrentEnergyRoot"),
+        .init(activationDay: 1, englishTitle: "Root Chakra", color: CortexTheme.adaptive(light: 0xE81816, dark: 0xA81312), assetName: "ChakraRoot", cardAssetName: "CurrentEnergyRoot"),
         .init(activationDay: 5, englishTitle: "Sacral Chakra", color: Color(red: 208 / 255, green: 93 / 255, blue: 2 / 255), assetName: "ChakraSacral", cardAssetName: "CurrentEnergySacral"),
         .init(activationDay: 10, englishTitle: "Solar Plexus Chakra", color: Color(red: 240 / 255, green: 156 / 255, blue: 34 / 255), assetName: "ChakraSolar", cardAssetName: "CurrentEnergySolar"),
         .init(activationDay: 15, englishTitle: "Heart Chakra", color: Color(red: 57 / 255, green: 141 / 255, blue: 24 / 255), assetName: "ChakraHeart", cardAssetName: "CurrentEnergyHeart"),

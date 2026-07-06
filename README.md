@@ -1,4 +1,4 @@
-# Cortex 1.1.1 — Home Kundalini sincronizada + IPA automática
+# Cortex 1.2.5 — Dark mode, Light mode e tema automático
 
 Projeto SwiftUI completo para iPhone. A IPA unsigned é compilada diretamente do código-fonte pelo GitHub Actions em todo `push`; não depende de uma IPA-base e não exige clicar em “Create Unsigned IPA”.
 
@@ -7,7 +7,7 @@ Projeto SwiftUI completo para iPhone. A IPA unsigned é compilada diretamente do
 A tela inicial foi refeita com composição inspirada nos padrões visuais do iOS:
 
 - hierarquia clara, SF Pro nativa e espaçamento compacto;
-- cartões contínuos sobre preto OLED;
+- cartões contínuos com superfícies adaptativas para claro e escuro;
 - figura de transmutação no lugar do cérebro 3D;
 - sete centros ativados por uma linha do tempo fixa e verificável;
 - energia Kundalini sincronizada com o dia real do ciclo;
@@ -91,8 +91,8 @@ Cortex-unsigned-fullscreen.ipa.sha256
 Para criar também uma Release:
 
 ```bash
-git tag v1.1.1
-git push origin v1.1.1
+git tag v1.2.5
+git push origin v1.2.5
 ```
 
 ## Build local no macOS
@@ -153,4 +153,15 @@ A animação Kundalini original permanece preservada no projeto, mas o recorte d
 A Home usa agora o gradiente radial original do redesign no card de boas-vindas. A origem escura fica no canto inferior esquerdo e a luz se abre diagonalmente até o canto superior direito, com as três paradas exatas do arquivo de referência.
 
 O botão central de fissura recebeu o mesmo tratamento radial em vermelho e um stroke direcional que desaparece na direção da luz. O cabeçalho também se estende durante o gesto de puxar a tela para baixo, evitando qualquer recorte preto. A resistência visual é progressiva, os pulsos hápticos aumentam suavemente com a tensão e o conteúdo retorna com uma mola interpolada quando o gesto termina.
+## Light mode e aparência automática (1.2.5)
+
+A Home possui agora uma composição clara nativa baseada diretamente nos SVGs de referência fornecidos. O fundo usa `#F1F1F1`, os cartões usam `#FFFFFF`, os controles usam `#F5F5F5`, o texto principal usa `#191817` e o texto secundário usa `#555555`. O cabeçalho preserva a mesma direção de luz do dark mode com o gradiente `#E9E9E9` → `#C2C2C2` → `#9E9E9E`.
+
+Os sete estados do card **Current energy** possuem assets claros próprios em 1x, 2x e 3x, evitando filtros em tempo de execução e preservando as cores dos chakras. Em **Ajustes → Aparência**, o usuário pode selecionar:
+
+- **Automático**: acompanha o tema claro/escuro do iPhone;
+- **Claro**: mantém o aplicativo no light mode;
+- **Escuro**: mantém o aplicativo no dark mode.
+
+A preferência é salva localmente por `AppStorage` e aplicada à janela inteira, incluindo formulários, navegação, sheets e fluxos de emergência.
 

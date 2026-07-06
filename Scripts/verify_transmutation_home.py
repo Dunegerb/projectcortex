@@ -14,6 +14,8 @@ DASHBOARD = ROOT / "CortexApp" / "Features" / "Dashboard" / "DashboardView.swift
 APP_ROOT = ROOT / "CortexApp" / "AppRootView.swift"
 ENGINE = ROOT / "CortexApp" / "Core" / "Engines" / "RecoveryEngine.swift"
 SETTINGS = ROOT / "CortexApp" / "Features" / "Settings" / "SettingsView.swift"
+APP = ROOT / "CortexApp" / "CortexApp.swift"
+THEME = ROOT / "CortexApp" / "Theme" / "CortexTheme.swift"
 WEB_VIEW = ROOT / "CortexApp" / "Features" / "Dashboard" / "ChakraExperienceView.swift"
 ARTWORK = ROOT / "CortexApp" / "Resources" / "ChakraExperience.html"
 SOURCE_SVG = ROOT / "CortexApp" / "Resources" / "personkundalini.svg"
@@ -103,6 +105,8 @@ def main() -> int:
     app_root = APP_ROOT.read_text(encoding="utf-8")
     engine = ENGINE.read_text(encoding="utf-8")
     settings = SETTINGS.read_text(encoding="utf-8")
+    app = APP.read_text(encoding="utf-8")
+    theme = THEME.read_text(encoding="utf-8")
     web_view = WEB_VIEW.read_text(encoding="utf-8")
     artwork = ARTWORK.read_text(encoding="utf-8")
     project = PROJECT.read_text(encoding="utf-8")
@@ -139,7 +143,7 @@ def main() -> int:
         "activationDay: 90",
         'assetName: "ChakraRoot"',
         'assetName: "ChakraCrown"',
-        "Image(stage.cardAssetName)",
+        "stage.lightCardAssetName",
         'cardAssetName: "CurrentEnergyRoot"',
         'cardAssetName: "CurrentEnergySacral"',
         'cardAssetName: "CurrentEnergySolar"',
@@ -178,6 +182,26 @@ def main() -> int:
         require(engine, token, "RecoveryEngine.swift")
 
     require(settings, "Tempo gasto no ato da autosatisfação", "SettingsView.swift")
+    for token in (
+        "AppAppearanceMode.storageKey",
+        'Section("Aparência")',
+        '.pickerStyle(.segmented)',
+        'case .system:',
+        'case .light:',
+        'case .dark:',
+    ):
+        require(settings if token not in ("case .system:", "case .light:", "case .dark:") else theme, token, "SettingsView.swift / CortexTheme.swift")
+    for token in (
+        ".preferredColorScheme(appearanceMode.colorScheme)",
+        "@AppStorage(AppAppearanceMode.storageKey)",
+    ):
+        require(app, token, "CortexApp.swift")
+    for token in (
+        "0xF1F1F1", "0xFFFFFF", "0xF5F5F5", "0x191817", "0x555555",
+        "0xE9E9E9", "0xC2C2C2", "0x9E9E9E",
+    ):
+        if token not in theme and token not in dashboard:
+            fail(f"missing supplied light-mode color {token}")
 
     for token in (
         "loadHTMLString",
@@ -198,9 +222,9 @@ def main() -> int:
     if "ChakraExperienceView(" in current_card_source or "WKWebView" in current_card_source:
         fail("current energy card must not depend on WebKit; it causes late rescaling and blanking after backgrounding")
     for token in (
-        "Image(stage.cardAssetName)",
+        "Image(colorScheme == .light ? stage.lightCardAssetName : stage.cardAssetName)",
         ".aspectRatio(699.0 / 383.0, contentMode: .fit)",
-        ".id(stage.cardAssetName)",
+        ".id(colorScheme == .light ? stage.lightCardAssetName : stage.cardAssetName)",
     ):
         require(current_card_source, token, "DashboardView.swift currentEnergyCard")
     require(artwork, ".aura {\n      display: none !important;", "ChakraExperience.html")
@@ -217,6 +241,9 @@ def main() -> int:
         "CurrentEnergyRoot", "CurrentEnergySacral", "CurrentEnergySolar",
         "CurrentEnergyHeart", "CurrentEnergyThroat", "CurrentEnergyThirdEye",
         "CurrentEnergyCrown",
+        "CurrentEnergyRootLight", "CurrentEnergySacralLight", "CurrentEnergySolarLight",
+        "CurrentEnergyHeartLight", "CurrentEnergyThroatLight", "CurrentEnergyThirdEyeLight",
+        "CurrentEnergyCrownLight",
     ):
         verify_current_energy_asset(asset)
 
@@ -229,6 +256,7 @@ def main() -> int:
         "goal-card.svg",
         "countnotes-card.svg",
         "addtodaynote-card.svg",
+        "HomeLightModeReference.svg",
     ):
         path = DESIGN_SOURCE / reference
         if not path.is_file() or path.stat().st_size == 0:
@@ -274,7 +302,8 @@ def main() -> int:
 
     print(
         "Verified pixel-referenced iPhone X Home redesign, SF Pro layout, custom navigation, "
-        "seven native current-energy cards, optional daily notes and Kundalini runtime."
+        "seven dark/light native current-energy cards, automatic appearance selection, "
+        "optional daily notes and Kundalini runtime."
     )
     return 0
 

@@ -3,6 +3,8 @@
 | Função | Implementação |
 |---|---|
 | Home de transmutação | `DashboardView` |
+| Tema claro/escuro/automático | `AppAppearanceMode`, `CortexTheme`, `CortexApp` e `SettingsView` |
+| Assets claros de energia | `CurrentEnergy*Light.imageset` |
 | Figura vetorial sincronizada | `ChakraExperienceView` + `Resources/ChakraExperience.html` |
 | Contagem automática | `RecoveryEngine` usando `UserProfile.startDate` |
 | Recomeço após recaída | `DashboardView.registerRelapse` |

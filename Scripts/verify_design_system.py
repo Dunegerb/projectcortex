@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DESIGN = ROOT / "Shared" / "CortexDesignSystem.swift"
+THEME = ROOT / "CortexApp" / "Theme" / "CortexTheme.swift"
 APP_SOURCES = list((ROOT / "CortexApp").rglob("*.swift"))
 WIDGET_SOURCES = list((ROOT / "CortexWidget").rglob("*.swift"))
 
@@ -25,10 +26,21 @@ EXPECTED_SIZES = {
     "caption2": "11",
 }
 
-EXPECTED_COLORS = (
+EXPECTED_DARK_COLORS = (
     "28.0 / 255.0, green: 28.0 / 255.0, blue: 30.0 / 255.0",
     "44.0 / 255.0, green: 44.0 / 255.0, blue: 46.0 / 255.0",
     "58.0 / 255.0, green: 58.0 / 255.0, blue: 60.0 / 255.0",
+)
+
+EXPECTED_LIGHT_HEX = (
+    "0xF1F1F1",
+    "0xFFFFFF",
+    "0xF5F5F5",
+    "0x191817",
+    "0x555555",
+    "0xE9E9E9",
+    "0xC2C2C2",
+    "0x9E9E9E",
 )
 
 
@@ -39,6 +51,7 @@ def fail(message: str) -> None:
 
 def main() -> int:
     text = DESIGN.read_text(encoding="utf-8")
+    theme = THEME.read_text(encoding="utf-8")
 
     if "Font.system" not in text and ".font(.system" not in text:
         fail("system/SF Pro font is not configured")
@@ -51,9 +64,22 @@ def main() -> int:
     if "case .headline: .semibold" not in text:
         fail("Headline must remain Semi-Bold")
 
-    for color in EXPECTED_COLORS:
+    for color in EXPECTED_DARK_COLORS:
         if color not in text:
-            fail(f"missing elevation color {color}")
+            fail(f"missing dark elevation color {color}")
+
+    app_source_text = "\n".join(
+        path.read_text(encoding="utf-8") for path in APP_SOURCES
+    )
+
+    for color in EXPECTED_LIGHT_HEX:
+        if color not in theme and color not in app_source_text:
+            fail(f"missing supplied light-mode color {color}")
+
+    for token in ("AppAppearanceMode", "adaptiveUIColor", "preferredColorScheme"):
+        source = theme if token != "preferredColorScheme" else app_source_text
+        if token not in source:
+            fail(f"missing adaptive appearance implementation: {token}")
 
     source_text = "\n".join(path.read_text(encoding="utf-8") for path in APP_SOURCES + WIDGET_SOURCES)
     forbidden = {
@@ -69,7 +95,7 @@ def main() -> int:
     if positive_tracking:
         fail("positive ad-hoc tracking remains in UI source")
 
-    print("Verified SF Pro typography scale and OLED elevation palette.")
+    print("Verified SF Pro typography and adaptive dark/light palette.")
     return 0
 
 

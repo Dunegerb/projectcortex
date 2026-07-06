@@ -56,7 +56,7 @@ struct MainTabView: View {
                 .padding(.horizontal, 24 * scale)
                 .padding(.bottom, navigationBottomPadding)
             }
-            .background(Color.black.ignoresSafeArea())
+            .background(CortexTheme.base.ignoresSafeArea())
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
@@ -104,6 +104,7 @@ private enum MainSection: String, CaseIterable, Identifiable {
 }
 
 private struct CortexBottomNavigation: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var selection: MainSection
     let onEmergency: () -> Void
     let scale: CGFloat
@@ -119,14 +120,29 @@ private struct CortexBottomNavigation: View {
         .padding(.horizontal, 4 * scale)
         .frame(maxWidth: 326 * scale)
         .frame(height: 69 * scale)
-        .background(
-            RoundedRectangle(cornerRadius: 34.5 * scale, style: .continuous)
-                .fill(Color(red: 27 / 255, green: 27 / 255, blue: 27 / 255).opacity(0.66))
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 34.5 * scale, style: .continuous))
-        )
+        .background {
+            ZStack {
+                if colorScheme == .dark {
+                    RoundedRectangle(cornerRadius: 34.5 * scale, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                }
+
+                RoundedRectangle(cornerRadius: 34.5 * scale, style: .continuous)
+                    .fill(NavigationColors.bar.opacity(colorScheme == .dark ? 0.66 : 1))
+            }
+        }
         .overlay(
             RoundedRectangle(cornerRadius: 34.5 * scale, style: .continuous)
-                .stroke(Color.white.opacity(0.025), lineWidth: 0.7)
+                .stroke(
+                    colorScheme == .light ? Color.white.opacity(0.72) : Color.white.opacity(0.025),
+                    lineWidth: 0.7
+                )
+        )
+        .shadow(
+            color: colorScheme == .light ? Color.black.opacity(0.14) : Color.clear,
+            radius: 18.05 * scale,
+            x: 0,
+            y: 4 * scale
         )
     }
 
@@ -221,7 +237,8 @@ private struct CortexBottomNavigation: View {
 }
 
 private enum NavigationColors {
-    static let selected = Color(red: 54 / 255, green: 54 / 255, blue: 54 / 255)
-    static let inactive = Color(red: 35 / 255, green: 35 / 255, blue: 35 / 255)
-    static let icon = Color(red: 145 / 255, green: 145 / 255, blue: 145 / 255)
+    static let bar = CortexTheme.adaptive(light: 0xFFFFFF, dark: 0x1B1B1B)
+    static let selected = CortexTheme.adaptive(light: 0x191817, dark: 0x363636)
+    static let inactive = CortexTheme.adaptive(light: 0xF5F5F5, dark: 0x232323)
+    static let icon = CortexTheme.adaptive(light: 0x555555, dark: 0x919191)
 }

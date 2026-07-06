@@ -4,11 +4,26 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var profile: UserProfile
+    @AppStorage(AppAppearanceMode.storageKey) private var appearanceModeRaw = AppAppearanceMode.system.rawValue
     @State private var showResetAlert = false
 
     var body: some View {
         NavigationStack {
             Form {
+                Section("Aparência") {
+                    Picker("Tema", selection: $appearanceModeRaw) {
+                        ForEach(AppAppearanceMode.allCases) { mode in
+                            Text(mode.title).tag(mode.rawValue)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    Label(appearanceDescription, systemImage: selectedAppearance.systemImage)
+                        .cortexTextStyle(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                .listRowBackground(CortexTheme.secondary)
+
                 Section("Identidade") {
                     TextField("Nome", text: $profile.realName)
                         .cortexNativeKeyboard(capitalization: .words, submitLabel: .next)
@@ -68,6 +83,21 @@ struct SettingsView: View {
             } message: {
                 Text("Esta ação apaga perfil, diário, check-ins e sessões locais. Não pode ser desfeita.")
             }
+        }
+    }
+
+    private var selectedAppearance: AppAppearanceMode {
+        AppAppearanceMode(rawValue: appearanceModeRaw) ?? .system
+    }
+
+    private var appearanceDescription: String {
+        switch selectedAppearance {
+        case .system:
+            return "A aparência acompanha automaticamente o tema configurado no iPhone."
+        case .light:
+            return "O Córtex permanece no modo claro."
+        case .dark:
+            return "O Córtex permanece no modo escuro."
         }
     }
 

@@ -82,30 +82,58 @@ CortexApp/Resources/Assets.xcassets/CurrentEnergyCrown.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/CurrentEnergyCrown.imageset/CurrentEnergyCrown.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyCrown.imageset/CurrentEnergyCrown@2x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyCrown.imageset/CurrentEnergyCrown@3x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyCrownLight.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/CurrentEnergyCrownLight.imageset/CurrentEnergyCrownLight.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyCrownLight.imageset/CurrentEnergyCrownLight@2x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyCrownLight.imageset/CurrentEnergyCrownLight@3x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyHeart.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/CurrentEnergyHeart.imageset/CurrentEnergyHeart.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyHeart.imageset/CurrentEnergyHeart@2x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyHeart.imageset/CurrentEnergyHeart@3x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyHeartLight.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/CurrentEnergyHeartLight.imageset/CurrentEnergyHeartLight.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyHeartLight.imageset/CurrentEnergyHeartLight@2x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyHeartLight.imageset/CurrentEnergyHeartLight@3x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyRoot.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/CurrentEnergyRoot.imageset/CurrentEnergyRoot.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyRoot.imageset/CurrentEnergyRoot@2x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyRoot.imageset/CurrentEnergyRoot@3x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyRootLight.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/CurrentEnergyRootLight.imageset/CurrentEnergyRootLight.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyRootLight.imageset/CurrentEnergyRootLight@2x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyRootLight.imageset/CurrentEnergyRootLight@3x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergySacral.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/CurrentEnergySacral.imageset/CurrentEnergySacral.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergySacral.imageset/CurrentEnergySacral@2x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergySacral.imageset/CurrentEnergySacral@3x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergySacralLight.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/CurrentEnergySacralLight.imageset/CurrentEnergySacralLight.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergySacralLight.imageset/CurrentEnergySacralLight@2x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergySacralLight.imageset/CurrentEnergySacralLight@3x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergySolar.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/CurrentEnergySolar.imageset/CurrentEnergySolar.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergySolar.imageset/CurrentEnergySolar@2x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergySolar.imageset/CurrentEnergySolar@3x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergySolarLight.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/CurrentEnergySolarLight.imageset/CurrentEnergySolarLight.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergySolarLight.imageset/CurrentEnergySolarLight@2x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergySolarLight.imageset/CurrentEnergySolarLight@3x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyThirdEye.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/CurrentEnergyThirdEye.imageset/CurrentEnergyThirdEye.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyThirdEye.imageset/CurrentEnergyThirdEye@2x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyThirdEye.imageset/CurrentEnergyThirdEye@3x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyThirdEyeLight.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/CurrentEnergyThirdEyeLight.imageset/CurrentEnergyThirdEyeLight.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyThirdEyeLight.imageset/CurrentEnergyThirdEyeLight@2x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyThirdEyeLight.imageset/CurrentEnergyThirdEyeLight@3x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyThroat.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/CurrentEnergyThroat.imageset/CurrentEnergyThroat.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyThroat.imageset/CurrentEnergyThroat@2x.png
 CortexApp/Resources/Assets.xcassets/CurrentEnergyThroat.imageset/CurrentEnergyThroat@3x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyThroatLight.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/CurrentEnergyThroatLight.imageset/CurrentEnergyThroatLight.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyThroatLight.imageset/CurrentEnergyThroatLight@2x.png
+CortexApp/Resources/Assets.xcassets/CurrentEnergyThroatLight.imageset/CurrentEnergyThroatLight@3x.png
 CortexApp/Resources/Assets.xcassets/KundaliniPerson.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/KundaliniPerson.imageset/KundaliniPerson.svg
 CortexApp/Resources/Assets.xcassets/LaunchBackground.colorset/Contents.json
@@ -134,9 +162,27 @@ CortexApp/Resources/DesignSource/CurrentEnergyStages/plexuschakra.svg
 CortexApp/Resources/DesignSource/CurrentEnergyStages/rootchakra.svg
 CortexApp/Resources/DesignSource/CurrentEnergyStages/sacrakchakra.svg
 CortexApp/Resources/DesignSource/CurrentEnergyStages/thirdeyechakra.svg
+CortexApp/Resources/DesignSource/CurrentEnergyStagesLight/CurrentEnergyCrownLight.svg
+CortexApp/Resources/DesignSource/CurrentEnergyStagesLight/CurrentEnergyHeartLight.svg
+CortexApp/Resources/DesignSource/CurrentEnergyStagesLight/CurrentEnergyRootLight.svg
+CortexApp/Resources/DesignSource/CurrentEnergyStagesLight/CurrentEnergySacralLight.svg
+CortexApp/Resources/DesignSource/CurrentEnergyStagesLight/CurrentEnergySolarLight.svg
+CortexApp/Resources/DesignSource/CurrentEnergyStagesLight/CurrentEnergyThirdEyeLight.svg
+CortexApp/Resources/DesignSource/CurrentEnergyStagesLight/CurrentEnergyThroatLight.svg
+CortexApp/Resources/DesignSource/HomeLightModeReference.svg
 CortexApp/Resources/DesignSource/HomeRedesignLayout.json
 CortexApp/Resources/DesignSource/HomeRedesignReference.png
 CortexApp/Resources/DesignSource/Keep transmuting.svg
+CortexApp/Resources/DesignSource/LightMode/Current-energy,_card.svg
+CortexApp/Resources/DesignSource/LightMode/Keep transmuting.svg
+CortexApp/Resources/DesignSource/LightMode/Rectangle 2.svg
+CortexApp/Resources/DesignSource/LightMode/Rectangle 3.svg
+CortexApp/Resources/DesignSource/LightMode/actualchakralogos-topcard.svg
+CortexApp/Resources/DesignSource/LightMode/barnavegation.svg
+CortexApp/Resources/DesignSource/LightMode/card-since.data+dayscounter.svg
+CortexApp/Resources/DesignSource/LightMode/goodmorning+name.svg
+CortexApp/Resources/DesignSource/LightMode/recoverytime.svg
+CortexApp/Resources/DesignSource/LightMode/shieldbutton.svg
 CortexApp/Resources/DesignSource/Rectangle 2.svg
 CortexApp/Resources/DesignSource/Rectangle 3.svg
 CortexApp/Resources/DesignSource/actualchakralogos-topcard.svg

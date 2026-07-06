@@ -5,6 +5,7 @@ import SwiftUI
 struct CortexApp: App {
     @UIApplicationDelegateAdaptor(CortexAppDelegate.self) private var appDelegate
     @StateObject private var router = AppRouter()
+    @AppStorage(AppAppearanceMode.storageKey) private var appearanceModeRaw = AppAppearanceMode.system.rawValue
     private let modelContainer: ModelContainer
 
     init() {
@@ -29,12 +30,16 @@ struct CortexApp: App {
         WindowGroup {
             AppRootView()
                 .environmentObject(router)
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(appearanceMode.colorScheme)
                 .onOpenURL { router.handle(url: $0) }
                 .task {
                     await ScreenTimeService.shared.restoreAndApplyIfNeeded()
                 }
         }
         .modelContainer(modelContainer)
+    }
+
+    private var appearanceMode: AppAppearanceMode {
+        AppAppearanceMode(rawValue: appearanceModeRaw) ?? .system
     }
 }

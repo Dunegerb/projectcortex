@@ -20,13 +20,28 @@ O aplicativo usa a fonte de sistema do iOS por meio de `Font.system`. Em iPhones
 
 A implementação está em `Shared/CortexDesignSystem.swift`. Não são incluídos arquivos `.otf` ou `.ttf`.
 
-## Elevação escura
+## Paleta adaptativa
+
+### Dark mode
 
 | Nível | Hex | Uso |
 |---|---|---|
-| Base | `#000000` | Fundo principal e launch screen |
-| Secundário | `#1C1C1E` | Cartões, navegação, tab bar e modais |
-| Terciário | `#2C2C2E` | Elementos agrupados e opções não selecionadas |
-| Quaternário | `#3A3A3C` | Campos, busca, controles inativos e divisórias |
+| Base | `#000000` | Fundo principal |
+| Secundário | `#1C1C1E` | Cartões, navegação e modais |
+| Terciário | `#2C2C2E` | Elementos agrupados |
+| Quaternário | `#3A3A3C` | Campos, controles e divisórias |
 
-As cores são centralizadas em `CortexPalette`, e `CortexTheme` configura também a aparência UIKit de barras de navegação, tab bar e campos de busca.
+### Light mode
+
+| Token | Hex | Uso |
+|---|---|---|
+| Base | `#F1F1F1` | Fundo principal |
+| Cartão | `#FFFFFF` | Cards e barra inferior |
+| Controle | `#F5F5F5` | Botões, círculos e itens inativos |
+| Texto principal | `#191817` | Títulos, valores e seleção ativa |
+| Texto secundário | `#555555` | Legendas, ícones e textos auxiliares |
+| Gradiente do cabeçalho | `#E9E9E9` → `#C2C2C2` → `#9E9E9E` | Painel superior da Home |
+| Chakra raiz ativo | `#E81816` | Destaque do estágio Root |
+| Status ativo | `#13A83D` | Indicador do Escudo Neural |
+
+`CortexTheme` usa cores dinâmicas de `UIColor`, portanto SwiftUI e UIKit respondem à mesma `ColorScheme`. A preferência fica em `AppAppearanceMode` e é aplicada por `preferredColorScheme`; no modo Automático o valor é `nil`, permitindo que o iOS controle o tema.

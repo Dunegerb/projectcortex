@@ -1,12 +1,50 @@
 import SwiftUI
 import UIKit
 
+enum AppAppearanceMode: String, CaseIterable, Identifiable {
+    case system
+    case light
+    case dark
+
+    static let storageKey = "cortex.appearance.mode"
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .system: return "Automático"
+        case .light: return "Claro"
+        case .dark: return "Escuro"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .system: return "circle.lefthalf.filled"
+        case .light: return "sun.max"
+        case .dark: return "moon"
+        }
+    }
+
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .system: return nil
+        case .light: return .light
+        case .dark: return .dark
+        }
+    }
+}
+
 enum CortexTheme {
-    // Apple-style OLED elevation palette.
-    static let base = CortexPalette.base
-    static let secondary = CortexPalette.secondary
-    static let tertiary = CortexPalette.tertiary
-    static let quaternary = CortexPalette.quaternary
+    // App surfaces. Light values follow the supplied Home light-mode SVG exactly.
+    static let base = adaptive(light: 0xF1F1F1, dark: 0x000000)
+    static let secondary = adaptive(light: 0xFFFFFF, dark: 0x1C1C1E)
+    static let tertiary = adaptive(light: 0xF5F5F5, dark: 0x2C2C2E)
+    static let quaternary = adaptive(light: 0xE9E9E9, dark: 0x3A3A3C)
+
+    static let primaryText = adaptive(light: 0x191817, dark: 0xFFFFFF)
+    static let secondaryText = adaptive(light: 0x555555, dark: 0x919191)
+    static let hairline = adaptive(light: 0xE9E9E9, dark: 0x3A3A3C)
 
     // Compatibility aliases used by existing feature views.
     static let navy = base
@@ -14,9 +52,9 @@ enum CortexTheme {
 
     // Functional accents remain intentionally restrained.
     static let moss = Color(red: 0.28, green: 0.43, blue: 0.36)
-    static let ice = Color(red: 0.47, green: 0.72, blue: 0.86)
-    static let muted = Color(red: 0.56, green: 0.56, blue: 0.58)
-    static let danger = Color(red: 0.55, green: 0.18, blue: 0.20)
+    static let ice = adaptive(light: 0x555555, dark: 0x78B8DB)
+    static let muted = adaptive(light: 0x555555, dark: 0x8F8F94)
+    static let danger = adaptive(light: 0xB4232B, dark: 0x8C2E33)
     static let paper = Color(red: 0.91, green: 0.93, blue: 0.92)
 
     static let background = LinearGradient(
@@ -25,27 +63,49 @@ enum CortexTheme {
         endPoint: .bottom
     )
 
+    static func adaptive(light: UInt32, dark: UInt32) -> Color {
+        Color(uiColor: adaptiveUIColor(light: light, dark: dark))
+    }
+
+    static func adaptiveUIColor(light: UInt32, dark: UInt32) -> UIColor {
+        UIColor { traits in
+            UIColor(hex: traits.userInterfaceStyle == .dark ? dark : light)
+        }
+    }
+
     static func configureSystemAppearance() {
         let navigation = UINavigationBarAppearance()
         navigation.configureWithOpaqueBackground()
-        navigation.backgroundColor = UIColor(secondary)
-        navigation.shadowColor = UIColor(quaternary)
-        navigation.titleTextAttributes = textAttributes(style: .headline, color: .white)
-        navigation.largeTitleTextAttributes = textAttributes(style: .largeTitle, color: .white)
+        navigation.backgroundColor = adaptiveUIColor(light: 0xFFFFFF, dark: 0x1C1C1E)
+        navigation.shadowColor = adaptiveUIColor(light: 0xE9E9E9, dark: 0x3A3A3C)
+        navigation.titleTextAttributes = textAttributes(
+            style: .headline,
+            color: adaptiveUIColor(light: 0x191817, dark: 0xFFFFFF)
+        )
+        navigation.largeTitleTextAttributes = textAttributes(
+            style: .largeTitle,
+            color: adaptiveUIColor(light: 0x191817, dark: 0xFFFFFF)
+        )
 
         let navigationBar = UINavigationBar.appearance()
         navigationBar.standardAppearance = navigation
         navigationBar.scrollEdgeAppearance = navigation
         navigationBar.compactAppearance = navigation
-        navigationBar.tintColor = UIColor(ice)
+        navigationBar.tintColor = adaptiveUIColor(light: 0x555555, dark: 0x78B8DB)
 
         let tab = UITabBarAppearance()
         tab.configureWithOpaqueBackground()
-        tab.backgroundColor = UIColor(secondary)
-        tab.shadowColor = UIColor(quaternary)
+        tab.backgroundColor = adaptiveUIColor(light: 0xFFFFFF, dark: 0x1C1C1E)
+        tab.shadowColor = adaptiveUIColor(light: 0xE9E9E9, dark: 0x3A3A3C)
 
-        let normal = textAttributes(style: .caption2, color: UIColor.secondaryLabel)
-        let selected = textAttributes(style: .caption2, color: UIColor(ice))
+        let normal = textAttributes(
+            style: .caption2,
+            color: adaptiveUIColor(light: 0x555555, dark: 0x919191)
+        )
+        let selected = textAttributes(
+            style: .caption2,
+            color: adaptiveUIColor(light: 0x191817, dark: 0x78B8DB)
+        )
         tab.stackedLayoutAppearance.normal.titleTextAttributes = normal
         tab.stackedLayoutAppearance.selected.titleTextAttributes = selected
         tab.inlineLayoutAppearance.normal.titleTextAttributes = normal
@@ -56,10 +116,10 @@ enum CortexTheme {
         let tabBar = UITabBar.appearance()
         tabBar.standardAppearance = tab
         tabBar.scrollEdgeAppearance = tab
-        tabBar.tintColor = UIColor(ice)
-        tabBar.unselectedItemTintColor = UIColor.secondaryLabel
+        tabBar.tintColor = adaptiveUIColor(light: 0x191817, dark: 0x78B8DB)
+        tabBar.unselectedItemTintColor = adaptiveUIColor(light: 0x555555, dark: 0x919191)
 
-        UISearchTextField.appearance().backgroundColor = UIColor(quaternary)
+        UISearchTextField.appearance().backgroundColor = adaptiveUIColor(light: 0xF5F5F5, dark: 0x3A3A3C)
     }
 
     private static func textAttributes(style: CortexTextStyle, color: UIColor) -> [NSAttributedString.Key: Any] {
@@ -76,6 +136,16 @@ enum CortexTheme {
     }
 }
 
+private extension UIColor {
+    convenience init(hex: UInt32) {
+        self.init(
+            red: CGFloat((hex >> 16) & 0xFF) / 255,
+            green: CGFloat((hex >> 8) & 0xFF) / 255,
+            blue: CGFloat(hex & 0xFF) / 255,
+            alpha: 1
+        )
+    }
+}
 
 private struct CortexNativeKeyboardModifier: ViewModifier {
     let capitalization: TextInputAutocapitalization
@@ -111,7 +181,7 @@ struct CortexCard: ViewModifier {
                     .fill(CortexTheme.secondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .stroke(CortexTheme.quaternary.opacity(0.72), lineWidth: 1)
+                            .stroke(CortexTheme.hairline.opacity(0.72), lineWidth: 1)
                     )
             )
     }
