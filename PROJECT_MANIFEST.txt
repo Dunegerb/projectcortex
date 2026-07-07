@@ -154,6 +154,7 @@ CortexApp/Resources/Assets.xcassets/NavSettings.imageset/NavSettings.png
 CortexApp/Resources/Assets.xcassets/ShieldGlyph.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/ShieldGlyph.imageset/ShieldGlyph.png
 CortexApp/Resources/ChakraExperience.html
+CortexApp/Resources/DesignSource/AppIcon/appleicone.svg
 CortexApp/Resources/DesignSource/Current-energy,_card.svg
 CortexApp/Resources/DesignSource/CurrentEnergyStages/Crownchakra.svg
 CortexApp/Resources/DesignSource/CurrentEnergyStages/Throatchakra.svg

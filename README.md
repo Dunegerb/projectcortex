@@ -121,7 +121,7 @@ A figura animada da Home usa agora 80% da área disponível, mantendo o cartão 
 
 ## App icon integrado
 
-O ícone do Cortex já está dentro do catálogo `AppIcon.appiconset`. No Sideloadly, carregue somente a IPA e deixe a opção de ícone personalizado desativada. O Xcode inclui o ícone correto durante a compilação do GitHub Actions.
+O ícone do Cortex já está dentro do catálogo `AppIcon.appiconset` e usa a marca vetorial branca sobre fundo preto. No Sideloadly, carregue somente a IPA e deixe a opção de ícone personalizado desativada. O build também injeta PNGs fallback idênticos no bundle final, garantindo que o Sideloadly use exatamente a mesma marca.
 
 ### App Icon 1.1.7
 O build agora valida o catálogo compilado (`Assets.car`), os metadados do `Info.plist` e os PNGs fallback no bundle final. Para atualizar o ícone no iPhone, remova a instalação anterior antes de instalar a nova IPA, evitando o cache antigo do SpringBoard.

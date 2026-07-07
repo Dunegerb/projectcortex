@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.5 (build 18)
+## 1.2.5 (build 19)
 
 - Adiciona modo claro baseado nos SVGs fornecidos, com as cores exatas `#F1F1F1`, `#FFFFFF`, `#F5F5F5`, `#191817` e `#555555`.
 - Reproduz no cabeçalho claro o gradiente radial `#E9E9E9` → `#C2C2C2` (73%) → `#9E9E9E`.
@@ -9,6 +9,9 @@
 - Inclui em Ajustes as opções **Automático**, **Claro** e **Escuro**; o modo Automático acompanha o tema do iPhone.
 - Torna superfícies SwiftUI e barras UIKit adaptativas e persiste a escolha em `AppStorage`.
 - Corrige novamente o painel **Current energy** no modo claro usando o mesmo princípio visual do dark mode: blur de raio 4 sobre a própria arte e preenchimento `#F5F5F5` a 31%, sem brilho, borda, sombra ou tonalização extra.
+- Substitui o App Icon por uma nova marca vetorial branca sobre fundo preto, gerada diretamente do SVG fornecido.
+- Atualiza todos os tamanhos do catálogo `AppIcon`, os oito PNGs fallback injetados na IPA para o Sideloadly e a marca da tela de abertura.
+- Garante que os ícones fallback sejam binariamente idênticos aos tamanhos correspondentes do catálogo principal.
 
 ## 1.2.4 (build 15)
 

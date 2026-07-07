@@ -42,4 +42,26 @@ for name, expected_size in expected.items():
             f'(bit_depth={bit_depth}, color_type={color_type})'
         )
 
-print('Verified embedded iPhone AppIcon set: exact PNG dimensions, 8-bit RGB, no alpha channel.')
+
+fallback = root / 'CortexApp/Resources/AppIconFallback'
+fallback_pairs = {
+    'AppIcon20x20@2x.png': 'AppIcon-20@2x.png',
+    'AppIcon20x20@3x.png': 'AppIcon-20@3x.png',
+    'AppIcon29x29@2x.png': 'AppIcon-29@2x.png',
+    'AppIcon29x29@3x.png': 'AppIcon-29@3x.png',
+    'AppIcon40x40@2x.png': 'AppIcon-40@2x.png',
+    'AppIcon40x40@3x.png': 'AppIcon-40@3x.png',
+    'AppIcon60x60@2x.png': 'AppIcon-60@2x.png',
+    'AppIcon60x60@3x.png': 'AppIcon-60@3x.png',
+}
+for fallback_name, source_name in fallback_pairs.items():
+    fallback_path = fallback / fallback_name
+    source_path = iconset / source_name
+    if not fallback_path.is_file() or fallback_path.stat().st_size == 0:
+        raise SystemExit(f'app icon verification failed: missing or empty fallback {fallback_name}')
+    if fallback_path.read_bytes() != source_path.read_bytes():
+        raise SystemExit(
+            f'app icon verification failed: fallback {fallback_name} does not exactly match {source_name}'
+        )
+
+print('Verified embedded iPhone AppIcon set and exact Sideloadly fallback copies: dimensions, RGB format and pixel identity are correct.')
