@@ -16,8 +16,8 @@ if [[ ! -d "$APP_PATH" ]]; then
   echo "Erro: bundle do app não encontrado: $APP_PATH" >&2
   exit 1
 fi
-if [[ ! -d "$CATALOG/AppIcon.appiconset" ]]; then
-  echo "Erro: catálogo AppIcon ausente: $CATALOG" >&2
+if [[ ! -d "$CATALOG/CortexAppIcon.appiconset" ]]; then
+  echo "Erro: catálogo CortexAppIcon ausente: $CATALOG" >&2
   exit 1
 fi
 if ! command -v xcrun >/dev/null 2>&1; then
@@ -41,7 +41,7 @@ xcrun actool "$CATALOG" \
   --platform iphoneos \
   --minimum-deployment-target 17.0 \
   --target-device iphone \
-  --app-icon AppIcon \
+  --app-icon CortexAppIcon \
   --accent-color AccentColor \
   --compress-pngs \
   --enable-on-demand-resources NO \

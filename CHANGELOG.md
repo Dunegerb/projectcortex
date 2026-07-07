@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.6 (build 20)
+
+- Corrige o ícone exibido nas notificações do iPhone, apontando o bundle para uma nova identidade interna de App Icon (`CortexAppIcon`).
+- Renomeia também os PNGs fallback para `CortexIcon*`, evitando que o iOS ou o Sideloadly reutilizem arquivos com o nome antigo em cache.
+- Mantém a logo atual fornecida em `DesignSource/AppIcon/appleicone.svg` em todos os tamanhos de 20, 29, 40, 60 e 1024 pontos.
+- Atualiza as validações do catálogo, do projeto Xcode e da IPA para impedir regressões.
+
 ## 1.2.5 (build 19)
 
 - Adiciona modo claro baseado nos SVGs fornecidos, com as cores exatas `#F1F1F1`, `#FFFFFF`, `#F5F5F5`, `#191817` e `#555555`.

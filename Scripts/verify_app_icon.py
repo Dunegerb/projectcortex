@@ -4,22 +4,22 @@ import json
 import struct
 
 root = Path(__file__).resolve().parents[1]
-iconset = root / 'CortexApp/Resources/Assets.xcassets/AppIcon.appiconset'
+iconset = root / 'CortexApp/Resources/Assets.xcassets/CortexAppIcon.appiconset'
 manifest = iconset / 'Contents.json'
 if not manifest.is_file():
     raise SystemExit('app icon verification failed: Contents.json is missing')
 
 data = json.loads(manifest.read_text(encoding='utf-8'))
 expected = {
-    'AppIcon-20@2x.png': (40, 40),
-    'AppIcon-20@3x.png': (60, 60),
-    'AppIcon-29@2x.png': (58, 58),
-    'AppIcon-29@3x.png': (87, 87),
-    'AppIcon-40@2x.png': (80, 80),
-    'AppIcon-40@3x.png': (120, 120),
-    'AppIcon-60@2x.png': (120, 120),
-    'AppIcon-60@3x.png': (180, 180),
-    'AppIcon-1024.png': (1024, 1024),
+    'CortexAppIcon-20@2x.png': (40, 40),
+    'CortexAppIcon-20@3x.png': (60, 60),
+    'CortexAppIcon-29@2x.png': (58, 58),
+    'CortexAppIcon-29@3x.png': (87, 87),
+    'CortexAppIcon-40@2x.png': (80, 80),
+    'CortexAppIcon-40@3x.png': (120, 120),
+    'CortexAppIcon-60@2x.png': (120, 120),
+    'CortexAppIcon-60@3x.png': (180, 180),
+    'CortexAppIcon-1024.png': (1024, 1024),
 }
 listed = {item.get('filename') for item in data.get('images', []) if item.get('filename')}
 missing_manifest = sorted(set(expected) - listed)
@@ -45,14 +45,14 @@ for name, expected_size in expected.items():
 
 fallback = root / 'CortexApp/Resources/AppIconFallback'
 fallback_pairs = {
-    'AppIcon20x20@2x.png': 'AppIcon-20@2x.png',
-    'AppIcon20x20@3x.png': 'AppIcon-20@3x.png',
-    'AppIcon29x29@2x.png': 'AppIcon-29@2x.png',
-    'AppIcon29x29@3x.png': 'AppIcon-29@3x.png',
-    'AppIcon40x40@2x.png': 'AppIcon-40@2x.png',
-    'AppIcon40x40@3x.png': 'AppIcon-40@3x.png',
-    'AppIcon60x60@2x.png': 'AppIcon-60@2x.png',
-    'AppIcon60x60@3x.png': 'AppIcon-60@3x.png',
+    'CortexIcon20x20@2x.png': 'CortexAppIcon-20@2x.png',
+    'CortexIcon20x20@3x.png': 'CortexAppIcon-20@3x.png',
+    'CortexIcon29x29@2x.png': 'CortexAppIcon-29@2x.png',
+    'CortexIcon29x29@3x.png': 'CortexAppIcon-29@3x.png',
+    'CortexIcon40x40@2x.png': 'CortexAppIcon-40@2x.png',
+    'CortexIcon40x40@3x.png': 'CortexAppIcon-40@3x.png',
+    'CortexIcon60x60@2x.png': 'CortexAppIcon-60@2x.png',
+    'CortexIcon60x60@3x.png': 'CortexAppIcon-60@3x.png',
 }
 for fallback_name, source_name in fallback_pairs.items():
     fallback_path = fallback / fallback_name
@@ -64,4 +64,4 @@ for fallback_name, source_name in fallback_pairs.items():
             f'app icon verification failed: fallback {fallback_name} does not exactly match {source_name}'
         )
 
-print('Verified embedded iPhone AppIcon set and exact Sideloadly fallback copies: dimensions, RGB format and pixel identity are correct.')
+print('Verified embedded iPhone CortexAppIcon set and exact Sideloadly fallback copies: dimensions, RGB format and pixel identity are correct.')

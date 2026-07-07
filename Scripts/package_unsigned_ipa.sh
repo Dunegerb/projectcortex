@@ -30,8 +30,8 @@ if not isinstance(launch, dict):
 if launch.get("UIColorName") != "LaunchBackground" or launch.get("UIImageName") != "LaunchMark":
     raise SystemExit("Erro: configuração UILaunchScreen inválida no plist-fonte")
 icons = info.get("CFBundleIcons", {}).get("CFBundlePrimaryIcon", {})
-if icons.get("CFBundleIconName") != "AppIcon":
-    raise SystemExit("Erro: CFBundleIconName não aponta para AppIcon no plist-fonte")
+if icons.get("CFBundleIconName") != "CortexAppIcon":
+    raise SystemExit("Erro: CFBundleIconName não aponta para CortexAppIcon no plist-fonte")
 print(f"Source launch and app-icon metadata confirmed in: {plist_path}")
 PY
 
@@ -51,7 +51,7 @@ xcodebuild \
   EXPANDED_CODE_SIGN_IDENTITY='' \
   DEVELOPMENT_TEAM='' \
   PROVISIONING_PROFILE_SPECIFIER='' \
-  ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon \
+  ASSETCATALOG_COMPILER_APPICON_NAME=CortexAppIcon \
   ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS=YES \
   ONLY_ACTIVE_ARCH=NO \
   build
@@ -78,7 +78,7 @@ for resource in ChakraExperience.html personkundalini.svg; do
 done
 
 if [[ ! -s "$APP_PATH/Assets.car" ]]; then
-  echo "Erro: Assets.car não foi gerado; o catálogo AppIcon não foi compilado." >&2
+  echo "Erro: Assets.car não foi gerado; o catálogo CortexAppIcon não foi compilado." >&2
   exit 1
 fi
 
@@ -98,10 +98,10 @@ info["UILaunchScreen"] = {
 }
 info["UIRequiresFullScreen"] = True
 primary = info.setdefault("CFBundleIcons", {}).setdefault("CFBundlePrimaryIcon", {})
-primary["CFBundleIconName"] = "AppIcon"
-primary["CFBundleIconFiles"] = ["AppIcon60x60"]
-info["CFBundleIconName"] = "AppIcon"
-info["CFBundleIconFiles"] = ["AppIcon60x60"]
+primary["CFBundleIconName"] = "CortexAppIcon"
+primary["CFBundleIconFiles"] = ["CortexIcon20x20", "CortexIcon29x29", "CortexIcon40x40", "CortexIcon60x60"]
+info["CFBundleIconName"] = "CortexAppIcon"
+info["CFBundleIconFiles"] = ["CortexIcon20x20", "CortexIcon29x29", "CortexIcon40x40", "CortexIcon60x60"]
 
 with plist_path.open("wb") as handle:
     plistlib.dump(info, handle, fmt=plistlib.FMT_BINARY, sort_keys=False)

@@ -56,11 +56,19 @@ def main() -> int:
                 raise ValueError("UIRequiresFullScreen is not enabled")
 
             primary_icon = info.get("CFBundleIcons", {}).get("CFBundlePrimaryIcon", {})
-            if primary_icon.get("CFBundleIconName") != "AppIcon":
-                raise ValueError("CFBundleIconName is missing or does not point to AppIcon")
+            if primary_icon.get("CFBundleIconName") != "CortexAppIcon":
+                raise ValueError("CFBundleIconName is missing or does not point to CortexAppIcon")
             icon_files = primary_icon.get("CFBundleIconFiles")
-            if not isinstance(icon_files, list) or "AppIcon60x60" not in icon_files:
-                raise ValueError("CFBundlePrimaryIcon does not contain AppIcon60x60 fallback metadata")
+            expected_icon_basenames = {
+                "CortexIcon20x20",
+                "CortexIcon29x29",
+                "CortexIcon40x40",
+                "CortexIcon60x60",
+            }
+            if not isinstance(icon_files, list) or not expected_icon_basenames.issubset(icon_files):
+                raise ValueError(
+                    "CFBundlePrimaryIcon does not contain all CortexIcon fallback metadata"
+                )
 
             signing_files = [item.filename for item in infos if is_signing_artifact(item.filename)]
             if signing_files:
@@ -86,8 +94,14 @@ def main() -> int:
                 raise ValueError("Compiled Assets.car is missing or empty")
 
             required_icons = (
-                "AppIcon60x60@2x.png",
-                "AppIcon60x60@3x.png",
+                "CortexIcon20x20@2x.png",
+                "CortexIcon20x20@3x.png",
+                "CortexIcon29x29@2x.png",
+                "CortexIcon29x29@3x.png",
+                "CortexIcon40x40@2x.png",
+                "CortexIcon40x40@3x.png",
+                "CortexIcon60x60@2x.png",
+                "CortexIcon60x60@3x.png",
             )
             for icon in required_icons:
                 icon_path = str(app_dir / icon)

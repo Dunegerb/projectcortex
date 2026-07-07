@@ -73,17 +73,23 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>AppIcon60x60</string>
+				<string>CortexIcon20x20</string>
+				<string>CortexIcon29x29</string>
+				<string>CortexIcon40x40</string>
+				<string>CortexIcon60x60</string>
 			</array>
 			<key>CFBundleIconName</key>
-			<string>AppIcon</string>
+			<string>CortexAppIcon</string>
 		</dict>
 	</dict>
 	<key>CFBundleIconFiles</key>
 	<array>
-		<string>AppIcon60x60</string>
+		<string>CortexIcon20x20</string>
+		<string>CortexIcon29x29</string>
+		<string>CortexIcon40x40</string>
+		<string>CortexIcon60x60</string>
 	</array>
 	<key>CFBundleIconName</key>
-	<string>AppIcon</string>
+	<string>CortexAppIcon</string>
 </dict>
 </plist>
