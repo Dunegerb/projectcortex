@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.7 (build 21)
+
+- Adiciona uma nova animação nativa de entrada baseada nos dois frames SVG fornecidos.
+- Mantém o `glasslogo` centralizado com material translúcido e luzes desfocadas que atravessam a marca da esquerda para a direita.
+- Transforma o `textlogo` de 131 × 88 para 29 × 19 enquanto o `iconlogo` cresce de 66 × 53 para 164 × 131.
+- Usa exatamente 800 ms com `cubic-bezier(1, 0.01, 0, 0.99)` para a transição principal.
+- Atualiza a imagem estática do Launch Screen para coincidir com o primeiro frame e evitar troca visual antes da animação.
+- Respeita a preferência Reduzir Movimento do iPhone e preserva os SVGs originais em `DesignSource/LaunchAnimation`.
+
 ## 1.2.6 (build 20)
 
 - Corrige o ícone exibido nas notificações do iPhone, apontando o bundle para uma nova identidade interna de App Icon (`CortexAppIcon`).

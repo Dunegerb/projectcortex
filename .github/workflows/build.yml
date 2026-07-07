@@ -31,6 +31,9 @@ jobs:
       - name: Verify automatic transmutation Home
         run: python3 Scripts/verify_transmutation_home.py
 
+      - name: Verify startup animation
+        run: python3 Scripts/verify_splash_animation.py
+
       - name: Generate Xcode project
         run: xcodegen generate
 

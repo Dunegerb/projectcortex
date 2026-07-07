@@ -35,6 +35,7 @@ CortexApp/Features/Emergency/EmergencyFlowView.swift
 CortexApp/Features/Emergency/LetterStepView.swift
 CortexApp/Features/Emergency/MovementStepView.swift
 CortexApp/Features/Journal/JournalView.swift
+CortexApp/Features/Launch/SplashAnimationView.swift
 CortexApp/Features/Milestones/MilestonesView.swift
 CortexApp/Features/Onboarding/ContractStepView.swift
 CortexApp/Features/Onboarding/ForgeStepView.swift
@@ -153,6 +154,12 @@ CortexApp/Resources/Assets.xcassets/NavSettings.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/NavSettings.imageset/NavSettings.png
 CortexApp/Resources/Assets.xcassets/ShieldGlyph.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/ShieldGlyph.imageset/ShieldGlyph.png
+CortexApp/Resources/Assets.xcassets/SplashGlassLogoMask.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/SplashGlassLogoMask.imageset/SplashGlassLogoMask.svg
+CortexApp/Resources/Assets.xcassets/SplashIconLogo.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/SplashIconLogo.imageset/SplashIconLogo.svg
+CortexApp/Resources/Assets.xcassets/SplashTextLogo.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/SplashTextLogo.imageset/SplashTextLogo.svg
 CortexApp/Resources/ChakraExperience.html
 CortexApp/Resources/DesignSource/AppIcon/appleicone.svg
 CortexApp/Resources/DesignSource/Current-energy,_card.svg
@@ -174,6 +181,17 @@ CortexApp/Resources/DesignSource/HomeLightModeReference.svg
 CortexApp/Resources/DesignSource/HomeRedesignLayout.json
 CortexApp/Resources/DesignSource/HomeRedesignReference.png
 CortexApp/Resources/DesignSource/Keep transmuting.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/Frame1/glasslogo.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/Frame1/iconlogo.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/Frame1/lightsbackground.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/Frame1/textlogo.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/Frame2/glasslogo.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/Frame2/iconlogo.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/Frame2/lightsbackground.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/Frame2/textlogo.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/README.md
+CortexApp/Resources/DesignSource/LaunchAnimation/frame-1-reference.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/frame-2-reference.svg
 CortexApp/Resources/DesignSource/LightMode/Current-energy,_card.svg
 CortexApp/Resources/DesignSource/LightMode/Keep transmuting.svg
 CortexApp/Resources/DesignSource/LightMode/Rectangle 2.svg
@@ -217,6 +235,7 @@ Scripts/remove_legacy_brain.sh
 Scripts/verify_app_icon.py
 Scripts/verify_design_system.py
 Scripts/verify_native_keyboard.py
+Scripts/verify_splash_animation.py
 Scripts/verify_transmutation_home.py
 Scripts/verify_unsigned_ipa.py
 Scripts/verify_xcode_project_resources.py

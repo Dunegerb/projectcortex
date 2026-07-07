@@ -14,4 +14,5 @@
 | Atualização automática do widget | `WidgetSharedState`, `CortexWidgetSnapshot` e `CortexWidgetEntry` |
 | Protocolo de emergência | `EmergencyFlowView` |
 | Tela cheia | `Config/Cortex-Info.plist` e `AppRootView` |
+| Animação de entrada | `SplashAnimationView`, `Splash*` assets e `DesignSource/LaunchAnimation` |
 | IPA automática | `.github/workflows/unsigned-ipa.yml` |

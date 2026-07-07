@@ -13,6 +13,7 @@ cd "$ROOT"
 python3 "$ROOT/Scripts/verify_design_system.py"
 python3 "$ROOT/Scripts/verify_native_keyboard.py"
 python3 "$ROOT/Scripts/verify_transmutation_home.py"
+python3 "$ROOT/Scripts/verify_splash_animation.py"
 python3 "$ROOT/Scripts/verify_app_icon.py"
 python3 "$ROOT/Scripts/verify_xcode_project_resources.py"
 

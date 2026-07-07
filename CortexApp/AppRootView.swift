@@ -4,6 +4,7 @@ import SwiftUI
 struct AppRootView: View {
     @EnvironmentObject private var router: AppRouter
     @Query(sort: \UserProfile.createdAt) private var profiles: [UserProfile]
+    @State private var isShowingSplash = true
 
     var body: some View {
         ZStack {
@@ -16,6 +17,13 @@ struct AppRootView: View {
                     }
             } else {
                 OnboardingView()
+            }
+
+            if isShowingSplash {
+                SplashAnimationView {
+                    isShowingSplash = false
+                }
+                .zIndex(100)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
