@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.11 (build 25)
+
+- Remove completamente o filme `CortexSplashIntro.mp4` e toda dependência de `AVFoundation` da abertura.
+- Reconstrói a animação diretamente em SwiftUI com os vetores originais de `textlogo`, `iconlogo` e `glasslogo`.
+- Mantém as coordenadas do design 739 × 1600, blur 23.4, luzes externas e refratadas, shader Metal de deslocamento, caustics e crossfades sincronizados.
+- Preserva 900 ms do frame inicial, 800 ms com `cubic-bezier(1, 0.01, 0, 0.99)` e 50 ms finais antes da Home.
+- Atualiza os validadores para rejeitar vídeo, HTML, WebKit e AVPlayer na splash.
+
 ## 1.2.10 (build 24)
 
 - Impede que a tela de entrada seja encerrada em milissegundos quando o iPhone está com Reduzir Movimento ativo.

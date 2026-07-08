@@ -18,6 +18,8 @@ The approved animation uses the supplied 739 × 1600 reference frames and the ex
 
 ## Runtime implementation
 
-The exact visual result is rendered offline at 60 fps into `CortexSplashIntro.mp4`. The app plays this silent H.264 resource with `AVPlayerLayer`; no HTML, JavaScript, network request, or `WKWebView` is involved in the startup animation.
+`SplashAnimationView.swift` rebuilds the composition directly in SwiftUI. The runtime contains no movie, HTML, JavaScript, `WKWebView`, `AVPlayer`, or network access.
 
-The timeline contains a 900 ms initial hold, an 800 ms transition using `cubic-bezier(1, 0.01, 0, 0.99)`, and two final display frames. Runtime dismissal is tied only to the real `AVPlayerItemDidPlayToEndTime` event after the movie reaches its final timestamp; app readiness and Reduce Motion never shorten the intro. If the movie cannot be decoded, a native 1.75-second fallback preserves the full hold and transition interval. `native-render-manifest.json` records the source and runtime hashes, dimensions, frame count, and duration. The original SVGs remain untouched in `Frame1` and `Frame2`.
+The six exact logo states are compiled as vector assets. The glass geometry is used as a full-alpha native mask and as a vector rim overlay. SwiftUI animates the two scene lights, the two refracted lights, both caustics, logo frames, and crossfades. `CortexSplashShaders.metal` applies the native 0.008 × 0.024 noise warp with seed 17 and displacement scale 17 in the original 739 × 1600 coordinate space.
+
+The timeline is fixed to a 900 ms initial hold, an 800 ms transition using `cubic-bezier(1, 0.01, 0, 0.99)`, and a 50 ms final hold before the Home screen is released. The original SVGs remain untouched in `Frame1` and `Frame2`.

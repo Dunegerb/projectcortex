@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the native, WebKit-free startup animation and launch bridge."""
+"""Verify the fully native SwiftUI Cortex launch animation."""
 
 from __future__ import annotations
 
@@ -9,23 +9,47 @@ import re
 import struct
 import sys
 from pathlib import Path
-from typing import Optional
 
 ROOT = Path(__file__).resolve().parents[1]
-VIDEO = ROOT / "CortexApp" / "Resources" / "Launch" / "CortexSplashIntro.mp4"
 SWIFT = ROOT / "CortexApp" / "Features" / "Launch" / "SplashAnimationView.swift"
+METAL = ROOT / "CortexApp" / "Features" / "Launch" / "CortexSplashShaders.metal"
 APP_ROOT = ROOT / "CortexApp" / "AppRootView.swift"
 PROJECT = ROOT / "project.yml"
 ASSETS = ROOT / "CortexApp" / "Resources" / "Assets.xcassets"
+RESOURCES = ROOT / "CortexApp" / "Resources"
 LAUNCH_MARK = ASSETS / "LaunchMark.imageset"
-EXPECTED_VIDEO_SHA256 = "a34b17c4f76faadae9a7030994a7b140e4af20ccd4c39e9bc7e14a3a84f5d3ae"
-EXPECTED_FRAME_HASHES = {
-    "SplashFirstFrame.png": "9f56a1ec8d15b8b87a6095761608351ba06fe9f9cb2dca590cf6c5d38f44bb95",
-    "SplashFirstFrame@2x.png": "041f2c5bbc8af5c4f71e909da13a0907edf49e41d483648b066974649b0ac23d",
-    "SplashFirstFrame@3x.png": "7f003bea85a5f7064c7a230f58c8ff50fb40460d1301ca17fcec1776347b2a30",
-    "SplashFinalFrame.png": "b75696f78a668845ede22111bfe85e33609a53872d17746154945f079f744d77",
-    "SplashFinalFrame@2x.png": "e771ce6550bd7f026dc3277fb808fe34e2fea923fddadc84f62c2b2440e28253",
-    "SplashFinalFrame@3x.png": "d96c7c45e38ff3d92afe82498cbdfc78e58c47d1ef330b57367973cf5f0107ff",
+
+EXPECTED_SVGS = {
+    "SplashGlassMask": {
+        "file": "SplashGlassMask.svg",
+        "size": (442, 298),
+        "sha256": "c84e493dddfc18f94d318ab20dd1b07dc7ee67c5e53235c052e7058833b5728b",
+    },
+    "SplashGlassOverlay": {
+        "file": "SplashGlassOverlay.svg",
+        "size": (442, 298),
+        "sha256": "a1ab72dcc19f1c1cfb4d34318e4ef757012ccd16edf27528f40efb24ef2293ed",
+    },
+    "SplashIconLogoStart": {
+        "file": "SplashIconLogoStart.svg",
+        "size": (66, 53),
+        "sha256": "8148bb73ba70118810544a158175b78684d0bb2b0c08ced4c53e65a2ba9080db",
+    },
+    "SplashIconLogoEnd": {
+        "file": "SplashIconLogoEnd.svg",
+        "size": (164, 131),
+        "sha256": "47cecf5debd3fe0c7e423ea855aef7e6fbf6106afd43eb37611ff750f7e11e08",
+    },
+    "SplashTextLogoStart": {
+        "file": "SplashTextLogoStart.svg",
+        "size": (131, 88),
+        "sha256": "eb136ebb6a2ad6b26082e6118868f1342558c07e31526013d7e8ef35573c658c",
+    },
+    "SplashTextLogoEnd": {
+        "file": "SplashTextLogoEnd.svg",
+        "size": (29, 19),
+        "sha256": "19ac3dc5c2026c25031b9bea4e2535b961aafe41186482485a72a54380a78e60",
+    },
 }
 
 
@@ -47,154 +71,118 @@ def verify_png(path: Path, expected_size: tuple[int, int], require_alpha: bool =
     if (width, height) != expected_size:
         fail(f"unexpected dimensions for {path.name}: {width}x{height}")
     if require_alpha and raw[25] not in (4, 6):
-        fail(f"{path.name} must be RGBA")
+        fail(f"{path.name} must contain alpha")
 
 
-def iter_boxes(data: bytes, start: int = 0, end: Optional[int] = None):
-    end = len(data) if end is None else end
-    offset = start
-    while offset + 8 <= end:
-        size = struct.unpack_from(">I", data, offset)[0]
-        kind = data[offset + 4 : offset + 8]
-        header = 8
-        if size == 1:
-            if offset + 16 > end:
-                return
-            size = struct.unpack_from(">Q", data, offset + 8)[0]
-            header = 16
-        elif size == 0:
-            size = end - offset
-        if size < header or offset + size > end:
-            return
-        yield kind, offset + header, offset + size
-        offset += size
-
-
-def verify_mp4(path: Path) -> None:
-    raw = path.read_bytes()
-    digest = hashlib.sha256(raw).hexdigest()
-    if digest != EXPECTED_VIDEO_SHA256:
-        fail("CortexSplashIntro.mp4 differs from the approved native render")
-    if not 50_000 <= len(raw) <= 500_000:
-        fail(f"unexpected splash movie size: {len(raw)} bytes")
-
-    top = list(iter_boxes(raw))
-    top_types = {kind for kind, _, _ in top}
-    for required in (b"ftyp", b"moov", b"mdat"):
-        if required not in top_types:
-            fail(f"MP4 box {required.decode()} is missing")
-    if b"avc1" not in raw:
-        fail("splash movie is not H.264/AVC")
-
-    duration_seconds = None
-    dimensions = None
-    for kind, payload_start, box_end in top:
-        if kind != b"moov":
-            continue
-        for child_kind, child_start, child_end in iter_boxes(raw, payload_start, box_end):
-            if child_kind == b"mvhd":
-                payload = raw[child_start:child_end]
-                version = payload[0]
-                if version == 0 and len(payload) >= 20:
-                    timescale = struct.unpack_from(">I", payload, 12)[0]
-                    duration = struct.unpack_from(">I", payload, 16)[0]
-                elif version == 1 and len(payload) >= 32:
-                    timescale = struct.unpack_from(">I", payload, 20)[0]
-                    duration = struct.unpack_from(">Q", payload, 24)[0]
-                else:
-                    continue
-                if timescale:
-                    duration_seconds = duration / timescale
-            elif child_kind == b"trak":
-                for track_kind, track_start, track_end in iter_boxes(raw, child_start, child_end):
-                    if track_kind != b"tkhd":
-                        continue
-                    payload = raw[track_start:track_end]
-                    version = payload[0]
-                    width_offset = 76 if version == 0 else 88
-                    if len(payload) < width_offset + 8:
-                        continue
-                    width = struct.unpack_from(">I", payload, width_offset)[0] / 65536
-                    height = struct.unpack_from(">I", payload, width_offset + 4)[0] / 65536
-                    if width > 0 and height > 0:
-                        dimensions = (round(width), round(height))
-
-    if dimensions != (750, 1624):
-        fail(f"unexpected splash movie dimensions: {dimensions}")
-    if duration_seconds is None or abs(duration_seconds - 1.75) > 0.002:
-        fail(f"unexpected splash movie duration: {duration_seconds}")
-
-
-def verify_imageset(name: str) -> None:
+def verify_svg_asset(name: str, metadata: dict[str, object]) -> None:
     directory = ASSETS / f"{name}.imageset"
-    manifest = json.loads((directory / "Contents.json").read_text(encoding="utf-8"))
-    expected = {
-        f"{name}.png": (375, 812),
-        f"{name}@2x.png": (750, 1624),
-        f"{name}@3x.png": (1125, 2436),
-    }
-    referenced = {item.get("filename") for item in manifest.get("images", [])}
-    if referenced != set(expected):
-        fail(f"unexpected {name} manifest entries: {sorted(referenced)}")
-    for filename, size in expected.items():
-        path = directory / filename
-        verify_png(path, size)
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        if digest != EXPECTED_FRAME_HASHES[filename]:
-            fail(f"{filename} differs from the approved reference frame")
+    manifest_path = directory / "Contents.json"
+    svg_path = directory / str(metadata["file"])
+    if not manifest_path.is_file() or not svg_path.is_file():
+        fail(f"{name}.imageset is incomplete")
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    filenames = [item.get("filename") for item in manifest.get("images", [])]
+    if filenames != [metadata["file"]]:
+        fail(f"unexpected manifest for {name}: {filenames}")
+    if manifest.get("properties", {}).get("preserves-vector-representation") is not True:
+        fail(f"{name} must preserve its vector representation")
+
+    raw = svg_path.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != metadata["sha256"]:
+        fail(f"{svg_path.name} differs from the approved vector asset")
+
+    text = raw.decode("utf-8")
+    width, height = metadata["size"]
+    if f'width="{width}"' not in text or f'height="{height}"' not in text:
+        fail(f"unexpected SVG dimensions for {svg_path.name}")
+    if f'viewBox="0 0 {width} {height}"' not in text:
+        fail(f"unexpected SVG viewBox for {svg_path.name}")
 
 
 def main() -> int:
-    if not VIDEO.is_file():
-        fail("CortexSplashIntro.mp4 is missing")
-    if (ROOT / "CortexApp" / "Resources" / "SplashIntro.html").exists():
-        fail("SplashIntro.html must not be bundled or kept as a runtime resource")
+    forbidden_runtime_files = [
+        RESOURCES / "SplashIntro.html",
+        RESOURCES / "Launch" / "CortexSplashIntro.mp4",
+    ]
+    for path in forbidden_runtime_files:
+        if path.exists():
+            fail(f"legacy splash runtime file still exists: {path.relative_to(ROOT)}")
 
-    verify_mp4(VIDEO)
-    verify_imageset("SplashFirstFrame")
-    verify_imageset("SplashFinalFrame")
+    movie_files = sorted(
+        path.relative_to(ROOT)
+        for suffix in ("*.mp4", "*.mov", "*.m4v")
+        for path in RESOURCES.rglob(suffix)
+    )
+    if movie_files:
+        fail(f"movie assets are forbidden in the splash implementation: {movie_files}")
+
+    for name, metadata in EXPECTED_SVGS.items():
+        verify_svg_asset(name, metadata)
 
     swift = SWIFT.read_text(encoding="utf-8")
+    metal = METAL.read_text(encoding="utf-8")
     app_root = APP_ROOT.read_text(encoding="utf-8")
     project = PROJECT.read_text(encoding="utf-8")
 
     for token in (
-        "import AVFoundation",
-        "AVPlayerItem(asset: asset)",
-        "AVPlayerLayer.self",
-        'forResource: "CortexSplashIntro"',
-        'withExtension: "mp4"',
-        "automaticallyWaitsToMinimizeStalling = true",
-        "playImmediately(atRate: 1)",
-        ".AVPlayerItemDidPlayToEndTime",
-        'Image("SplashFirstFrame")',
-        'Image("SplashFinalFrame")',
-        "finishOnlyAfterRealMovieEnd",
-        "currentSeconds + 0.025 < durationSeconds",
-        "onPlaybackFailure: beginFallback",
-        ".now() + 0.9",
-        ".now() + 1.75",
-        ".timingCurve(1, 0.01, 0, 0.99, duration: 0.8)",
-        ".resizeAspect",
-        "isMuted = true",
+        "import SwiftUI",
+        "static let initialHoldNanoseconds: UInt64 = 900_000_000",
+        "static let transitionNanoseconds: UInt64 = 800_000_000",
+        "static let finalHoldNanoseconds: UInt64 = 50_000_000",
+        "Animation.timingCurve(1, 0.01, 0, 0.99, duration: 0.8)",
+        "SplashDesignSpace(isFrame2: isFrame2)",
+        "x: 0.5074424899 * viewportScale",
+        "y: 0.5075 * viewportScale",
+        "SplashRect(x: 173, y: 680, width: 33, height: 59.627)",
+        "SplashRect(x: 479, y: 696, width: 82, height: 62)",
+        "SplashRect(x: 173, y: 821.373, width: 33, height: 59.627)",
+        "SplashRect(x: 479, y: 843, width: 82, height: 62)",
+        "SplashRect(x: 337, y: 774, width: 66, height: 53)",
+        "SplashRect(x: 288, y: 735, width: 164, height: 131)",
+        "SplashRect(x: 304, y: 756, width: 131, height: 88)",
+        "SplashRect(x: 355, y: 790, width: 29, height: 19)",
+        ".blur(radius: 23.4, opaque: false)",
+        ".distortionEffect(",
+        "ShaderLibrary.cortexLiquidWarp()",
+        "maxSampleOffset: CGSize(width: 9, height: 9)",
+        'Image("SplashGlassMask")',
+        'Image("SplashGlassOverlay")',
+        'startAsset: "SplashIconLogoStart"',
+        'endAsset: "SplashIconLogoEnd"',
+        'startAsset: "SplashTextLogoStart"',
+        'endAsset: "SplashTextLogoEnd"',
+        "try? await Task.sleep(nanoseconds: Timing.initialHoldNanoseconds)",
+        "withAnimation(Timing.transition)",
+        "finishOnce()",
     ):
         require(swift, token, "SplashAnimationView.swift")
 
+
+    if hashlib.sha256(METAL.read_bytes()).hexdigest() != "b06a6f87d05a795440b747e785f89e090c100a231f2beefde58f02c3e35730dc":
+        fail("CortexSplashShaders.metal differs from the approved native refraction shader")
+    for token in (
+        "[[ stitchable ]] float2 cortexLiquidWarp(float2 position)",
+        "float2 frequency = float2(0.008, 0.024)",
+        "cortexSmoothNoise(samplePoint, 17.0)",
+        "* 17.0",
+    ):
+        require(metal, token, "CortexSplashShaders.metal")
+
     for forbidden in (
+        "import AVFoundation",
+        "AVPlayer",
+        "AVPlayerLayer",
+        "CortexSplashIntro",
         "import WebKit",
         "WKWebView",
-        "WKWebViewConfiguration",
-        "loadFileURL",
         "evaluateJavaScript",
         "SplashIntro.html",
-        "transitionend",
-        "accessibilityReduceMotion",
-        ".now() + 0.08",
-        ".now() + 0.12",
-        "finishAfterFallbackDelay",
+        "VideoPlayer",
     ):
         if forbidden in swift:
-            fail(f"WebKit/HTML splash code still present: {forbidden}")
+            fail(f"non-native splash dependency still present: {forbidden}")
 
     for token in (
         "@State private var isShowingSplash = true",
@@ -204,13 +192,12 @@ def main() -> int:
     ):
         require(app_root, token, "AppRootView.swift")
 
-    require(project, "CortexApp/Resources/Launch/CortexSplashIntro.mp4", "project.yml")
-    if "CortexApp/Resources/SplashIntro.html" in project:
-        fail("project.yml still copies SplashIntro.html")
-    if not re.search(r"CURRENT_PROJECT_VERSION:\s*24", project):
-        fail("CURRENT_PROJECT_VERSION must be 24")
-    if not re.search(r"MARKETING_VERSION:\s*1\.2\.10", project):
-        fail("MARKETING_VERSION must be 1.2.10")
+    if "CortexSplashIntro.mp4" in project or "SplashIntro.html" in project:
+        fail("project.yml still includes a legacy splash runtime resource")
+    if not re.search(r"CURRENT_PROJECT_VERSION:\s*25", project):
+        fail("CURRENT_PROJECT_VERSION must be 25")
+    if not re.search(r"MARKETING_VERSION:\s*1\.2\.11", project):
+        fail("MARKETING_VERSION must be 1.2.11")
 
     launch_manifest = json.loads((LAUNCH_MARK / "Contents.json").read_text(encoding="utf-8"))
     launch_expected = {
@@ -225,8 +212,8 @@ def main() -> int:
         verify_png(LAUNCH_MARK / filename, size, require_alpha=True)
 
     print(
-        "Verified native AVFoundation splash: full 1.75 s playback gated by the real movie end, "
-        "duration-safe fallback, no HTML, and no WebKit."
+        "Verified fully native SwiftUI splash: exact frame geometry and timing, "
+        "vector assets, no movie, no HTML, no WebKit, and no AVFoundation."
     )
     return 0
 

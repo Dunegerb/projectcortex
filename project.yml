@@ -18,8 +18,8 @@ settings:
     SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
     SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
     SUPPORTS_MACCATALYST: NO
-    CURRENT_PROJECT_VERSION: 24
-    MARKETING_VERSION: 1.2.10
+    CURRENT_PROJECT_VERSION: 25
+    MARKETING_VERSION: 1.2.11
     DEVELOPMENT_TEAM: ${CORTEX_TEAM_ID}
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     CORTEX_APP_GROUP: ${CORTEX_APP_GROUP}
@@ -53,10 +53,6 @@ targets:
         type: file
         buildPhase: resources
         group: CortexApp/Resources
-      - path: CortexApp/Resources/Launch/CortexSplashIntro.mp4
-        type: file
-        buildPhase: resources
-        group: CortexApp/Resources/Launch
     postBuildScripts:
       - name: Install Kundalini runtime resources
         script: |

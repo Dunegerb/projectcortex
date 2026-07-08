@@ -71,7 +71,7 @@ fi
 "$ROOT/Scripts/install_app_icon_fallback.sh" "$APP_PATH"
 "$ROOT/Scripts/compile_asset_catalog.sh" "$APP_PATH"
 
-for resource in ChakraExperience.html personkundalini.svg CortexSplashIntro.mp4; do
+for resource in ChakraExperience.html personkundalini.svg; do
   if [[ ! -s "$APP_PATH/$resource" ]]; then
     echo "Erro: recurso de runtime ausente no bundle final: $resource" >&2
     exit 1

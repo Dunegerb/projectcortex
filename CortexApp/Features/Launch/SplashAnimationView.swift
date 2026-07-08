@@ -1,71 +1,74 @@
-import AVFoundation
 import SwiftUI
-import UIKit
 
-/// Native startup presentation. The approved browser animation is rendered
-/// offline into a short, silent H.264 asset and played by AVFoundation. No
-/// HTML, JavaScript, network access, or WebKit process is used at runtime.
+/// Fully native Cortex startup animation.
 ///
-/// The splash is intentionally not shortened when the app finishes loading
-/// quickly: the Home screen is released only after the movie reaches its real
-/// end. Accessibility Reduce Motion does not bypass this branded intro.
+/// The implementation mirrors the approved 375 × 812 reference in a
+/// 739 × 1600 design space. Every moving property uses the same 800 ms
+/// cubic timing curve after a 900 ms initial hold. The view contains no
+/// movie, HTML, JavaScript, WebKit, network access, or runtime decoding.
 struct SplashAnimationView: View {
+    private enum Timing {
+        static let initialHoldNanoseconds: UInt64 = 900_000_000
+        static let transitionNanoseconds: UInt64 = 800_000_000
+        static let finalHoldNanoseconds: UInt64 = 50_000_000
+        static let transition = Animation.timingCurve(1, 0.01, 0, 0.99, duration: 0.8)
+    }
+
+    @State private var isFrame2 = false
+    @State private var didStart = false
     @State private var didFinish = false
-    @State private var isUsingFallback = false
-    @State private var fallbackShowsFinalFrame = false
 
     let onFinished: () -> Void
 
     var body: some View {
-        ZStack {
-            Color.black
+        GeometryReader { proxy in
+            let viewportScale = min(proxy.size.width / 375, proxy.size.height / 812)
+            let viewportWidth = 375 * viewportScale
+            let viewportHeight = 812 * viewportScale
+            let viewportX = (proxy.size.width - viewportWidth) / 2
+            let viewportY = (proxy.size.height - viewportHeight) / 2
 
-            Image("SplashFirstFrame")
-                .resizable()
-                .interpolation(.high)
-                .aspectRatio(375.0 / 812.0, contentMode: .fit)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ZStack(alignment: .topLeading) {
+                Color.black
 
-            if isUsingFallback {
-                Image("SplashFinalFrame")
-                    .resizable()
-                    .interpolation(.high)
-                    .aspectRatio(375.0 / 812.0, contentMode: .fit)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .opacity(fallbackShowsFinalFrame ? 1 : 0)
-            } else {
-                CortexSplashVideoPlayer(
-                    onFinished: finishOnce,
-                    onPlaybackFailure: beginFallback
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                SplashDesignSpace(isFrame2: isFrame2)
+                    .frame(width: 739, height: 1600, alignment: .topLeading)
+                    .scaleEffect(
+                        x: 0.5074424899 * viewportScale,
+                        y: 0.5075 * viewportScale,
+                        anchor: .topLeading
+                    )
+                    .offset(x: viewportX, y: viewportY)
             }
+            .frame(width: proxy.size.width, height: proxy.size.height)
+            .clipped()
         }
         .background(Color.black)
         .ignoresSafeArea()
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+        .task {
+            await runAnimationOnce()
+        }
     }
 
-    /// A defensive native fallback used only if iOS cannot decode the bundled
-    /// movie. It preserves the same 900 ms hold + 800 ms transition duration,
-    /// so a resource failure can never collapse the splash to a few ms.
     @MainActor
-    private func beginFallback() {
-        guard !didFinish, !isUsingFallback else { return }
-        isUsingFallback = true
-        fallbackShowsFinalFrame = false
+    private func runAnimationOnce() async {
+        guard !didStart else { return }
+        didStart = true
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
-            guard !didFinish else { return }
-            withAnimation(.timingCurve(1, 0.01, 0, 0.99, duration: 0.8)) {
-                fallbackShowsFinalFrame = true
-            }
+        try? await Task.sleep(nanoseconds: Timing.initialHoldNanoseconds)
+        guard !Task.isCancelled else { return }
+
+        withAnimation(Timing.transition) {
+            isFrame2 = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.75) {
-            finishOnce()
-        }
+        try? await Task.sleep(
+            nanoseconds: Timing.transitionNanoseconds + Timing.finalHoldNanoseconds
+        )
+        guard !Task.isCancelled else { return }
+        finishOnce()
     }
 
     @MainActor
@@ -76,270 +79,219 @@ struct SplashAnimationView: View {
     }
 }
 
-private struct CortexSplashVideoPlayer: UIViewRepresentable {
-    let onFinished: @MainActor () -> Void
-    let onPlaybackFailure: @MainActor () -> Void
+private struct SplashDesignSpace: View {
+    let isFrame2: Bool
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(
-            onFinished: onFinished,
-            onPlaybackFailure: onPlaybackFailure
-        )
-    }
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            Color.black
+                .frame(width: 739, height: 1600)
 
-    func makeUIView(context: Context) -> SplashPlayerView {
-        let view = SplashPlayerView()
-        context.coordinator.start(in: view)
-        return view
-    }
-
-    func updateUIView(_ uiView: SplashPlayerView, context: Context) {}
-
-    static func dismantleUIView(_ uiView: SplashPlayerView, coordinator: Coordinator) {
-        coordinator.stop()
-        uiView.playerLayer.player = nil
-    }
-
-    final class Coordinator: NSObject {
-        private let onFinished: @MainActor () -> Void
-        private let onPlaybackFailure: @MainActor () -> Void
-
-        private var player: AVPlayer?
-        private var playerItem: AVPlayerItem?
-        private var itemStatusObservation: NSKeyValueObservation?
-        private var displayObservation: NSKeyValueObservation?
-        private var endObserver: NSObjectProtocol?
-        private var failureObserver: NSObjectProtocol?
-        private var preparationWatchdog: DispatchWorkItem?
-        private var playbackWatchdog: DispatchWorkItem?
-
-        private var didStartPlayback = false
-        private var didPresentVideoFrame = false
-        private var didReachMovieEnd = false
-        private var isResolved = false
-
-        init(
-            onFinished: @escaping @MainActor () -> Void,
-            onPlaybackFailure: @escaping @MainActor () -> Void
-        ) {
-            self.onFinished = onFinished
-            self.onPlaybackFailure = onPlaybackFailure
-        }
-
-        func start(in view: SplashPlayerView) {
-            guard let videoURL = Bundle.main.url(
-                forResource: "CortexSplashIntro",
-                withExtension: "mp4"
-            ) else {
-                assertionFailure("CortexSplashIntro.mp4 não foi incluído no bundle.")
-                resolveAsFailure()
-                return
-            }
-
-            let asset = AVURLAsset(
-                url: videoURL,
-                options: [AVURLAssetPreferPreciseDurationAndTimingKey: true]
+            sceneLight(
+                start: SplashRect(x: 173, y: 680, width: 33, height: 59.627),
+                end: SplashRect(x: 479, y: 696, width: 82, height: 62)
             )
-            let item = AVPlayerItem(asset: asset)
-            item.preferredForwardBufferDuration = 0
-            playerItem = item
 
-            let player = AVPlayer(playerItem: item)
-            player.actionAtItemEnd = .pause
-            player.automaticallyWaitsToMinimizeStalling = true
-            player.isMuted = true
-            player.preventsDisplaySleepDuringVideoPlayback = false
-            self.player = player
+            sceneLight(
+                start: SplashRect(x: 173, y: 821.373, width: 33, height: 59.627),
+                end: SplashRect(x: 479, y: 843, width: 82, height: 62)
+            )
 
-            view.playerLayer.player = player
-            view.playerLayer.videoGravity = .resizeAspect
-            view.playerLayer.backgroundColor = UIColor.clear.cgColor
-            view.playerLayer.isHidden = true
+            SplashGlassLens(isFrame2: isFrame2)
+                .frame(width: 442, height: 298)
+                .position(x: 149 + 221, y: 651 + 149)
 
-            displayObservation = view.playerLayer.observe(
-                \.isReadyForDisplay,
-                options: [.initial, .new]
-            ) { [weak self, weak view] layer, _ in
-                guard layer.isReadyForDisplay else { return }
-                DispatchQueue.main.async {
-                    guard let self, !self.isResolved else { return }
-                    self.didPresentVideoFrame = true
-                    view?.playerLayer.isHidden = false
-                    self.finishOnlyAfterRealMovieEnd()
-                }
-            }
+            SplashCrossfadeLogo(
+                isFrame2: isFrame2,
+                startAsset: "SplashIconLogoStart",
+                endAsset: "SplashIconLogoEnd",
+                start: SplashRect(x: 337, y: 774, width: 66, height: 53),
+                end: SplashRect(x: 288, y: 735, width: 164, height: 131)
+            )
 
-            itemStatusObservation = item.observe(
-                \.status,
-                options: [.initial, .new]
-            ) { [weak self] item, _ in
-                DispatchQueue.main.async {
-                    guard let self, !self.isResolved else { return }
-                    switch item.status {
-                    case .readyToPlay:
-                        self.preparationWatchdog?.cancel()
-                        self.preparationWatchdog = nil
-                        self.seekToBeginningAndPlay()
-                    case .failed:
-                        self.resolveAsFailure()
-                    default:
-                        break
-                    }
-                }
-            }
-
-            endObserver = NotificationCenter.default.addObserver(
-                forName: .AVPlayerItemDidPlayToEndTime,
-                object: item,
-                queue: .main
-            ) { [weak self] _ in
-                self?.handleMovieEnd()
-            }
-
-            failureObserver = NotificationCenter.default.addObserver(
-                forName: .AVPlayerItemFailedToPlayToEndTime,
-                object: item,
-                queue: .main
-            ) { [weak self] _ in
-                self?.resolveAsFailure()
-            }
-
-            let watchdog = DispatchWorkItem { [weak self] in
-                self?.resolveAsFailure()
-            }
-            preparationWatchdog = watchdog
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: watchdog)
+            SplashCrossfadeLogo(
+                isFrame2: isFrame2,
+                startAsset: "SplashTextLogoStart",
+                endAsset: "SplashTextLogoEnd",
+                start: SplashRect(x: 304, y: 756, width: 131, height: 88),
+                end: SplashRect(x: 355, y: 790, width: 29, height: 19)
+            )
         }
+        .frame(width: 739, height: 1600, alignment: .topLeading)
+        .compositingGroup()
+    }
 
-        func stop() {
-            guard !isResolved else {
-                cleanup()
-                return
-            }
-            isResolved = true
-            cleanup()
-        }
+    private func sceneLight(start: SplashRect, end: SplashRect) -> some View {
+        let rect = isFrame2 ? end : start
 
-        private func seekToBeginningAndPlay() {
-            guard !didStartPlayback, let player else { return }
-            didStartPlayback = true
-
-            player.seek(
-                to: .zero,
-                toleranceBefore: .zero,
-                toleranceAfter: .zero
-            ) { [weak self] completed in
-                DispatchQueue.main.async {
-                    guard let self, !self.isResolved else { return }
-                    guard completed else {
-                        self.resolveAsFailure()
-                        return
-                    }
-
-                    player.playImmediately(atRate: 1)
-
-                    // This is a stall watchdog, never a normal completion path.
-                    // The splash is completed only by AVPlayerItemDidPlayToEndTime.
-                    let watchdog = DispatchWorkItem { [weak self] in
-                        self?.resolveAsFailure()
-                    }
-                    self.playbackWatchdog = watchdog
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: watchdog)
-                }
-            }
-        }
-
-        private func handleMovieEnd() {
-            guard !isResolved, let item = playerItem else { return }
-
-            let currentSeconds = item.currentTime().seconds
-            let durationSeconds = item.duration.seconds
-            let hasValidTimes = currentSeconds.isFinite && durationSeconds.isFinite && durationSeconds > 0
-
-            // Never trust an early notification. If the item did not actually
-            // reach its final timestamp, restart once from frame zero instead
-            // of exposing the Home screen prematurely.
-            if hasValidTimes, currentSeconds + 0.025 < durationSeconds {
-                didStartPlayback = false
-                seekToBeginningAndPlay()
-                return
-            }
-
-            didReachMovieEnd = true
-            finishOnlyAfterRealMovieEnd()
-        }
-
-        private func finishOnlyAfterRealMovieEnd() {
-            guard didReachMovieEnd, didPresentVideoFrame else { return }
-            resolveAsSuccess()
-        }
-
-        private func resolveAsSuccess() {
-            guard !isResolved else { return }
-            isResolved = true
-            cleanup()
-            Task { @MainActor [onFinished] in
-                onFinished()
-            }
-        }
-
-        private func resolveAsFailure() {
-            guard !isResolved else { return }
-            isResolved = true
-            cleanup()
-            Task { @MainActor [onPlaybackFailure] in
-                onPlaybackFailure()
-            }
-        }
-
-        private func cleanup() {
-            preparationWatchdog?.cancel()
-            preparationWatchdog = nil
-            playbackWatchdog?.cancel()
-            playbackWatchdog = nil
-
-            player?.pause()
-            player = nil
-            playerItem = nil
-            itemStatusObservation = nil
-            displayObservation = nil
-
-            if let endObserver {
-                NotificationCenter.default.removeObserver(endObserver)
-                self.endObserver = nil
-            }
-            if let failureObserver {
-                NotificationCenter.default.removeObserver(failureObserver)
-                self.failureObserver = nil
-            }
-        }
-
-        deinit {
-            cleanup()
-        }
+        return Rectangle()
+            .fill(Color(red: 49 / 255, green: 49 / 255, blue: 49 / 255))
+            .frame(width: rect.width, height: rect.height)
+            .blur(radius: 23.4, opaque: false)
+            .position(x: rect.centerX, y: rect.centerY)
     }
 }
 
-private final class SplashPlayerView: UIView {
-    override class var layerClass: AnyClass {
-        AVPlayerLayer.self
+private struct SplashGlassLens: View {
+    let isFrame2: Bool
+
+    var body: some View {
+        ZStack {
+            refractedLights
+                .distortionEffect(
+                    ShaderLibrary.cortexLiquidWarp(),
+                    maxSampleOffset: CGSize(width: 9, height: 9)
+                )
+                .mask(glassMask)
+                .brightness(0.035)
+                .contrast(1.10)
+
+            Color(red: 241 / 255, green: 241 / 255, blue: 241 / 255)
+                .opacity(0.01)
+                .mask(glassMask)
+
+            LinearGradient(
+                colors: [
+                    Color.white.opacity(0.004),
+                    Color.black.opacity(0.12)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .mask(glassMask)
+
+            Image("SplashGlassOverlay")
+                .resizable()
+                .interpolation(.high)
+                .frame(width: 442, height: 298)
+                .shadow(color: Color.white.opacity(0.018), radius: 1.1, x: -0.4, y: -0.4)
+
+            // Directional −45° highlight, matching the reference's subtle
+            // distant specular light without using private layer filters.
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0.42),
+                    .init(color: Color.white.opacity(0.013), location: 0.68),
+                    .init(color: Color.white.opacity(0.045), location: 0.82),
+                    .init(color: .clear, location: 1)
+                ],
+                startPoint: .bottomLeading,
+                endPoint: .topTrailing
+            )
+            .mask(glassMask)
+            .opacity(0.2)
+        }
+        .frame(width: 442, height: 298)
     }
 
-    var playerLayer: AVPlayerLayer {
-        layer as! AVPlayerLayer
+    private var glassMask: some View {
+        Image("SplashGlassMask")
+            .resizable()
+            .interpolation(.high)
+            .frame(width: 442, height: 298)
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        isOpaque = false
-        isUserInteractionEnabled = false
+    private var refractedLights: some View {
+        ZStack(alignment: .topLeading) {
+            refractedLight(
+                start: SplashRect(x: 24, y: 29, width: 33, height: 59.627),
+                end: SplashRect(x: 330, y: 45, width: 82, height: 62)
+            )
+
+            refractedLight(
+                start: SplashRect(x: 24, y: 170.373, width: 33, height: 59.627),
+                end: SplashRect(x: 330, y: 192, width: 82, height: 62)
+            )
+
+            caustic(
+                start: SplashRect(x: 48, y: 25, width: 10, height: 70),
+                end: SplashRect(x: 397, y: 40, width: 10, height: 72),
+                startOpacity: 0.08,
+                endOpacity: 0.06
+            )
+
+            caustic(
+                start: SplashRect(x: 48, y: 166, width: 10, height: 70),
+                end: SplashRect(x: 397, y: 187, width: 10, height: 72),
+                startOpacity: 0.08,
+                endOpacity: 0.06
+            )
+        }
+        .frame(width: 442, height: 298, alignment: .topLeading)
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        backgroundColor = .clear
-        isOpaque = false
-        isUserInteractionEnabled = false
+    private func refractedLight(start: SplashRect, end: SplashRect) -> some View {
+        let rect = isFrame2 ? end : start
+        let base = Color(red: 49 / 255, green: 49 / 255, blue: 49 / 255)
+
+        return ZStack {
+            Rectangle()
+                .fill(base)
+
+            // Small native chromatic offsets reproduce the nearly invisible
+            // dispersion in the approved SVG while keeping the material dark.
+            Rectangle()
+                .fill(Color(red: 138 / 255, green: 216 / 255, blue: 1).opacity(0.02))
+                .offset(x: 0.45, y: -0.25)
+
+            Rectangle()
+                .fill(Color(red: 1, green: 159 / 255, blue: 207 / 255).opacity(0.014))
+                .offset(x: -0.4, y: 0.28)
+        }
+        .frame(width: rect.width, height: rect.height)
+        .blur(radius: 23.4, opaque: false)
+        .position(x: rect.centerX, y: rect.centerY)
     }
+
+    private func caustic(
+        start: SplashRect,
+        end: SplashRect,
+        startOpacity: Double,
+        endOpacity: Double
+    ) -> some View {
+        let rect = isFrame2 ? end : start
+
+        return Capsule()
+            .fill(Color.white.opacity(0.025))
+            .frame(width: rect.width, height: rect.height)
+            .blur(radius: 6, opaque: false)
+            .opacity(isFrame2 ? endOpacity : startOpacity)
+            .position(x: rect.centerX, y: rect.centerY)
+    }
+}
+
+private struct SplashCrossfadeLogo: View {
+    let isFrame2: Bool
+    let startAsset: String
+    let endAsset: String
+    let start: SplashRect
+    let end: SplashRect
+
+    var body: some View {
+        let rect = isFrame2 ? end : start
+
+        ZStack {
+            Image(startAsset)
+                .resizable()
+                .interpolation(.high)
+                .opacity(isFrame2 ? 0 : 1)
+
+            Image(endAsset)
+                .resizable()
+                .interpolation(.high)
+                .opacity(isFrame2 ? 1 : 0)
+        }
+        .frame(width: rect.width, height: rect.height)
+        .position(x: rect.centerX, y: rect.centerY)
+    }
+}
+
+private struct SplashRect {
+    let x: CGFloat
+    let y: CGFloat
+    let width: CGFloat
+    let height: CGFloat
+
+    var centerX: CGFloat { x + width / 2 }
+    var centerY: CGFloat { y + height / 2 }
 }

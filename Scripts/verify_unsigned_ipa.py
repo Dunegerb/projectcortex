@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import plistlib
 import stat
 import sys
@@ -113,11 +112,16 @@ def main() -> int:
             required_resources = (
                 "ChakraExperience.html",
                 "personkundalini.svg",
-                "CortexSplashIntro.mp4",
             )
-            legacy_splash_path = str(app_dir / "SplashIntro.html")
-            if legacy_splash_path in names:
-                raise ValueError("Legacy SplashIntro.html must not be present in the IPA")
+            forbidden_splash_resources = (
+                str(app_dir / "SplashIntro.html"),
+                str(app_dir / "CortexSplashIntro.mp4"),
+            )
+            for forbidden_path in forbidden_splash_resources:
+                if forbidden_path in names:
+                    raise ValueError(
+                        f"Legacy splash runtime resource must not be present in the IPA: {forbidden_path}"
+                    )
             for resource in required_resources:
                 resource_path = str(app_dir / resource)
                 resource_info = next(
@@ -130,11 +134,6 @@ def main() -> int:
                     )
                 if resource_info.file_size <= 0:
                     raise ValueError(f"Required runtime resource is empty: {resource_path}")
-                if resource == "CortexSplashIntro.mp4":
-                    digest = hashlib.sha256(archive.read(resource_info)).hexdigest()
-                    expected = "a34b17c4f76faadae9a7030994a7b140e4af20ccd4c39e9bc7e14a3a84f5d3ae"
-                    if digest != expected:
-                        raise ValueError("CortexSplashIntro.mp4 differs from the approved render")
 
         print(f"Verified: {args.ipa}")
         return 0
