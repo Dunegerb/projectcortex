@@ -21,15 +21,21 @@ static float cortexSmoothNoise(float2 point, float seed) {
 }
 
 /// Native equivalent of the SVG feTurbulence + feDisplacementMap lens warp.
-/// The frequencies, seed and 17-point displacement scale come directly from
-/// the approved reference animation.
-[[ stitchable ]] float2 cortexLiquidWarp(float2 position) {
+/// `position` arrives in screen points, so it is converted back to the 739 ×
+/// 1600 design coordinate system before sampling the approved frequencies.
+[[ stitchable ]] float2 cortexLiquidWarp(
+    float2 position,
+    float scaleX,
+    float scaleY
+) {
+    float2 designScale = max(float2(scaleX, scaleY), float2(0.0001));
+    float2 designPosition = position / designScale;
     float2 frequency = float2(0.008, 0.024);
-    float2 samplePoint = position * frequency;
+    float2 samplePoint = designPosition * frequency;
 
     float redNoise = cortexSmoothNoise(samplePoint, 17.0);
     float greenNoise = cortexSmoothNoise(samplePoint + float2(37.2, 19.4), 17.0);
-    float2 displacement = (float2(redNoise, greenNoise) - 0.5) * 17.0;
+    float2 designDisplacement = (float2(redNoise, greenNoise) - 0.5) * 17.0;
 
-    return position + displacement;
+    return position + designDisplacement * designScale;
 }

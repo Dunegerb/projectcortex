@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.12 (build 26)
+
+- Corrige o salto da composição da splash para o canto superior esquerdo após a saída do Launch Screen.
+- Remove `compositingGroup()`, `scaleEffect()` e `position()` da árvore da animação, evitando o rebase das camadas pelo compositor do iOS.
+- Converte todas as coordenadas do espaço 739 × 1600 diretamente para a viewport e posiciona cada camada com `frame + offset`.
+- Substitui os SVGs de runtime por assets PNG transparentes em 1x, 2x e 3x; os SVGs originais continuam preservados apenas como fonte de design.
+- Torna o shader de refração consciente da escala da tela para manter frequência e deslocamento equivalentes à referência.
+- Mantém integralmente 900 ms do frame inicial, 800 ms da transição e 50 ms do frame final.
+
 ## 1.2.11 (build 25)
 
 - Remove completamente o filme `CortexSplashIntro.mp4` e toda dependência de `AVFoundation` da abertura.

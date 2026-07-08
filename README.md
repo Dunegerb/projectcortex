@@ -125,9 +125,9 @@ O ícone do Cortex já está dentro do catálogo `CortexAppIcon.appiconset` e us
 
 Na versão 1.2.6, o nome interno do catálogo e dos PNGs fallback foi renovado para invalidar o cache do ícone antigo nas notificações. Notificações já existentes podem manter a miniatura anterior; as novas usam a logo atual após instalar o novo build.
 
-## Animação de entrada 1.2.11
+## Animação de entrada 1.2.12
 
-A abertura é reconstruída diretamente em SwiftUI, sem vídeo, HTML, JavaScript, `WKWebView` ou `AVPlayer`. Os logotipos e a geometria do vidro são vetores compilados no catálogo de assets; luzes, blur, máscara, refração por shader Metal, caustics, posições, escalas e crossfades são animados nativamente no espaço original de 739 × 1600. A sequência mantém 900 ms no frame inicial, 800 ms de transição com `cubic-bezier(1, .01, 0, .99)` e 50 ms no frame final antes de liberar a Home.
+A abertura é reconstruída diretamente em SwiftUI, sem vídeo, HTML, JavaScript, `WKWebView` ou `AVPlayer`. Para impedir que o compositor do iOS reposicione as camadas no canto superior esquerdo, a implementação não escala nem achata a cena inteira: cada retângulo do espaço de design 739 × 1600 é convertido para coordenadas reais da viewport e colocado com `frame + offset`. Os SVGs fornecidos permanecem como fonte de design, enquanto o runtime usa assets Retina transparentes em 1x, 2x e 3x. Luzes, blur, máscara, refração Metal, caustics e crossfades continuam nativos. A sequência mantém 900 ms no frame inicial, 800 ms de transição com `cubic-bezier(1, .01, 0, .99)` e 50 ms no frame final antes de liberar a Home.
 
 ### App Icon 1.1.7
 O build agora valida o catálogo compilado (`Assets.car`), os metadados do `Info.plist` e os PNGs fallback no bundle final. Para atualizar o ícone no iPhone, remova a instalação anterior antes de instalar a nova IPA, evitando o cache antigo do SpringBoard.
