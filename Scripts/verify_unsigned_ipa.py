@@ -112,6 +112,7 @@ def main() -> int:
             required_resources = (
                 "ChakraExperience.html",
                 "personkundalini.svg",
+                "SplashIntro.html",
             )
             for resource in required_resources:
                 resource_path = str(app_dir / resource)
@@ -121,10 +122,10 @@ def main() -> int:
                 )
                 if resource_info is None:
                     raise ValueError(
-                        f"Required Kundalini resource is missing from the main app bundle: {resource_path}"
+                        f"Required runtime resource is missing from the main app bundle: {resource_path}"
                     )
                 if resource_info.file_size <= 0:
-                    raise ValueError(f"Required Kundalini resource is empty: {resource_path}")
+                    raise ValueError(f"Required runtime resource is empty: {resource_path}")
 
         print(f"Verified: {args.ipa}")
         return 0

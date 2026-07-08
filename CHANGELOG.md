@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.8 (build 22)
+
+- Substitui a aproximação nativa anterior pela animação HTML/CSS fornecida, preservada byte a byte em `SplashIntro.html`.
+- Renderiza a abertura dentro de um `WKWebView` local para manter exatamente as máscaras, filtros SVG, refração, blur, posições e escalas da referência.
+- Mantém o frame inicial por 900 ms e executa a transição principal em 800 ms com `cubic-bezier(1, .01, 0, .99)`.
+- Remove a tela de entrada somente após o evento real `transitionend`, sem estimar o término da animação pelo código Swift.
+- Desativa interação no loader para impedir replay acidental dentro do aplicativo.
+- Atualiza o Launch Screen com um recorte renderizado do frame 1, evitando o flash branco da implementação anterior.
+
 ## 1.2.7 (build 21)
 
 - Adiciona uma nova animação nativa de entrada baseada nos dois frames SVG fornecidos.

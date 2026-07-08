@@ -214,6 +214,7 @@ CortexApp/Resources/DesignSource/goodmorning+name.svg
 CortexApp/Resources/DesignSource/recoverytime.svg
 CortexApp/Resources/DesignSource/shieldbutton.svg
 CortexApp/Resources/PrivacyInfo.xcprivacy
+CortexApp/Resources/SplashIntro.html
 CortexApp/Resources/personkundalini.svg
 CortexApp/Theme/CortexTheme.swift
 CortexTests/ManifestoGeneratorTests.swift

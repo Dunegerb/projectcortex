@@ -18,8 +18,8 @@ settings:
     SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
     SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: NO
     SUPPORTS_MACCATALYST: NO
-    CURRENT_PROJECT_VERSION: 21
-    MARKETING_VERSION: 1.2.7
+    CURRENT_PROJECT_VERSION: 22
+    MARKETING_VERSION: 1.2.8
     DEVELOPMENT_TEAM: ${CORTEX_TEAM_ID}
     ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     CORTEX_APP_GROUP: ${CORTEX_APP_GROUP}
@@ -50,6 +50,10 @@ targets:
         buildPhase: resources
         group: CortexApp/Resources
       - path: CortexApp/Resources/PrivacyInfo.xcprivacy
+        type: file
+        buildPhase: resources
+        group: CortexApp/Resources
+      - path: CortexApp/Resources/SplashIntro.html
         type: file
         buildPhase: resources
         group: CortexApp/Resources

@@ -12,6 +12,8 @@ if 'Assets.xcassets' not in text:
     raise SystemExit('project verification failed: Assets.xcassets is absent from the generated project')
 if 'Assets.xcassets in Resources' not in text:
     raise SystemExit('project verification failed: Assets.xcassets is not in Copy Bundle Resources')
+if 'SplashIntro.html in Resources' not in text:
+    raise SystemExit('project verification failed: SplashIntro.html is not in Copy Bundle Resources')
 if 'ASSETCATALOG_COMPILER_APPICON_NAME = CortexAppIcon' not in text and 'ASSETCATALOG_COMPILER_APPICON_NAME = "CortexAppIcon"' not in text:
     raise SystemExit('project verification failed: CortexAppIcon build setting is absent')
 
