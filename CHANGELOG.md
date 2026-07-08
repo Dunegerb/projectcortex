@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.10 (build 24)
+
+- Impede que a tela de entrada seja encerrada em milissegundos quando o iPhone está com Reduzir Movimento ativo.
+- Remove qualquer caminho normal de conclusão baseado em atraso curto ou timeout iniciado antes do vídeo estar pronto.
+- Libera a Home somente após `AVPlayerItemDidPlayToEndTime` confirmar que o filme chegou ao timestamp final real.
+- Mantém a splash sobre a interface já carregada até os 900 ms iniciais, 800 ms de transição e os frames finais terminarem.
+- Adiciona uma proteção contra notificações prematuras de término e um fallback nativo com duração completa caso o MP4 não possa ser decodificado.
+
 ## 1.2.9 (build 23)
 
 - Remove completamente `SplashIntro.html`, JavaScript e `WKWebView` da animação de abertura.

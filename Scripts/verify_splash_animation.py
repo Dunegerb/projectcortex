@@ -164,10 +164,17 @@ def main() -> int:
         "AVPlayerLayer.self",
         'forResource: "CortexSplashIntro"',
         'withExtension: "mp4"',
-        "automaticallyWaitsToMinimizeStalling = false",
+        "automaticallyWaitsToMinimizeStalling = true",
         "playImmediately(atRate: 1)",
         ".AVPlayerItemDidPlayToEndTime",
-        'Image(reduceMotion ? "SplashFinalFrame" : "SplashFirstFrame")',
+        'Image("SplashFirstFrame")',
+        'Image("SplashFinalFrame")',
+        "finishOnlyAfterRealMovieEnd",
+        "currentSeconds + 0.025 < durationSeconds",
+        "onPlaybackFailure: beginFallback",
+        ".now() + 0.9",
+        ".now() + 1.75",
+        ".timingCurve(1, 0.01, 0, 0.99, duration: 0.8)",
         ".resizeAspect",
         "isMuted = true",
     ):
@@ -181,6 +188,10 @@ def main() -> int:
         "evaluateJavaScript",
         "SplashIntro.html",
         "transitionend",
+        "accessibilityReduceMotion",
+        ".now() + 0.08",
+        ".now() + 0.12",
+        "finishAfterFallbackDelay",
     ):
         if forbidden in swift:
             fail(f"WebKit/HTML splash code still present: {forbidden}")
@@ -196,10 +207,10 @@ def main() -> int:
     require(project, "CortexApp/Resources/Launch/CortexSplashIntro.mp4", "project.yml")
     if "CortexApp/Resources/SplashIntro.html" in project:
         fail("project.yml still copies SplashIntro.html")
-    if not re.search(r"CURRENT_PROJECT_VERSION:\s*23", project):
-        fail("CURRENT_PROJECT_VERSION must be 23")
-    if not re.search(r"MARKETING_VERSION:\s*1\.2\.9", project):
-        fail("MARKETING_VERSION must be 1.2.9")
+    if not re.search(r"CURRENT_PROJECT_VERSION:\s*24", project):
+        fail("CURRENT_PROJECT_VERSION must be 24")
+    if not re.search(r"MARKETING_VERSION:\s*1\.2\.10", project):
+        fail("MARKETING_VERSION must be 1.2.10")
 
     launch_manifest = json.loads((LAUNCH_MARK / "Contents.json").read_text(encoding="utf-8"))
     launch_expected = {
@@ -214,8 +225,8 @@ def main() -> int:
         verify_png(LAUNCH_MARK / filename, size, require_alpha=True)
 
     print(
-        "Verified native AVFoundation splash: exact 1.75 s H.264 render, "
-        "static continuity frames, no HTML, and no WebKit."
+        "Verified native AVFoundation splash: full 1.75 s playback gated by the real movie end, "
+        "duration-safe fallback, no HTML, and no WebKit."
     )
     return 0
 
