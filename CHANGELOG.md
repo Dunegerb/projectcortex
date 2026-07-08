@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.9 (build 23)
+
+- Remove completamente `SplashIntro.html`, JavaScript e `WKWebView` da animação de abertura.
+- Reproduz a referência aprovada em um filme H.264 silencioso de 60 fps, renderizado offline a partir dos estados e do easing exatos.
+- Executa a abertura nativamente com `AVPlayerLayer`, decodificação de vídeo por hardware e sem acesso à rede.
+- Mantém 900 ms do frame inicial, 800 ms de transição com `cubic-bezier(1, .01, 0, .99)` e dois frames finais antes de liberar a interface.
+- Adiciona frames estáticos 1x, 2x e 3x para continuidade visual e para a preferência Reduzir Movimento.
+- Atualiza os validadores do projeto e da IPA para exigir o MP4 aprovado e rejeitar qualquer regressão para HTML/WebKit no splash.
+
 ## 1.2.8 (build 22)
 
 - Substitui a aproximação nativa anterior pela animação HTML/CSS fornecida, preservada byte a byte em `SplashIntro.html`.

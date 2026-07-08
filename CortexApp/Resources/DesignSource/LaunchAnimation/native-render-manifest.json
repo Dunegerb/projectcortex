@@ -1,0 +1,29 @@
+{
+  "source_reference_sha256": "221d39b7e4231996d054f513fc79ab09d7e94e72c95f7305971dc96a78279292",
+  "runtime_asset": "CortexSplashIntro.mp4",
+  "runtime_asset_sha256": "a34b17c4f76faadae9a7030994a7b140e4af20ccd4c39e9bc7e14a3a84f5d3ae",
+  "codec": "H.264 High Profile",
+  "pixel_format": "yuv420p",
+  "dimensions": "750x1624",
+  "frame_rate": 60,
+  "frame_count": 105,
+  "duration_seconds": 1.75,
+  "timeline": {
+    "initial_hold_seconds": 0.9,
+    "transition_seconds": 0.8,
+    "final_paint_frames": 2
+  },
+  "easing": "cubic-bezier(1, 0.01, 0, 0.99)",
+  "runtime_engine": "AVFoundation",
+  "splash_contains_html_in_ipa": false,
+  "splash_contains_javascript_in_ipa": false,
+  "splash_uses_webkit": false,
+  "static_frame_hashes": {
+    "SplashFirstFrame.png": "9f56a1ec8d15b8b87a6095761608351ba06fe9f9cb2dca590cf6c5d38f44bb95",
+    "SplashFirstFrame@2x.png": "041f2c5bbc8af5c4f71e909da13a0907edf49e41d483648b066974649b0ac23d",
+    "SplashFirstFrame@3x.png": "7f003bea85a5f7064c7a230f58c8ff50fb40460d1301ca17fcec1776347b2a30",
+    "SplashFinalFrame.png": "b75696f78a668845ede22111bfe85e33609a53872d17746154945f079f744d77",
+    "SplashFinalFrame@2x.png": "e771ce6550bd7f026dc3277fb808fe34e2fea923fddadc84f62c2b2440e28253",
+    "SplashFinalFrame@3x.png": "d96c7c45e38ff3d92afe82498cbdfc78e58c47d1ef330b57367973cf5f0107ff"
+  }
+}

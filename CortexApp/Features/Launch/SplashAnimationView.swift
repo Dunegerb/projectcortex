@@ -1,10 +1,10 @@
+import AVFoundation
 import SwiftUI
-import WebKit
+import UIKit
 
-/// Hosts the approved HTML/CSS liquid-glass intro without translating its
-/// geometry or timing into SwiftUI. WKWebView is intentional here: it lets the
-/// IPA render the same masks, SVG filters, bezier curve and 739 × 1600 design
-/// space as the supplied browser reference.
+/// Native startup presentation. The approved browser animation is rendered
+/// offline into a short, silent H.264 asset and played by AVFoundation. No
+/// HTML, JavaScript, network access, or WebKit process is used at runtime.
 struct SplashAnimationView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var didFinish = false
@@ -12,13 +12,29 @@ struct SplashAnimationView: View {
     let onFinished: () -> Void
 
     var body: some View {
-        CortexSplashWebView(
-            reduceMotion: reduceMotion,
-            onAnimationFinished: finishOnce
-        )
+        ZStack {
+            Color.black
+
+            Image(reduceMotion ? "SplashFinalFrame" : "SplashFirstFrame")
+                .resizable()
+                .interpolation(.high)
+                .aspectRatio(375.0 / 812.0, contentMode: .fit)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            if !reduceMotion {
+                CortexSplashVideoPlayer(onFinished: finishOnce)
+            }
+        }
         .background(Color.black)
         .ignoresSafeArea()
+        .allowsHitTesting(false)
         .accessibilityHidden(true)
+        .onAppear {
+            guard reduceMotion else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                finishOnce()
+            }
+        }
     }
 
     @MainActor
@@ -29,152 +45,149 @@ struct SplashAnimationView: View {
     }
 }
 
-private struct CortexSplashWebView: UIViewRepresentable {
-    let reduceMotion: Bool
-    let onAnimationFinished: @MainActor () -> Void
+private struct CortexSplashVideoPlayer: UIViewRepresentable {
+    let onFinished: @MainActor () -> Void
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(onAnimationFinished: onAnimationFinished)
+        Coordinator(onFinished: onFinished)
     }
 
-    func makeUIView(context: Context) -> WKWebView {
-        let controller = WKUserContentController()
-        controller.add(context.coordinator, name: Coordinator.messageName)
-
-        let configuration = WKWebViewConfiguration()
-        configuration.userContentController = controller
-        configuration.suppressesIncrementalRendering = false
-
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.navigationDelegate = context.coordinator
-        webView.isOpaque = true
-        webView.backgroundColor = .black
-        webView.underPageBackgroundColor = .black
-        webView.isUserInteractionEnabled = false
-
-        webView.scrollView.backgroundColor = .black
-        webView.scrollView.isScrollEnabled = false
-        webView.scrollView.bounces = false
-        webView.scrollView.showsHorizontalScrollIndicator = false
-        webView.scrollView.showsVerticalScrollIndicator = false
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-
-        guard let sourceURL = Bundle.main.url(
-            forResource: "SplashIntro",
-            withExtension: "html"
-        ) else {
-            assertionFailure("SplashIntro.html não foi incluído no bundle.")
-            context.coordinator.finishAfterFallbackDelay()
-            return webView
-        }
-
-        var components = URLComponents(url: sourceURL, resolvingAgainstBaseURL: false)
-        if reduceMotion {
-            components?.queryItems = [URLQueryItem(name: "frame", value: "2")]
-        }
-
-        let loadURL = components?.url ?? sourceURL
-        webView.loadFileURL(
-            loadURL,
-            allowingReadAccessTo: sourceURL.deletingLastPathComponent()
-        )
-        return webView
+    func makeUIView(context: Context) -> SplashPlayerView {
+        let view = SplashPlayerView()
+        context.coordinator.start(in: view)
+        return view
     }
 
-    func updateUIView(_ webView: WKWebView, context: Context) {}
+    func updateUIView(_ uiView: SplashPlayerView, context: Context) {}
 
-    static func dismantleUIView(_ webView: WKWebView, coordinator: Coordinator) {
-        webView.stopLoading()
-        webView.navigationDelegate = nil
-        webView.configuration.userContentController.removeScriptMessageHandler(
-            forName: Coordinator.messageName
-        )
+    static func dismantleUIView(_ uiView: SplashPlayerView, coordinator: Coordinator) {
+        coordinator.stop()
+        uiView.playerLayer.player = nil
     }
 
-    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
-        static let messageName = "cortexSplash"
-
-        private let onAnimationFinished: @MainActor () -> Void
+    final class Coordinator: NSObject {
+        private let onFinished: @MainActor () -> Void
+        private var player: AVPlayer?
+        private var itemStatusObservation: NSKeyValueObservation?
+        private var displayObservation: NSKeyValueObservation?
+        private var endObserver: NSObjectProtocol?
+        private var failureObserver: NSObjectProtocol?
+        private var timeoutWorkItem: DispatchWorkItem?
         private var didFinish = false
 
-        init(onAnimationFinished: @escaping @MainActor () -> Void) {
-            self.onAnimationFinished = onAnimationFinished
+        init(onFinished: @escaping @MainActor () -> Void) {
+            self.onFinished = onFinished
         }
 
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            // This bridge observes the real CSS transition instead of estimating
-            // 900 ms + 800 ms in native code. It does not change any visual rule
-            // from SplashIntro.html. Two RAFs ensure frame 2 is painted before
-            // the overlay is removed.
-            let bridge = """
-            (() => {
-              if (window.__cortexNativeBridgeInstalled) return;
-              window.__cortexNativeBridgeInstalled = true;
+        func start(in view: SplashPlayerView) {
+            guard let videoURL = Bundle.main.url(
+                forResource: "CortexSplashIntro",
+                withExtension: "mp4"
+            ) else {
+                assertionFailure("CortexSplashIntro.mp4 não foi incluído no bundle.")
+                finishAfterFallbackDelay()
+                return
+            }
 
-              const postFinished = () => {
-                if (window.__cortexNativeFinished) return;
-                window.__cortexNativeFinished = true;
-                requestAnimationFrame(() => requestAnimationFrame(() => {
-                  window.webkit.messageHandlers.\(Self.messageName).postMessage('finished');
-                }));
-              };
+            let asset = AVURLAsset(
+                url: videoURL,
+                options: [AVURLAssetPreferPreciseDurationAndTimingKey: true]
+            )
+            let item = AVPlayerItem(asset: asset)
+            item.preferredForwardBufferDuration = 0
 
-              const loader = document.getElementById('loader');
-              const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-              const fixed = new URLSearchParams(location.search).get('frame');
+            let player = AVPlayer(playerItem: item)
+            player.actionAtItemEnd = .pause
+            player.automaticallyWaitsToMinimizeStalling = false
+            player.isMuted = true
+            self.player = player
 
-              if (fixed === '2' || reduced) {
-                requestAnimationFrame(() => requestAnimationFrame(postFinished));
-                return;
-              }
+            view.playerLayer.player = player
+            view.playerLayer.videoGravity = .resizeAspect
+            view.playerLayer.backgroundColor = UIColor.clear.cgColor
+            view.playerLayer.isHidden = true
 
-              const target = document.querySelector('.icon-logo');
-              if (target) {
-                target.addEventListener('transitionend', event => {
-                  if (event.propertyName === 'width' && loader?.classList.contains('is-frame-2')) {
-                    postFinished();
-                  }
-                }, { passive: true });
-              }
-
-              // Safety only: normal completion is driven by transitionend.
-              setTimeout(postFinished, 3500);
-            })();
-            """
-
-            webView.evaluateJavaScript(bridge) { [weak self] _, error in
-                if error != nil {
-                    self?.finishAfterFallbackDelay()
+            displayObservation = view.playerLayer.observe(
+                \.isReadyForDisplay,
+                options: [.initial, .new]
+            ) { [weak view] layer, _ in
+                guard layer.isReadyForDisplay else { return }
+                DispatchQueue.main.async {
+                    view?.playerLayer.isHidden = false
                 }
+            }
+
+            itemStatusObservation = item.observe(
+                \.status,
+                options: [.initial, .new]
+            ) { [weak self] item, _ in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    switch item.status {
+                    case .readyToPlay:
+                        self.player?.seek(
+                            to: .zero,
+                            toleranceBefore: .zero,
+                            toleranceAfter: .zero
+                        ) { [weak self] completed in
+                            guard completed else { return }
+                            DispatchQueue.main.async {
+                                self?.player?.playImmediately(atRate: 1)
+                            }
+                        }
+                    case .failed:
+                        self.finishAfterFallbackDelay()
+                    default:
+                        break
+                    }
+                }
+            }
+
+            endObserver = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemDidPlayToEndTime,
+                object: item,
+                queue: .main
+            ) { [weak self] _ in
+                // The movie contains the two final display frames from the
+                // approved reference before this notification is emitted.
+                self?.finishOnce()
+            }
+
+            failureObserver = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemFailedToPlayToEndTime,
+                object: item,
+                queue: .main
+            ) { [weak self] _ in
+                self?.finishAfterFallbackDelay()
+            }
+
+            let timeout = DispatchWorkItem { [weak self] in
+                self?.finishOnce()
+            }
+            timeoutWorkItem = timeout
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: timeout)
+        }
+
+        func stop() {
+            timeoutWorkItem?.cancel()
+            timeoutWorkItem = nil
+            player?.pause()
+            player = nil
+            itemStatusObservation = nil
+            displayObservation = nil
+
+            if let endObserver {
+                NotificationCenter.default.removeObserver(endObserver)
+                self.endObserver = nil
+            }
+            if let failureObserver {
+                NotificationCenter.default.removeObserver(failureObserver)
+                self.failureObserver = nil
             }
         }
 
-        func webView(
-            _ webView: WKWebView,
-            didFail navigation: WKNavigation!,
-            withError error: Error
-        ) {
-            finishAfterFallbackDelay()
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            didFailProvisionalNavigation navigation: WKNavigation!,
-            withError error: Error
-        ) {
-            finishAfterFallbackDelay()
-        }
-
-        func userContentController(
-            _ userContentController: WKUserContentController,
-            didReceive message: WKScriptMessage
-        ) {
-            guard message.name == Self.messageName else { return }
-            finishOnce()
-        }
-
-        func finishAfterFallbackDelay() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
+        private func finishAfterFallbackDelay() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in
                 self?.finishOnce()
             }
         }
@@ -182,9 +195,38 @@ private struct CortexSplashWebView: UIViewRepresentable {
         private func finishOnce() {
             guard !didFinish else { return }
             didFinish = true
-            Task { @MainActor [onAnimationFinished] in
-                onAnimationFinished()
+            stop()
+            Task { @MainActor [onFinished] in
+                onFinished()
             }
         }
+
+        deinit {
+            stop()
+        }
+    }
+}
+
+private final class SplashPlayerView: UIView {
+    override class var layerClass: AnyClass {
+        AVPlayerLayer.self
+    }
+
+    var playerLayer: AVPlayerLayer {
+        layer as! AVPlayerLayer
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        isOpaque = false
+        isUserInteractionEnabled = false
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        backgroundColor = .clear
+        isOpaque = false
+        isUserInteractionEnabled = false
     }
 }

@@ -154,12 +154,14 @@ CortexApp/Resources/Assets.xcassets/NavSettings.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/NavSettings.imageset/NavSettings.png
 CortexApp/Resources/Assets.xcassets/ShieldGlyph.imageset/Contents.json
 CortexApp/Resources/Assets.xcassets/ShieldGlyph.imageset/ShieldGlyph.png
-CortexApp/Resources/Assets.xcassets/SplashGlassLogoMask.imageset/Contents.json
-CortexApp/Resources/Assets.xcassets/SplashGlassLogoMask.imageset/SplashGlassLogoMask.svg
-CortexApp/Resources/Assets.xcassets/SplashIconLogo.imageset/Contents.json
-CortexApp/Resources/Assets.xcassets/SplashIconLogo.imageset/SplashIconLogo.svg
-CortexApp/Resources/Assets.xcassets/SplashTextLogo.imageset/Contents.json
-CortexApp/Resources/Assets.xcassets/SplashTextLogo.imageset/SplashTextLogo.svg
+CortexApp/Resources/Assets.xcassets/SplashFinalFrame.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/SplashFinalFrame.imageset/SplashFinalFrame.png
+CortexApp/Resources/Assets.xcassets/SplashFinalFrame.imageset/SplashFinalFrame@2x.png
+CortexApp/Resources/Assets.xcassets/SplashFinalFrame.imageset/SplashFinalFrame@3x.png
+CortexApp/Resources/Assets.xcassets/SplashFirstFrame.imageset/Contents.json
+CortexApp/Resources/Assets.xcassets/SplashFirstFrame.imageset/SplashFirstFrame.png
+CortexApp/Resources/Assets.xcassets/SplashFirstFrame.imageset/SplashFirstFrame@2x.png
+CortexApp/Resources/Assets.xcassets/SplashFirstFrame.imageset/SplashFirstFrame@3x.png
 CortexApp/Resources/ChakraExperience.html
 CortexApp/Resources/DesignSource/AppIcon/appleicone.svg
 CortexApp/Resources/DesignSource/Current-energy,_card.svg
@@ -192,6 +194,7 @@ CortexApp/Resources/DesignSource/LaunchAnimation/Frame2/textlogo.svg
 CortexApp/Resources/DesignSource/LaunchAnimation/README.md
 CortexApp/Resources/DesignSource/LaunchAnimation/frame-1-reference.svg
 CortexApp/Resources/DesignSource/LaunchAnimation/frame-2-reference.svg
+CortexApp/Resources/DesignSource/LaunchAnimation/native-render-manifest.json
 CortexApp/Resources/DesignSource/LightMode/Current-energy,_card.svg
 CortexApp/Resources/DesignSource/LightMode/Keep transmuting.svg
 CortexApp/Resources/DesignSource/LightMode/Rectangle 2.svg
@@ -213,8 +216,8 @@ CortexApp/Resources/DesignSource/goal-card.svg
 CortexApp/Resources/DesignSource/goodmorning+name.svg
 CortexApp/Resources/DesignSource/recoverytime.svg
 CortexApp/Resources/DesignSource/shieldbutton.svg
+CortexApp/Resources/Launch/CortexSplashIntro.mp4
 CortexApp/Resources/PrivacyInfo.xcprivacy
-CortexApp/Resources/SplashIntro.html
 CortexApp/Resources/personkundalini.svg
 CortexApp/Theme/CortexTheme.swift
 CortexTests/ManifestoGeneratorTests.swift

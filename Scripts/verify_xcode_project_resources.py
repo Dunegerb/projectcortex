@@ -12,9 +12,9 @@ if 'Assets.xcassets' not in text:
     raise SystemExit('project verification failed: Assets.xcassets is absent from the generated project')
 if 'Assets.xcassets in Resources' not in text:
     raise SystemExit('project verification failed: Assets.xcassets is not in Copy Bundle Resources')
-if 'SplashIntro.html in Resources' not in text:
-    raise SystemExit('project verification failed: SplashIntro.html is not in Copy Bundle Resources')
+if 'CortexSplashIntro.mp4 in Resources' not in text:
+    raise SystemExit('project verification failed: CortexSplashIntro.mp4 is not in Copy Bundle Resources')
 if 'ASSETCATALOG_COMPILER_APPICON_NAME = CortexAppIcon' not in text and 'ASSETCATALOG_COMPILER_APPICON_NAME = "CortexAppIcon"' not in text:
     raise SystemExit('project verification failed: CortexAppIcon build setting is absent')
 
-print('Verified generated Xcode project: Assets.xcassets is in Copy Bundle Resources.')
+print('Verified generated Xcode project: assets and native splash movie are in Copy Bundle Resources.')
