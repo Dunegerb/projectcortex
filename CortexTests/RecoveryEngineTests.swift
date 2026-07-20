@@ -28,9 +28,100 @@ final class RecoveryEngineTests: XCTestCase {
             calendar: calendar
         )
 
-        XCTAssertEqual(snapshot.currentDay, 11)
-        XCTAssertEqual(snapshot.currentStreak, 11)
+        XCTAssertEqual(snapshot.currentDay, 10)
+        XCTAssertEqual(snapshot.currentStreak, 10)
         XCTAssertEqual(snapshot.alignedDays, 0)
+    }
+
+    func testCounterStaysAtZeroUntilACompleteDayHasElapsed() {
+        let start = now.addingTimeInterval(-86_399)
+        let profile = makeProfile(startDate: start)
+
+        let snapshot = RecoveryEngine.snapshot(
+            profile: profile,
+            checkIns: [],
+            now: now,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(snapshot.currentDay, 0)
+        XCTAssertEqual(snapshot.currentStreak, 0)
+    }
+
+    func testCounterBecomesOneAtExactlyTwentyFourHours() {
+        let start = now.addingTimeInterval(-86_400)
+        let profile = makeProfile(startDate: start)
+
+        let snapshot = RecoveryEngine.snapshot(
+            profile: profile,
+            checkIns: [],
+            now: now,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(snapshot.currentDay, 1)
+    }
+
+    func testCounterBecomesTwoAtExactlyFortyEightHours() {
+        let start = now.addingTimeInterval(-172_800)
+        let profile = makeProfile(startDate: start)
+
+        let snapshot = RecoveryEngine.snapshot(
+            profile: profile,
+            checkIns: [],
+            now: now,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(snapshot.currentDay, 2)
+    }
+
+    func testCrossingMidnightDoesNotAdvanceTheCounter() {
+        let start = calendar.date(from: DateComponents(
+            year: 2026,
+            month: 6,
+            day: 24,
+            hour: 23,
+            minute: 59
+        ))!
+        let shortlyAfterMidnight = calendar.date(from: DateComponents(
+            year: 2026,
+            month: 6,
+            day: 25,
+            hour: 0,
+            minute: 1
+        ))!
+        let profile = makeProfile(startDate: start)
+
+        let snapshot = RecoveryEngine.snapshot(
+            profile: profile,
+            checkIns: [],
+            now: shortlyAfterMidnight,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(snapshot.currentDay, 0)
+    }
+
+    func testSacralThresholdIsReachedAtFiveCompleteDays() {
+        let justBeforeFiveDays = now.addingTimeInterval(-(5 * 86_400) + 1)
+        let atFiveDays = now.addingTimeInterval(-(5 * 86_400))
+
+        let beforeSnapshot = RecoveryEngine.snapshot(
+            profile: makeProfile(startDate: justBeforeFiveDays),
+            checkIns: [],
+            now: now,
+            calendar: calendar
+        )
+        let thresholdSnapshot = RecoveryEngine.snapshot(
+            profile: makeProfile(startDate: atFiveDays),
+            checkIns: [],
+            now: now,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(beforeSnapshot.currentDay, 4)
+        XCTAssertEqual(thresholdSnapshot.currentDay, 5)
     }
 
     func testCheckInsDoNotControlAutomaticProgress() {
@@ -73,7 +164,7 @@ final class RecoveryEngineTests: XCTestCase {
         XCTAssertEqual(snapshot.hoursRecovered, 1.5, accuracy: 0.001)
     }
 
-    func testResetStartDateBeginsNewCycleAtDayOne() {
+    func testResetStartDateBeginsNewCycleAtZeroDays() {
         let oldRelapse = DailyCheckIn(
             date: calendar.date(byAdding: .day, value: -10, to: now)!,
             status: .slip
@@ -87,7 +178,7 @@ final class RecoveryEngineTests: XCTestCase {
             calendar: calendar
         )
 
-        XCTAssertEqual(snapshot.currentDay, 1)
+        XCTAssertEqual(snapshot.currentDay, 0)
         XCTAssertEqual(snapshot.hoursRecovered, 0, accuracy: 0.001)
         XCTAssertEqual(snapshot.slips, 1)
     }

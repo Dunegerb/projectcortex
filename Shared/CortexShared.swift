@@ -40,7 +40,7 @@ public struct CortexWidgetSnapshot: Codable, Equatable {
         recoveryScore: 0.48,
         neuralState: "EM FLUXO",
         currentDay: 18,
-        cycleStartDate: Calendar.current.date(byAdding: .day, value: -17, to: Date()),
+        cycleStartDate: Calendar.current.date(byAdding: .day, value: -18, to: Date()),
         targetDays: 90
     )
 }

@@ -28,6 +28,8 @@ struct RecoverySnapshot: Equatable {
 }
 
 struct RecoveryEngine {
+    private static let secondsPerDay: TimeInterval = 86_400
+
     /// Builds the current cycle from the profile start date. Check-ins are journal
     /// records only and never advance, pause or reduce the automatic day counter.
     static func snapshot(
@@ -37,18 +39,14 @@ struct RecoveryEngine {
         calendar: Calendar = .current
     ) -> RecoverySnapshot {
         let cycleStart = min(profile.startDate, now)
-        let startOfCycle = calendar.startOfDay(for: cycleStart)
-        let startOfToday = calendar.startOfDay(for: now)
-        let elapsedCalendarDays = max(
-            0,
-            calendar.dateComponents([.day], from: startOfCycle, to: startOfToday).day ?? 0
-        )
-        let currentDay = elapsedCalendarDays + 1
-
         let elapsedSeconds = max(0, now.timeIntervalSince(cycleStart))
-        let elapsedDays = elapsedSeconds / 86_400
-        let targetSpan = Double(max(profile.targetDays - 1, 1))
-        let progress = min(max(Double(currentDay - 1) / targetSpan, 0), 1)
+
+        // A day is earned only after a complete 24-hour interval. Calendar
+        // midnights never advance the counter on their own.
+        let currentDay = Int(elapsedSeconds / secondsPerDay)
+        let elapsedDays = elapsedSeconds / secondsPerDay
+        let targetSpan = Double(max(profile.targetDays, 1))
+        let progress = min(max(Double(currentDay) / targetSpan, 0), 1)
 
         let currentCycleEntries = checkIns.filter { $0.date >= cycleStart && $0.date <= now }
         let uniqueByDay = Dictionary(grouping: currentCycleEntries) {

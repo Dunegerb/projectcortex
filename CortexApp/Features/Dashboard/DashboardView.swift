@@ -129,11 +129,8 @@ struct DashboardView: View {
                 now = Date()
                 WidgetSharedState.update(profile: profile, snapshot: snapshot)
             }
-            .task {
-                while !Task.isCancelled {
-                    try? await Task.sleep(nanoseconds: 60_000_000_000)
-                    now = Date()
-                }
+            .task(id: profile.startDate) {
+                await runLiveClock()
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 now = Date()
@@ -142,6 +139,9 @@ struct DashboardView: View {
                 WidgetSharedState.update(profile: profile, snapshot: snapshot)
             }
             .onChange(of: profile.startDate) {
+                WidgetSharedState.update(profile: profile, snapshot: snapshot)
+            }
+            .onChange(of: snapshot.currentDay) {
                 WidgetSharedState.update(profile: profile, snapshot: snapshot)
             }
         }
@@ -330,6 +330,7 @@ struct DashboardView: View {
             .background(HomeColors.card, in: Circle())
         }
         .frame(maxWidth: .infinity)
+        .animation(currentEnergyStageAnimation, value: stage.activationDay)
         .allowsHitTesting(false)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Energia atual: \(stage.englishTitle). Centro \(activeChakras) de 7.")
@@ -382,7 +383,7 @@ struct DashboardView: View {
                             .tracking(-0.55 * scale)
                             .monospacedDigit()
                             .foregroundStyle(HomeColors.primary)
-                        Text(snapshot.currentDay == 1 ? "Dia" : "Dias")
+                        Text(snapshot.currentDay == 1 ? "Day" : "Days")
                             .font(.system(size: 12 * scale, weight: .regular, design: .default))
                             .foregroundStyle(HomeColors.muted)
                     }
@@ -396,7 +397,7 @@ struct DashboardView: View {
             .contentShape(RoundedRectangle(cornerRadius: 27 * scale, style: .continuous))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(snapshot.currentDay) dias desde \(profile.startDate.cortexEnglishLongDate). Toque para adicionar uma observação opcional.")
+        .accessibilityLabel("\(snapshot.currentDay) \(snapshot.currentDay == 1 ? "day" : "days") since \(profile.startDate.cortexEnglishLongDate). Tap to add an optional note.")
     }
 
     @ViewBuilder
@@ -408,37 +409,60 @@ struct DashboardView: View {
                 let renderedHeight = renderedWidth / targetAspect
 
                 ZStack {
-                    Image(stage.lightCardAssetName)
-                        .resizable()
-                        .interpolation(.high)
-                        .antialiased(true)
-                        .frame(width: renderedWidth, height: renderedHeight)
+                    ZStack {
+                        Image(stage.lightCardAssetName)
+                            .resizable()
+                            .interpolation(.high)
+                            .antialiased(true)
+                            .frame(width: renderedWidth, height: renderedHeight)
 
-                    currentEnergyLightGlass(
-                        cardWidth: renderedWidth,
-                        cardHeight: renderedHeight
-                    )
+                        currentEnergyLightGlass(
+                            cardWidth: renderedWidth,
+                            cardHeight: renderedHeight
+                        )
+                    }
+                    .id(stage.lightCardAssetName)
+                    .transition(currentEnergyStageTransition)
                 }
+                .animation(currentEnergyStageAnimation, value: stage.activationDay)
                 .frame(width: renderedWidth, height: renderedHeight)
                 .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 194 * scale)
-            .id(stage.lightCardAssetName)
+            .clipped()
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Current energy: \(stage.englishTitle)")
         } else {
-            Image(stage.cardAssetName)
-                .resizable()
-                .interpolation(.high)
-                .antialiased(true)
-                .aspectRatio(699.0 / 383.0, contentMode: .fit)
-                .frame(maxWidth: .infinity)
-                .frame(height: 194 * scale)
-                .id(stage.cardAssetName)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Current energy: \(stage.englishTitle)")
+            ZStack {
+                Image(stage.cardAssetName)
+                    .resizable()
+                    .interpolation(.high)
+                    .antialiased(true)
+                    .aspectRatio(699.0 / 383.0, contentMode: .fit)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 194 * scale)
+                    .id(stage.cardAssetName)
+                    .transition(currentEnergyStageTransition)
+            }
+            .animation(currentEnergyStageAnimation, value: stage.activationDay)
+            .frame(maxWidth: .infinity)
+            .frame(height: 194 * scale)
+            .clipped()
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Current energy: \(stage.englishTitle)")
         }
+    }
+
+    private var currentEnergyStageAnimation: Animation {
+        .timingCurve(0.20, 0.80, 0.20, 1.00, duration: 1.20)
+    }
+
+    private var currentEnergyStageTransition: AnyTransition {
+        .asymmetric(
+            insertion: .move(edge: .bottom).combined(with: .opacity),
+            removal: .move(edge: .top).combined(with: .opacity)
+        )
     }
 
     private func currentEnergyLightGlass(
@@ -689,6 +713,34 @@ struct DashboardView: View {
         return remainingHours == 0 ? "\(days) d" : "\(days) d \(remainingHours) h"
     }
 
+    private func runLiveClock() async {
+        while !Task.isCancelled {
+            let refreshDate = Date()
+            now = refreshDate
+
+            let nextRefresh = nextLiveRefreshDate(after: refreshDate)
+            let delay = max(nextRefresh.timeIntervalSinceNow, 0.05)
+            let nanoseconds = UInt64(min(delay, 60) * 1_000_000_000)
+
+            do {
+                try await Task.sleep(nanoseconds: nanoseconds)
+            } catch {
+                return
+            }
+        }
+    }
+
+    private func nextLiveRefreshDate(after date: Date) -> Date {
+        let regularRefresh = date.addingTimeInterval(60)
+        let elapsedSeconds = max(0, date.timeIntervalSince(profile.startDate))
+        let completedDays = floor(elapsedSeconds / 86_400)
+        let nextCycleDay = profile.startDate.addingTimeInterval((completedDays + 1) * 86_400)
+
+        // Wake just after the exact 24-hour boundary so floating-point timing
+        // cannot leave the Home displaying the previous day for another minute.
+        return min(regularRefresh, nextCycleDay.addingTimeInterval(0.05))
+    }
+
     private func saveObservation(_ note: String) {
         let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
         if let existing = todayObservation {
@@ -817,7 +869,7 @@ private struct DailyCheckInSheet: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Recomeçar o ciclo")
                             .cortexTextStyle(.headline)
-                        Text("Registre uma recaída somente quando necessário. O dia atual voltará para 1 e o tempo recuperado passará a ser calculado a partir desse momento.")
+                        Text("Registre uma recaída somente quando necessário. A contagem voltará para 0 e o tempo recuperado passará a ser calculado a partir desse momento.")
                             .cortexTextStyle(.footnote)
                             .foregroundStyle(.secondary)
 
@@ -844,7 +896,7 @@ private struct DailyCheckInSheet: View {
                     onRegisterRelapse(note)
                 }
             } message: {
-                Text("Seu histórico será preservado, mas o ciclo atual voltará ao dia 1.")
+                Text("Seu histórico será preservado, mas a contagem do ciclo atual voltará para 0.")
             }
         }
     }

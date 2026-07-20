@@ -6,11 +6,9 @@ struct CortexWidgetEntry: TimelineEntry {
     let snapshot: CortexWidgetSnapshot
 
     var currentDay: Int {
-        guard let start = snapshot.cycleStartDate else { return snapshot.currentDay }
-        let calendar = Calendar.current
-        let startDay = calendar.startOfDay(for: min(start, date))
-        let today = calendar.startOfDay(for: date)
-        return max(1, (calendar.dateComponents([.day], from: startDay, to: today).day ?? 0) + 1)
+        guard let start = snapshot.cycleStartDate else { return max(snapshot.currentDay, 0) }
+        let elapsedSeconds = max(0, date.timeIntervalSince(start))
+        return Int(elapsedSeconds / 86_400)
     }
 
     var progress: Double {
@@ -19,8 +17,8 @@ struct CortexWidgetEntry: TimelineEntry {
               targetDays > 0 else {
             return snapshot.recoveryScore
         }
-        let targetSpan = Double(max(targetDays - 1, 1))
-        return min(max(Double(currentDay - 1) / targetSpan, 0), 1)
+        let targetSpan = Double(max(targetDays, 1))
+        return min(max(Double(currentDay) / targetSpan, 0), 1)
     }
 
     var transmutationState: String {
@@ -44,9 +42,20 @@ struct CortexWidgetProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<CortexWidgetEntry>) -> Void) {
         let now = Date()
-        let entry = CortexWidgetEntry(date: now, snapshot: loadSnapshot())
-        let refresh = Calendar.current.date(byAdding: .minute, value: 30, to: now) ?? now.addingTimeInterval(1_800)
+        let snapshot = loadSnapshot()
+        let entry = CortexWidgetEntry(date: now, snapshot: snapshot)
+        let refresh = nextRefreshDate(after: now, snapshot: snapshot)
         completion(Timeline(entries: [entry], policy: .after(refresh)))
+    }
+
+    private func nextRefreshDate(after date: Date, snapshot: CortexWidgetSnapshot) -> Date {
+        guard let start = snapshot.cycleStartDate else {
+            return date.addingTimeInterval(1_800)
+        }
+
+        let elapsedSeconds = max(0, date.timeIntervalSince(start))
+        let completedDays = floor(elapsedSeconds / 86_400)
+        return start.addingTimeInterval((completedDays + 1) * 86_400 + 1)
     }
 
     private func loadSnapshot() -> CortexWidgetSnapshot {
